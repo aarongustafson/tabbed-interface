@@ -1,32 +1,36 @@
 {
-	"name": "@aarongustafson/COMPONENT-NAME",
+	"name": "@aarongustafson/tabbed-interface",
 	"version": "1.0.0",
-	"description": "COMPONENT_DESCRIPTION",
+	"description": "A web component that transforms heading-structured content into an accessible tabbed interface",
 	"keywords": [
 		"html",
 		"custom element",
-		"web component"
+		"web component",
+		"tabs",
+		"tabbed interface",
+		"accessibility",
+		"aria"
 	],
 	"author": "Aaron Gustafson <aaron@easy-designs.net> (https://www.aaron-gustafson.com/)",
 	"license": "MIT",
-	"homepage": "https://github.com/aarongustafson/COMPONENT-NAME#readme",
+	"homepage": "https://github.com/aarongustafson/tabbed-interface#readme",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/aarongustafson/COMPONENT-NAME.git"
+		"url": "git+https://github.com/aarongustafson/tabbed-interface.git"
 	},
 	"bugs": {
-		"url": "https://github.com/aarongustafson/COMPONENT-NAME/issues"
+		"url": "https://github.com/aarongustafson/tabbed-interface/issues"
 	},
 	"type": "module",
 	"main": "index.js",
-	"module": "COMPONENT-NAME.js",
+	"module": "tabbed-interface.js",
 	"customElements": "custom-elements.json",
 	"exports": {
 		".": {
 			"import": "./index.js"
 		},
-		"./COMPONENT-NAME.js": {
-			"import": "./COMPONENT-NAME.js"
+		"./tabbed-interface.js": {
+			"import": "./tabbed-interface.js"
 		},
 		"./define.js": {
 			"import": "./define.js"
@@ -34,7 +38,7 @@
 		"./custom-elements.json": "./custom-elements.json"
 	},
 	"files": [
-		"COMPONENT-NAME.js",
+		"tabbed-interface.js",
 		"define.js",
 		"index.js",
 		"custom-elements.json",

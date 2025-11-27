@@ -1,13 +1,18 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>COMPONENT-NAME Demo</title>
+		<title>tabbed-interface Demo</title>
 		<style>
 			body {
-				font-family: system-ui, -apple-system, BlinkMacSystemFont,
-					'Segoe UI', Roboto, sans-serif;
+				font-family:
+					system-ui,
+					-apple-system,
+					BlinkMacSystemFont,
+					'Segoe UI',
+					Roboto,
+					sans-serif;
 				max-width: 800px;
 				margin: 0 auto;
 				padding: 2rem;
@@ -25,43 +30,200 @@
 				border-radius: 4px;
 			}
 
-			.example h2 {
+			.example > h2 {
 				margin-top: 0;
 				font-size: 1.2rem;
 				color: #666;
 			}
+
+			/* Custom styling for the tabbed interface */
+			tabbed-interface {
+				--tabbed-interface-tablist-gap: 4px;
+				--tabbed-interface-tablist-margin: 0 0 -1px 0;
+				--tabbed-interface-tab-background: #f0f0f0;
+				--tabbed-interface-tab-border: 1px solid #ccc;
+				--tabbed-interface-tab-border-radius: 4px 4px 0 0;
+				--tabbed-interface-tab-padding: 0.5em 1em;
+				--tabbed-interface-tab-active-background: #fff;
+				--tabbed-interface-tab-hover-background: #e8e8e8;
+				--tabbed-interface-tabpanel-padding: 1em;
+				--tabbed-interface-tabpanel-border: 1px solid #ccc;
+			}
+
+			/* Style variant for second example */
+			.pills {
+				--tabbed-interface-tablist-gap: 8px;
+				--tabbed-interface-tablist-margin: 0 0 1em 0;
+				--tabbed-interface-tab-background: #e0e0e0;
+				--tabbed-interface-tab-border: none;
+				--tabbed-interface-tab-border-radius: 999px;
+				--tabbed-interface-tab-padding: 0.5em 1.5em;
+				--tabbed-interface-tab-active-background: #0066cc;
+				--tabbed-interface-tab-active-color: white;
+				--tabbed-interface-tab-hover-background: #d0d0d0;
+				--tabbed-interface-tabpanel-border: none;
+				--tabbed-interface-tabpanel-background: #f9f9f9;
+			}
+
+			/* Output for change events */
+			#output {
+				padding: 1em;
+				background: #f0f0f0;
+				border-radius: 4px;
+				font-family: monospace;
+				margin-top: 1em;
+			}
 		</style>
 	</head>
 	<body>
-		<h1>COMPONENT-NAME Demo</h1>
+		<h1>tabbed-interface Demo</h1>
+
+		<p>
+			The <code>&lt;tabbed-interface&gt;</code> web component transforms
+			heading-structured content into an accessible tabbed interface.
+		</p>
 
 		<div class="example">
 			<h2>Basic Example</h2>
-			<COMPONENT-NAME>
-				<p>Content goes here</p>
-			</COMPONENT-NAME>
+			<tabbed-interface>
+				<h3>Getting Started</h3>
+				<p>
+					This is the first tab panel content. It demonstrates the
+					basic usage of the tabbed interface component.
+				</p>
+				<p>
+					Simply place your content with consistent heading levels,
+					and the component will automatically create tabs.
+				</p>
+
+				<h3>Features</h3>
+				<ul>
+					<li>Automatic tab creation from headings</li>
+					<li>Full keyboard navigation support</li>
+					<li>ARIA attributes for accessibility</li>
+					<li>CSS custom properties for styling</li>
+					<li>Hash-based navigation</li>
+				</ul>
+
+				<h3>Installation</h3>
+				<pre><code>npm install @aarongustafson/tabbed-interface</code></pre>
+				<p>Then import in your JavaScript:</p>
+				<pre><code>import '@aarongustafson/tabbed-interface';</code></pre>
+			</tabbed-interface>
 		</div>
 
 		<div class="example">
-			<h2>Example with Attributes</h2>
-			<COMPONENT-NAME example-attribute="value">
-				<p>Content with attributes</p>
-			</COMPONENT-NAME>
+			<h2>Pill-Style Tabs</h2>
+			<tabbed-interface class="pills" hide-headers="false">
+				<h3>Tab One</h3>
+				<p>
+					This example shows headers visible in the panel and a
+					different visual style using CSS custom properties.
+				</p>
+
+				<h3>Tab Two</h3>
+				<p>
+					The pill style is achieved entirely through CSS custom
+					properties - no JavaScript changes needed.
+				</p>
+
+				<h3>Tab Three</h3>
+				<p>Content for the third tab in pill style.</p>
+			</tabbed-interface>
+		</div>
+
+		<div class="example">
+			<h2>Custom Tab Titles</h2>
+			<tabbed-interface>
+				<h3 data-tab-title="Short">
+					Very Long Section Title That Wouldn't Fit Well In a Tab
+				</h3>
+				<p>
+					Use the <code>data-tab-title</code> attribute on headings to
+					provide a shorter tab label while keeping the full heading
+					visible in the panel.
+				</p>
+
+				<h3 data-tab-title="Emoji 🎉">Plain Heading</h3>
+				<p>You can even add emoji or other content to your tab titles!</p>
+			</tabbed-interface>
+		</div>
+
+		<div class="example">
+			<h2>Tabs After Content</h2>
+			<tabbed-interface tablist-position="after">
+				<h3>First Section</h3>
+				<p>
+					The <code>tablist-position="after"</code> attribute places
+					the tab list below the content.
+				</p>
+
+				<h3>Second Section</h3>
+				<p>This can be useful for certain layouts or design patterns.</p>
+			</tabbed-interface>
+		</div>
+
+		<div class="example">
+			<h2>Event Handling</h2>
+			<tabbed-interface id="event-demo">
+				<h3 id="intro">Introduction</h3>
+				<p>Click between tabs and watch the output below.</p>
+
+				<h3 id="details">Details</h3>
+				<p>
+					The <code>tabbed-interface:change</code> event fires whenever
+					the active tab changes.
+				</p>
+
+				<h3 id="api">API Reference</h3>
+				<p>
+					Access <code>activeIndex</code>, and methods like
+					<code>next()</code>, <code>previous()</code>,
+					<code>first()</code>, and <code>last()</code>.
+				</p>
+			</tabbed-interface>
+			<div id="output">Waiting for tab change...</div>
+		</div>
+
+		<div class="example">
+			<h2>Programmatic Control</h2>
+			<tabbed-interface id="programmatic-demo">
+				<h3>Panel A</h3>
+				<p>First panel content.</p>
+
+				<h3>Panel B</h3>
+				<p>Second panel content.</p>
+
+				<h3>Panel C</h3>
+				<p>Third panel content.</p>
+			</tabbed-interface>
+			<p>
+				<button onclick="document.querySelector('#programmatic-demo').first()">
+					First
+				</button>
+				<button
+					onclick="document.querySelector('#programmatic-demo').previous()"
+				>
+					Previous
+				</button>
+				<button onclick="document.querySelector('#programmatic-demo').next()">
+					Next
+				</button>
+				<button onclick="document.querySelector('#programmatic-demo').last()">
+					Last
+				</button>
+			</p>
 		</div>
 
 		<script type="module">
 			import '../define.js';
 
-			// Add event listeners or demo-specific code here
+			// Event listener demo
 			document
-				.querySelectorAll('COMPONENT-NAME')
-				.forEach((element) => {
-					element.addEventListener(
-						'COMPONENT-NAME:event-name',
-						(event) => {
-							console.log('Event fired:', event.detail);
-						},
-					);
+				.querySelector('#event-demo')
+				.addEventListener('tabbed-interface:change', (event) => {
+					const output = document.querySelector('#output');
+					output.textContent = `Tab changed: index=${event.detail.tabIndex}, tabId=${event.detail.tabId}`;
 				});
 		</script>
 	</body>

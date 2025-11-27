@@ -1,2 +1,2 @@
-export { ComponentNameElement } from './COMPONENT-NAME.js';
+export { TabbedInterfaceElement } from './tabbed-interface.js';
 import './define.js';

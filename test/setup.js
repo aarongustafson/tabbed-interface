@@ -1,12 +1,12 @@
 import { beforeAll } from 'vitest';
-import { ComponentNameElement } from '../COMPONENT-NAME.js';
+import { TabbedInterfaceElement } from '../tabbed-interface.js';
 
 // Define the custom element before tests run
 beforeAll(() => {
-	if (!customElements.get('COMPONENT-NAME')) {
-		customElements.define('COMPONENT-NAME', ComponentNameElement);
+	if (!customElements.get('tabbed-interface')) {
+		customElements.define('tabbed-interface', TabbedInterfaceElement);
 	}
 
 	// Make the class available globally for testing static methods
-	globalThis.ComponentNameElement = ComponentNameElement;
+	globalThis.TabbedInterfaceElement = TabbedInterfaceElement;
 });
