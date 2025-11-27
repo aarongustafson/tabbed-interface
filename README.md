@@ -13,7 +13,7 @@ A web component that transforms heading-structured content into an accessible ta
 ## 🚀 Installation
 
 ```bash
-npm install @anthropic-ai/tabbed-interface
+npm install @aarongustafson/tabbed-interface
 ```
 
 ## 📖 Usage
@@ -33,7 +33,7 @@ npm install @anthropic-ai/tabbed-interface
 </tabbed-interface>
 
 <script type="module">
-  import '@anthropic-ai/tabbed-interface';
+  import '@aarongustafson/tabbed-interface';
 </script>
 ```
 
@@ -41,19 +41,19 @@ npm install @anthropic-ai/tabbed-interface
 
 **Auto-define (easiest):**
 ```javascript
-import '@anthropic-ai/tabbed-interface';
+import '@aarongustafson/tabbed-interface';
 // Element is automatically registered as <tabbed-interface>
 ```
 
 **Manual registration:**
 ```javascript
-import { TabbedInterfaceElement } from '@anthropic-ai/tabbed-interface/tabbed-interface.js';
+import { TabbedInterfaceElement } from '@aarongustafson/tabbed-interface/tabbed-interface.js';
 customElements.define('my-tabs', TabbedInterfaceElement);
 ```
 
 **Both (class + auto-define):**
 ```javascript
-import { TabbedInterfaceElement } from '@anthropic-ai/tabbed-interface';
+import { TabbedInterfaceElement } from '@aarongustafson/tabbed-interface';
 // Element is registered AND class is available
 ```
 
@@ -112,16 +112,16 @@ import { TabbedInterfaceElement } from '@anthropic-ai/tabbed-interface';
 ### Programmatic Control
 
 ```javascript
-const tabs = document.querySelector('tabbed-interface');
+const $tabs = document.querySelector('tabbed-interface');
 
 // Navigate
-tabs.next();
-tabs.previous();
-tabs.first();
-tabs.last();
+$tabs.next();
+$tabs.previous();
+$tabs.first();
+$tabs.last();
 
 // Set active tab directly
-tabs.activeIndex = 2;
+$tabs.activeIndex = 2;
 ```
 
 ## 🎯 Events

@@ -1,5 +1,5 @@
 {
-	"name": "@anthropic-ai/tabbed-interface",
+	"name": "@aarongustafson/tabbed-interface",
 	"version": "1.0.0",
 	"description": "A web component that transforms heading-structured content into an accessible tabbed interface",
 	"keywords": [
