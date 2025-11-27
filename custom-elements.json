@@ -4,29 +4,92 @@
 	"modules": [
 		{
 			"kind": "javascript-module",
-			"path": "COMPONENT-NAME.js",
+			"path": "tabbed-interface.js",
 			"declarations": [
 				{
 					"kind": "class",
-					"description": "COMPONENT_DESCRIPTION",
-					"name": "ComponentNameElement",
-					"members": [],
-					"events": [],
-					"attributes": [],
+					"description": "A web component that transforms heading-structured content into an accessible tabbed interface",
+					"name": "TabbedInterfaceElement",
+					"members": [
+						{
+							"kind": "field",
+							"name": "activeIndex",
+							"type": { "text": "number" },
+							"description": "Gets or sets the current active tab index"
+						},
+						{
+							"kind": "field",
+							"name": "hideHeaders",
+							"type": { "text": "boolean" },
+							"description": "Whether to hide headers in tab panels"
+						},
+						{
+							"kind": "field",
+							"name": "tablistPosition",
+							"type": { "text": "string" },
+							"description": "Position of the tablist: 'before' or 'after'"
+						},
+						{
+							"kind": "method",
+							"name": "next",
+							"description": "Navigate to the next tab"
+						},
+						{
+							"kind": "method",
+							"name": "previous",
+							"description": "Navigate to the previous tab"
+						},
+						{
+							"kind": "method",
+							"name": "first",
+							"description": "Navigate to the first tab"
+						},
+						{
+							"kind": "method",
+							"name": "last",
+							"description": "Navigate to the last tab"
+						}
+					],
+					"events": [
+						{
+							"name": "tabbed-interface:change",
+							"description": "Fired when the active tab changes",
+							"type": {
+								"text": "CustomEvent<{ tabId: string, tabpanelId: string, tabIndex: number }>"
+							}
+						}
+					],
+					"attributes": [
+						{
+							"name": "hide-headers",
+							"type": { "text": "boolean" },
+							"description": "When true, hides the heading elements within tab panels (default: true)"
+						},
+						{
+							"name": "tablist-position",
+							"type": { "text": "string" },
+							"description": "Position of the tab list: 'before' (default) or 'after' the content"
+						},
+						{
+							"name": "default-tab",
+							"type": { "text": "string" },
+							"description": "Index or heading ID of the tab to show by default"
+						}
+					],
 					"superclass": {
 						"name": "HTMLElement"
 					},
-					"tagName": "COMPONENT-NAME",
+					"tagName": "tabbed-interface",
 					"customElement": true
 				}
 			],
 			"exports": [
 				{
 					"kind": "js",
-					"name": "ComponentNameElement",
+					"name": "TabbedInterfaceElement",
 					"declaration": {
-						"name": "ComponentNameElement",
-						"module": "COMPONENT-NAME.js"
+						"name": "TabbedInterfaceElement",
+						"module": "tabbed-interface.js"
 					}
 				}
 			]

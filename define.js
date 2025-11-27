@@ -1,3 +1,3 @@
-import { ComponentNameElement } from './COMPONENT-NAME.js';
+import { TabbedInterfaceElement } from './tabbed-interface.js';
 
-customElements.define('COMPONENT-NAME', ComponentNameElement);
+customElements.define('tabbed-interface', TabbedInterfaceElement);

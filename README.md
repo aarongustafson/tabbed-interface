@@ -1,152 +1,228 @@
-# Web Component Starter Template
+# tabbed-interface
 
-A comprehensive, production-ready starter template for creating Web Components. This template is based on the architecture and best practices from [form-obfuscator](https://github.com/aarongustafson/form-obfuscator).
+A web component that transforms heading-structured content into an accessible tabbed interface. This is a modern web component port of the [jQuery TabInterface plugin](https://github.com/easy-designs/jquery.TabInterface.js).
 
 ## ✨ Features
 
-- **Modern Tooling**: Vitest, ESLint, Prettier, Happy DOM
-- **Best Practices**: Shadow DOM, Custom Elements v1, proper encapsulation
-- **Multiple Import Options**: Auto-define, manual definition, or both
-- **Testing**: Comprehensive test setup with coverage reporting
-- **CI/CD**: GitHub Actions workflows included
-- **Developer Experience**: Demo page, interactive setup, extensive documentation
-- **Publishing Ready**: npm package configuration and automated publishing workflow
+- **Progressive Enhancement**: Works with semantic HTML structure
+- **Accessibility**: Full ARIA support and keyboard navigation
+- **Customizable**: Extensive CSS custom properties for styling
+- **Lightweight**: No dependencies, pure vanilla JavaScript
+- **Modern**: Uses Shadow DOM and ES Modules
 
-## 🚀 Quick Start
-
-### Use This Template
-
-1. Click "Use this template" on GitHub, or:
+## 🚀 Installation
 
 ```bash
-git clone https://github.com/aarongustafson/web-component-starter.git my-component
-cd my-component
+npm install @anthropic-ai/tabbed-interface
 ```
 
-2. Run the interactive setup:
+## 📖 Usage
 
-```bash
-npm install
-npm run setup
+### Basic Usage
+
+```html
+<tabbed-interface>
+  <h2>First Tab</h2>
+  <p>Content for the first tab panel.</p>
+
+  <h2>Second Tab</h2>
+  <p>Content for the second tab panel.</p>
+
+  <h2>Third Tab</h2>
+  <p>Content for the third tab panel.</p>
+</tabbed-interface>
+
+<script type="module">
+  import '@anthropic-ai/tabbed-interface';
+</script>
 ```
 
-The setup wizard will:
-- Ask for your component name (e.g., `my-awesome-component`)
-- Ask for a description
-- Rename all files automatically
-- Replace all placeholders
-- **Clean up template setup files** (SETUP.md, scripts/)
-- Install dependencies
-- Initialize git repository
+### Import Options
 
-### Manual Setup
-
-If you prefer manual setup, see [SETUP.md](SETUP.md) for detailed instructions.
-
-## 📁 What's Included
-
-```
-web-component-starter/
-├── COMPONENT-NAME.js          # Component implementation
-├── index.js                   # Main entry (class + auto-define)
-├── define.js                  # Auto-define only
-├── custom-elements.json       # Custom Elements Manifest
-├── package.json               # Package config with scripts
-├── LICENSE                    # MIT License
-├── .gitignore                 # Git ignore
-├── .npmignore                 # npm ignore
-├── .prettierrc                # Prettier config
-├── .editorconfig              # Editor config
-├── eslint.config.js           # ESLint config
-├── vitest.config.js           # Vitest config
-├── .github/
-│   ├── workflows/
-│   │   ├── ci.yml            # Continuous integration
-│   │   └── publish.yml       # Auto-publish to npm
-│   └── ISSUE_TEMPLATE/       # Bug & feature templates
-├── scripts/
-│   └── setup.js              # Interactive setup wizard (removed after setup)
-├── test/
-│   ├── setup.js              # Test configuration
-│   └── COMPONENT-NAME.test.js # Test suite
-├── demo/
-│   └── index.html            # Live demo page
-├── SETUP.md                  # Manual setup guide
-└── CONTRIBUTING.md           # Contribution guidelines
-```
-
-## 🛠️ Development
-
-### Available Scripts
-
-```bash
-npm run setup          # Interactive setup wizard
-npm test               # Run tests in watch mode
-npm run test:run       # Run tests once
-npm run test:ui        # Open Vitest UI
-npm run test:coverage  # Generate coverage report
-npm run lint           # Lint with ESLint + Prettier
-npm run format         # Auto-fix linting issues
-```
-
-### Component Architecture
-
-This template provides three flexible import options:
-
-**Option 1: Auto-define (easiest)**
+**Auto-define (easiest):**
 ```javascript
-import '@yourscope/component-name';
-// Element is automatically registered
+import '@anthropic-ai/tabbed-interface';
+// Element is automatically registered as <tabbed-interface>
 ```
 
-**Option 2: Manual registration**
+**Manual registration:**
 ```javascript
-import { ComponentNameElement } from '@yourscope/component-name/component-name.js';
-customElements.define('my-custom-name', ComponentNameElement);
+import { TabbedInterfaceElement } from '@anthropic-ai/tabbed-interface/tabbed-interface.js';
+customElements.define('my-tabs', TabbedInterfaceElement);
 ```
 
-**Option 3: Both**
+**Both (class + auto-define):**
 ```javascript
-import { ComponentNameElement } from '@yourscope/component-name';
-// Element is registered AND class is available for extension
+import { TabbedInterfaceElement } from '@anthropic-ai/tabbed-interface';
+// Element is registered AND class is available
 ```
 
-## 🧪 Testing
+## 📋 Attributes
 
-Includes:
-- **Vitest**: Fast, modern test runner
-- **Happy DOM**: Lightweight browser environment
-- **Testing Library**: DOM testing utilities
-- **Coverage**: V8 coverage reporting
-- **UI**: Interactive test debugging
+| Attribute | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `hide-headers` | boolean | `true` | When true, visually hides headings in tab panels |
+| `tablist-position` | string | `"before"` | Position of tab list: `"before"` or `"after"` content |
+| `default-tab` | string | `"0"` | Initial active tab (index or heading ID) |
 
-Example:
+### Examples
+
+```html
+<!-- Show headings in panels -->
+<tabbed-interface hide-headers="false">
+  ...
+</tabbed-interface>
+
+<!-- Tabs after content -->
+<tabbed-interface tablist-position="after">
+  ...
+</tabbed-interface>
+
+<!-- Start on specific tab -->
+<tabbed-interface default-tab="2">
+  ...
+</tabbed-interface>
+
+<!-- Start on tab by heading ID -->
+<tabbed-interface default-tab="features">
+  <h2 id="intro">Introduction</h2>
+  <p>...</p>
+  <h2 id="features">Features</h2>
+  <p>...</p>
+</tabbed-interface>
+```
+
+## 📊 Properties
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `activeIndex` | number | Get/set the currently active tab index |
+| `hideHeaders` | boolean | Get/set header visibility |
+| `tablistPosition` | string | Get/set tablist position |
+
+## 🔧 Methods
+
+| Method | Description |
+|--------|-------------|
+| `next()` | Navigate to the next tab |
+| `previous()` | Navigate to the previous tab |
+| `first()` | Navigate to the first tab |
+| `last()` | Navigate to the last tab |
+
+### Programmatic Control
+
 ```javascript
-import { describe, it, expect } from 'vitest';
+const tabs = document.querySelector('tabbed-interface');
 
-describe('MyComponent', () => {
-  it('should render', () => {
-    const el = document.createElement('my-component');
-    expect(el).toBeInstanceOf(HTMLElement);
+// Navigate
+tabs.next();
+tabs.previous();
+tabs.first();
+tabs.last();
+
+// Set active tab directly
+tabs.activeIndex = 2;
+```
+
+## 🎯 Events
+
+| Event | Detail | Description |
+|-------|--------|-------------|
+| `tabbed-interface:change` | `{ tabId, tabpanelId, tabIndex }` | Fired when active tab changes |
+
+```javascript
+document.querySelector('tabbed-interface')
+  .addEventListener('tabbed-interface:change', (e) => {
+    console.log(`Switched to tab ${e.detail.tabIndex}`);
   });
-});
 ```
 
-## 📦 Publishing
+## ⌨️ Keyboard Navigation
 
-### Setup npm Publishing
+| Key | Action |
+|-----|--------|
+| `Arrow Left/Up` | Previous tab |
+| `Arrow Right/Down` | Next tab |
+| `Home` | First tab |
+| `End` | Last tab |
+| `Enter` | Focus tab panel |
+| `Escape` | Blur current tab |
 
-1. Add `NPM_TOKEN` to GitHub repository secrets
-2. Update version in `package.json`
-3. Create a GitHub release
-4. Automated workflow publishes to npm
+## 🎨 CSS Custom Properties
 
-### Manual Publishing
+Style the component using these CSS custom properties:
 
-```bash
-npm run test:run  # Ensure tests pass
-npm run lint      # Ensure code is clean
-npm publish       # Publish to npm
+### Tablist
+
+| Property | Default | Description |
+|----------|---------|-------------|
+| `--tabbed-interface-font-family` | `inherit` | Font family |
+| `--tabbed-interface-tablist-display` | `flex` | Display type |
+| `--tabbed-interface-tablist-gap` | `0` | Gap between tabs |
+| `--tabbed-interface-tablist-padding` | `0` | Tablist padding |
+| `--tabbed-interface-tablist-margin` | `0` | Tablist margin |
+| `--tabbed-interface-tablist-background` | `transparent` | Background color |
+| `--tabbed-interface-tablist-border` | `none` | Border |
+
+### Tabs
+
+| Property | Default | Description |
+|----------|---------|-------------|
+| `--tabbed-interface-tab-padding` | `0.5em 1em` | Tab padding |
+| `--tabbed-interface-tab-background` | `transparent` | Background |
+| `--tabbed-interface-tab-color` | `inherit` | Text color |
+| `--tabbed-interface-tab-border` | `1px solid #ccc` | Border |
+| `--tabbed-interface-tab-border-radius` | `0` | Border radius |
+| `--tabbed-interface-tab-active-background` | `#fff` | Active background |
+| `--tabbed-interface-tab-active-color` | `inherit` | Active text color |
+| `--tabbed-interface-tab-hover-background` | `#f0f0f0` | Hover background |
+| `--tabbed-interface-tab-hover-color` | `inherit` | Hover text color |
+| `--tabbed-interface-tab-focus-outline` | `2px solid #005fcc` | Focus outline |
+
+### Tab Panels
+
+| Property | Default | Description |
+|----------|---------|-------------|
+| `--tabbed-interface-tabpanel-padding` | `1em` | Panel padding |
+| `--tabbed-interface-tabpanel-background` | `transparent` | Background |
+| `--tabbed-interface-tabpanel-border` | `1px solid #ccc` | Border |
+
+### Example Styling
+
+```css
+tabbed-interface {
+  --tabbed-interface-tablist-gap: 4px;
+  --tabbed-interface-tab-background: #f0f0f0;
+  --tabbed-interface-tab-border-radius: 4px 4px 0 0;
+  --tabbed-interface-tab-active-background: #fff;
+  --tabbed-interface-tabpanel-padding: 1.5em;
+}
+```
+
+## 🏷️ Custom Tab Titles
+
+Use `data-tab-title` to show a different label in the tab than the heading:
+
+```html
+<tabbed-interface>
+  <h2 data-tab-title="Intro">Introduction and Getting Started Guide</h2>
+  <p>Full content with the complete heading visible in the panel.</p>
+</tabbed-interface>
+```
+
+## 🔗 Hash Navigation
+
+The component supports URL hash navigation. Link to specific tabs:
+
+```html
+<a href="#features">Go to Features</a>
+
+<tabbed-interface>
+  <h2 id="intro">Introduction</h2>
+  <p>...</p>
+  <h2 id="features">Features</h2>
+  <p>...</p>
+</tabbed-interface>
 ```
 
 ## 🌐 Browser Support
@@ -156,37 +232,29 @@ Works in all modern browsers supporting:
 - Shadow DOM v1
 - ES Modules
 
-For legacy browsers, use polyfills.
+## 🛠️ Development
 
-## 📚 Documentation
+```bash
+# Install dependencies
+npm install
 
-- [SETUP.md](SETUP.md) - Detailed setup instructions (removed after setup)
-- [CONTRIBUTING.md](CONTRIBUTING.md) - Contribution guidelines
-- [LICENSE](LICENSE) - MIT License
+# Run tests
+npm test
 
-## 🎯 Use Cases
+# Run tests once
+npm run test:run
 
-Perfect for:
-- Reusable UI components
-- Design system elements
-- Form controls and widgets
-- Interactive content blocks
-- Accessibility-enhanced components
+# Lint
+npm run lint
 
-## 🙏 Credits
-
-Based on best practices from:
-- [form-obfuscator](https://github.com/aarongustafson/form-obfuscator) by Aaron Gustafson
-- [Open Web Components](https://open-wc.org/)
+# Format code
+npm run format
+```
 
 ## 📄 License
 
 MIT - See [LICENSE](LICENSE)
 
-## 🤝 Contributing
+## 🙏 Credits
 
-Contributions welcome! See [CONTRIBUTING.md](CONTRIBUTING.md)
-
----
-
-**Ready to build your web component?** Run `npm run setup` to get started! 🚀
+Based on the [jQuery TabInterface plugin](https://github.com/easy-designs/jquery.TabInterface.js) by Aaron Gustafson.
