@@ -44,6 +44,7 @@ export class TabbedInterfaceElement extends HTMLElement {
 	#initialized = false;
 	#slotElement = null;
 	#boundHashChange = null;
+	#hasCustomTitle = [];
 
 	constructor() {
 		super();
@@ -288,6 +289,7 @@ export class TabbedInterfaceElement extends HTMLElement {
 		// Create tabs and panels
 		this.#tabs = [];
 		this.#tabpanels = [];
+		this.#hasCustomTitle = [];
 
 		sections.forEach((section, index) => {
 			const tabId = `${baseId}-tab-${index}`;
@@ -302,9 +304,12 @@ export class TabbedInterfaceElement extends HTMLElement {
 			tab.setAttribute('tabindex', index === 0 ? '0' : '-1');
 
 			// Get tab title from data attribute or heading content
-			const tabTitle =
-				section.heading.dataset.tabTitle || section.heading.innerHTML;
+			const customTitle = section.heading.dataset.tabTitle;
+			const tabTitle = customTitle || section.heading.innerHTML;
 			tab.innerHTML = tabTitle;
+
+			// Track whether this tab has a custom title
+			this.#hasCustomTitle.push(Boolean(customTitle));
 
 			// Add thumbnail if specified
 			const thumbnail = section.heading.dataset.tabThumbnail;
@@ -521,10 +526,8 @@ export class TabbedInterfaceElement extends HTMLElement {
 		this.#tabpanels.forEach((panel, index) => {
 			const heading = panel.querySelector('h1, h2, h3, h4, h5, h6');
 			if (heading) {
-				// Check if there's a custom tab title - if so, always show heading
-				const tab = this.#tabs[index];
-				const hasCustomTitle =
-					tab.innerHTML !== heading.innerHTML.trim();
+				// If there's a custom tab title, always show the heading in the panel
+				const hasCustomTitle = this.#hasCustomTitle[index];
 
 				if (hideHeaders && !hasCustomTitle) {
 					heading.classList.add('visually-hidden');
