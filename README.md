@@ -64,6 +64,7 @@ import { TabbedInterfaceElement } from '@aarongustafson/tabbed-interface';
 | `hide-headers` | boolean | `true` | When true, visually hides headings in tab panels |
 | `tablist-position` | string | `"before"` | Position of tab list: `"before"` or `"after"` content |
 | `default-tab` | string | `"0"` | Initial active tab (index or heading ID) |
+| `auto-activate` | boolean | `false` | When present, tabs activate on focus; when absent, use Enter/Space to activate |
 
 ### Examples
 
@@ -90,6 +91,11 @@ import { TabbedInterfaceElement } from '@aarongustafson/tabbed-interface';
   <h2 id="features">Features</h2>
   <p>...</p>
 </tabbed-interface>
+
+<!-- Auto-activation (tabs activate on focus) -->
+<tabbed-interface auto-activate>
+  ...
+</tabbed-interface>
 ```
 
 ## 📊 Properties
@@ -99,6 +105,7 @@ import { TabbedInterfaceElement } from '@aarongustafson/tabbed-interface';
 | `activeIndex` | number | Get/set the currently active tab index |
 | `hideHeaders` | boolean | Get/set header visibility |
 | `tablistPosition` | string | Get/set tablist position |
+| `autoActivate` | boolean | Get/set auto-activation behavior |
 
 ## 🔧 Methods
 
@@ -145,8 +152,7 @@ document.querySelector('tabbed-interface')
 | `Arrow Right/Down` | Next tab |
 | `Home` | First tab |
 | `End` | Last tab |
-| `Enter` | Focus tab panel |
-| `Escape` | Blur current tab |
+| `Enter/Space` | Activate tab (when auto-activate is absent) and focus first focusable element in panel |
 
 ## 🎨 CSS Custom Properties
 
@@ -171,13 +177,14 @@ Style the component using these CSS custom properties:
 | `--tabbed-interface-tab-padding` | `0.5em 1em` | Tab padding |
 | `--tabbed-interface-tab-background` | `transparent` | Background |
 | `--tabbed-interface-tab-color` | `inherit` | Text color |
-| `--tabbed-interface-tab-border` | `1px solid #ccc` | Border |
+| `--tabbed-interface-tab-border` | `1px solid ButtonBorder` | Border |
 | `--tabbed-interface-tab-border-radius` | `0` | Border radius |
-| `--tabbed-interface-tab-active-background` | `#fff` | Active background |
+| `--tabbed-interface-tab-border-radius-block-end` | `0` | Border radius for block-end (used when tablist-position="after") |
+| `--tabbed-interface-tab-active-background` | `Canvas` | Active background |
 | `--tabbed-interface-tab-active-color` | `inherit` | Active text color |
-| `--tabbed-interface-tab-hover-background` | `#f0f0f0` | Hover background |
+| `--tabbed-interface-tab-hover-background` | `ButtonFace` | Hover background |
 | `--tabbed-interface-tab-hover-color` | `inherit` | Hover text color |
-| `--tabbed-interface-tab-focus-outline` | `2px solid #005fcc` | Focus outline |
+| `--tabbed-interface-tab-focus-outline` | `2px solid AccentColor` | Focus outline |
 
 ### Tab Panels
 
@@ -185,7 +192,7 @@ Style the component using these CSS custom properties:
 |----------|---------|-------------|
 | `--tabbed-interface-tabpanel-padding` | `1em` | Panel padding |
 | `--tabbed-interface-tabpanel-background` | `transparent` | Background |
-| `--tabbed-interface-tabpanel-border` | `1px solid #ccc` | Border |
+| `--tabbed-interface-tabpanel-border` | `1px solid ButtonBorder` | Border |
 
 ### Example Styling
 
@@ -201,11 +208,11 @@ tabbed-interface {
 
 ## 🏷️ Custom Tab Titles
 
-Use `data-tab-title` to show a different label in the tab than the heading:
+Use `data-tab-short-name` to show a different label in the tab than the heading. The full heading text is set as the `aria-label` for screen readers:
 
 ```html
 <tabbed-interface>
-  <h2 data-tab-title="Intro">Introduction and Getting Started Guide</h2>
+  <h2 data-tab-short-name="Intro">Introduction and Getting Started Guide</h2>
   <p>Full content with the complete heading visible in the panel.</p>
 </tabbed-interface>
 ```
