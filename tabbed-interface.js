@@ -6,6 +6,7 @@
  * @attr {boolean} hide-headers - When true, hides the heading elements within tab panels (default: true)
  * @attr {string} tablist-position - Position of the tab list: "before" (default) or "after" the content
  * @attr {string} default-tab - Index or heading ID of the tab to show by default (defaults to first tab)
+ * @attr {boolean} auto-activate - When present, tabs activate on focus; when absent, use Enter/Space to activate (default: absent/false)
  *
  * @slot - Default slot for content with heading elements (h1-h6) that define tab sections
  *
@@ -34,7 +35,7 @@
  */
 export class TabbedInterfaceElement extends HTMLElement {
 	static get observedAttributes() {
-		return ['hide-headers', 'tablist-position', 'default-tab'];
+		return ['hide-headers', 'tablist-position', 'default-tab', 'auto-activate'];
 	}
 
 	#tablist = null;
@@ -123,6 +124,23 @@ export class TabbedInterfaceElement extends HTMLElement {
 	}
 
 	/**
+	 * Whether tabs auto-activate on focus
+	 * @returns {boolean}
+	 */
+	get autoActivate() {
+		// Default to false; true when attribute is present
+		return this.hasAttribute('auto-activate');
+	}
+
+	set autoActivate(value) {
+		if (value) {
+			this.setAttribute('auto-activate', '');
+		} else {
+			this.removeAttribute('auto-activate');
+		}
+	}
+
+	/**
 	 * Navigate to the next tab
 	 */
 	next() {
@@ -162,53 +180,58 @@ export class TabbedInterfaceElement extends HTMLElement {
 		this.shadowRoot.innerHTML = `
 			<style>
 				:host {
-					display: block;
-					font-family: var(--tabbed-interface-font-family, inherit);
-				}
+				display: block;
+				font-family: var(--tabbed-interface-font-family, inherit);
+			}
 
-				[role="tablist"] {
-					display: var(--tabbed-interface-tablist-display, flex);
-					gap: var(--tabbed-interface-tablist-gap, 0);
-					padding: var(--tabbed-interface-tablist-padding, 0);
-					margin: var(--tabbed-interface-tablist-margin, 0);
-					background: var(--tabbed-interface-tablist-background, transparent);
-					border: var(--tabbed-interface-tablist-border, none);
-					list-style: none;
-				}
+			[role="tablist"] {
+				display: var(--tabbed-interface-tablist-display, flex);
+				gap: var(--tabbed-interface-tablist-gap, 0);
+				padding: var(--tabbed-interface-tablist-padding, 0);
+				margin: var(--tabbed-interface-tablist-margin, 0);
+				background: var(--tabbed-interface-tablist-background, transparent);
+				border: var(--tabbed-interface-tablist-border, none);
+				list-style: none;
+			}
 
-				[role="tab"] {
-					padding: var(--tabbed-interface-tab-padding, 0.5em 1em);
-					background: var(--tabbed-interface-tab-background, transparent);
-					color: var(--tabbed-interface-tab-color, inherit);
-					border: var(--tabbed-interface-tab-border, 1px solid #ccc);
-					border-radius: var(--tabbed-interface-tab-border-radius, 0);
-					cursor: pointer;
-					font: inherit;
-					text-align: center;
-				}
+			[role="tab"] {
+				padding: var(--tabbed-interface-tab-padding, 0.5em 1em);
+				background: var(--tabbed-interface-tab-background, transparent);
+				color: var(--tabbed-interface-tab-color, inherit);
+				border: var(--tabbed-interface-tab-border, 1px solid ButtonBorder);
+				border-radius: var(--tabbed-interface-tab-border-radius, 0);
+				cursor: pointer;
+				font: inherit;
+				text-align: center;
+			}
 
-				[role="tab"]:hover {
-					background: var(--tabbed-interface-tab-hover-background, #f0f0f0);
-					color: var(--tabbed-interface-tab-hover-color, inherit);
-				}
+			[role="tab"]:hover {
+				background: var(--tabbed-interface-tab-hover-background, ButtonFace);
+				color: var(--tabbed-interface-tab-hover-color, inherit);
+			}
 
-				[role="tab"]:focus {
-					outline: var(--tabbed-interface-tab-focus-outline, 2px solid #005fcc);
-					outline-offset: -2px;
-				}
+			[role="tab"]:focus {
+				outline: var(--tabbed-interface-tab-focus-outline, 2px solid AccentColor);
+				outline-offset: -2px;
+			}
 
-				[role="tab"][aria-selected="true"] {
-					background: var(--tabbed-interface-tab-active-background, #fff);
-					color: var(--tabbed-interface-tab-active-color, inherit);
-				}
+			[role="tab"][aria-selected="true"] {
+				background: var(--tabbed-interface-tab-active-background, Canvas);
+				color: var(--tabbed-interface-tab-active-color, inherit);
+			}
 
-				[role="tabpanel"] {
-					padding: var(--tabbed-interface-tabpanel-padding, 1em);
-					background: var(--tabbed-interface-tabpanel-background, transparent);
-					border: var(--tabbed-interface-tabpanel-border, 1px solid #ccc);
-				}
+			:host([tablist-position="after"]) [role="tab"] {
+				border-start-start-radius: var(--tabbed-interface-tab-border-radius-block-end, var(--tabbed-interface-tab-border-radius, 0));
+				border-start-end-radius: var(--tabbed-interface-tab-border-radius-block-end, var(--tabbed-interface-tab-border-radius, 0));
+				border-end-start-radius: 0;
+				border-end-end-radius: 0;
+			}
 
-				[role="tabpanel"][hidden] {
+			[role="tabpanel"] {
+				padding: var(--tabbed-interface-tabpanel-padding, 1em);
+				background: var(--tabbed-interface-tabpanel-background, transparent);
+				border: var(--tabbed-interface-tabpanel-border, 1px solid ButtonBorder);
+			}				[role="tabpanel"][hidden] {
 					display: none;
 				}
 
@@ -304,9 +327,15 @@ export class TabbedInterfaceElement extends HTMLElement {
 			tab.setAttribute('tabindex', index === 0 ? '0' : '-1');
 
 			// Get tab title from data attribute or heading content
-			const customTitle = section.heading.dataset.tabTitle;
+			const customTitle = section.heading.dataset.tabShortName;
 			const tabTitle = customTitle || section.heading.innerHTML;
 			tab.innerHTML = tabTitle;
+
+			// If using short name, set aria-label to full text and hide the title
+			if (customTitle) {
+				tab.setAttribute('aria-label', section.heading.textContent.trim());
+				tab.setAttribute('title', '');
+			}
 
 			// Track whether this tab has a custom title
 			this.#hasCustomTitle.push(Boolean(customTitle));
@@ -323,8 +352,12 @@ export class TabbedInterfaceElement extends HTMLElement {
 			}
 
 			// Event listeners
-			tab.addEventListener('click', () => this.#activateTab(index));
-			tab.addEventListener('keydown', (e) => this.#handleKeydown(e));
+			if (this.autoActivate) {
+				tab.addEventListener('focus', () => this.#activateTab(index));
+			} else {
+				tab.addEventListener('click', () => this.#activateTab(index));
+			}
+			tab.addEventListener('keydown', (e) => this.#handleKeydown(e, index));
 
 			this.#tablist.appendChild(tab);
 			this.#tabs.push(tab);
@@ -334,7 +367,7 @@ export class TabbedInterfaceElement extends HTMLElement {
 			panel.setAttribute('role', 'tabpanel');
 			panel.setAttribute('id', panelId);
 			panel.setAttribute('aria-labelledby', tabId);
-			panel.setAttribute('tabindex', '0');
+			// Tabpanels are not focusable themselves
 			if (index !== 0) {
 				panel.setAttribute('hidden', '');
 			}
@@ -344,7 +377,7 @@ export class TabbedInterfaceElement extends HTMLElement {
 			// Store reference to original heading for ID lookups
 			clonedHeading.dataset.originalId = section.heading.id || '';
 
-			if (this.hideHeaders && !section.heading.dataset.tabTitle) {
+			if (this.hideHeaders && !section.heading.dataset.tabShortName) {
 				clonedHeading.classList.add('visually-hidden');
 			}
 
@@ -463,7 +496,7 @@ export class TabbedInterfaceElement extends HTMLElement {
 		);
 	}
 
-	#handleKeydown(event) {
+	#handleKeydown(event, tabIndex) {
 		const key = event.key;
 
 		switch (key) {
@@ -486,13 +519,20 @@ export class TabbedInterfaceElement extends HTMLElement {
 				this.last();
 				break;
 			case 'Enter':
+			case ' ':
 				event.preventDefault();
-				// Focus the active panel
-				this.#tabpanels[this.#activeIndex].focus();
-				break;
-			case 'Escape':
-				event.preventDefault();
-				event.target.blur();
+				// If auto-activate is disabled, activate the tab on Enter/Space
+				if (!this.autoActivate) {
+					this.#activateTab(tabIndex);
+				}
+				// Focus the first focusable element in the active panel
+				const panel = this.#tabpanels[this.#activeIndex];
+				const focusable = panel.querySelector(
+					'a, button, input, textarea, select, details, [tabindex]:not([tabindex="-1"])'
+				);
+				if (focusable) {
+					focusable.focus();
+				}
 				break;
 		}
 	}
