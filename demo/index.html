@@ -2,228 +2,696 @@
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>tabbed-interface Demo</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>&lt;tabbed-interface&gt; Web Component Demo</title>
+		<link rel="stylesheet" href="./styles.css" />
 		<style>
-			body {
-				font-family:
-					system-ui,
-					-apple-system,
-					BlinkMacSystemFont,
-					'Segoe UI',
-					Roboto,
-					sans-serif;
-				max-width: 800px;
-				margin: 0 auto;
-				padding: 2rem;
-				line-height: 1.6;
-			}
+			/* Component-specific demo styles */
 
-			h1 {
-				color: #333;
-			}
-
-			.example {
-				margin: 2rem 0;
-				padding: 1rem;
-				border: 1px solid #ddd;
-				border-radius: 4px;
-			}
-
-			.example > h2 {
-				margin-top: 0;
-				font-size: 1.2rem;
-				color: #666;
-			}
-
-			/* Custom styling for the tabbed interface */
+			/* Default styling for the tabbed interface */
 			tabbed-interface {
 				--tabbed-interface-tablist-gap: 4px;
 				--tabbed-interface-tablist-margin: 0 0 -1px 0;
-				--tabbed-interface-tab-background: #f0f0f0;
-				--tabbed-interface-tab-border: 1px solid #ccc;
-				--tabbed-interface-tab-border-radius: 4px 4px 0 0;
+				--tabbed-interface-tab-background: ButtonFace;
+				--tabbed-interface-tab-border: 1px solid ButtonBorder;
+				--tabbed-interface-tab-border-radius: 0.25em 0.25em 0 0;
 				--tabbed-interface-tab-padding: 0.5em 1em;
-				--tabbed-interface-tab-active-background: #fff;
-				--tabbed-interface-tab-hover-background: #e8e8e8;
+				--tabbed-interface-tab-active-background: Canvas;
+				--tabbed-interface-tab-hover-background: SelectedItem;
 				--tabbed-interface-tabpanel-padding: 1em;
-				--tabbed-interface-tabpanel-border: 1px solid #ccc;
+				--tabbed-interface-tabpanel-border: 1px solid ButtonBorder;
 			}
 
-			/* Style variant for second example */
+			/* Tabs after content - curved corners on block end */
+			tabbed-interface[tablist-position="after"] {
+				--tabbed-interface-tablist-margin: -1px 0 0 0;
+				--tabbed-interface-tab-border-radius-block-end: 0.25em;
+			}
+
+			/* Pill-style variant */
 			.pills {
 				--tabbed-interface-tablist-gap: 8px;
 				--tabbed-interface-tablist-margin: 0 0 1em 0;
-				--tabbed-interface-tab-background: #e0e0e0;
+				--tabbed-interface-tab-background: ButtonFace;
 				--tabbed-interface-tab-border: none;
 				--tabbed-interface-tab-border-radius: 999px;
 				--tabbed-interface-tab-padding: 0.5em 1.5em;
-				--tabbed-interface-tab-active-background: #0066cc;
-				--tabbed-interface-tab-active-color: white;
-				--tabbed-interface-tab-hover-background: #d0d0d0;
+				--tabbed-interface-tab-active-background: AccentColor;
+				--tabbed-interface-tab-active-color: AccentColorText;
+				--tabbed-interface-tab-hover-background: SelectedItem;
 				--tabbed-interface-tabpanel-border: none;
-				--tabbed-interface-tabpanel-background: #f9f9f9;
+				--tabbed-interface-tabpanel-background: ButtonFace;
 			}
 
-			/* Output for change events */
-			#output {
-				padding: 1em;
-				background: #f0f0f0;
+			/* Minimal variant */
+			.minimal {
+				--tabbed-interface-tablist-gap: 0;
+				--tabbed-interface-tablist-margin: 0 0 -1px 0;
+				--tabbed-interface-tab-background: transparent;
+				--tabbed-interface-tab-border: none;
+				--tabbed-interface-tab-border-radius: 0;
+				--tabbed-interface-tab-padding: 0.75em 1em;
+				--tabbed-interface-tab-active-background: transparent;
+				--tabbed-interface-tab-active-color: AccentColor;
+				--tabbed-interface-tab-hover-background: ButtonFace;
+				--tabbed-interface-tabpanel-padding: 1.5em 0;
+				--tabbed-interface-tabpanel-border: none;
+				--tabbed-interface-tabpanel-border-top: 2px solid AccentColor;
+			}
+
+			/* Control buttons */
+			.controls {
+				display: flex;
+				gap: 0.5rem;
+				margin-block-start: 1rem;
+				flex-wrap: wrap;
+			}
+
+			.controls button {
+				background: AccentColor;
+				color: AccentColorText;
+				border: none;
+				padding: 0.5rem 1rem;
 				border-radius: 4px;
-				font-family: monospace;
-				margin-top: 1em;
+				font-size: 0.9rem;
+				cursor: pointer;
+			}
+
+			.controls button:hover {
+				opacity: 0.8;
+			}
+
+			.controls button:active {
+				opacity: 0.6;
+			}
+
+			/* Event output */
+			.output {
+				padding: 1em;
+				background: ButtonFace;
+				border-radius: 4px;
+				font-family: 'Courier New', Courier, monospace;
+				font-size: 0.875rem;
+				margin-block-start: 1rem;
+				border: 1px solid ButtonBorder;
+			}
+
+			.output strong {
+				color: AccentColor;
+			}
+
+			/* Status indicator */
+			.status {
+				display: inline-block;
+				padding: 0.25rem 0.5rem;
+				background: AccentColor;
+				color: AccentColorText;
+				border-radius: 3px;
+				font-size: 0.875rem;
+				font-weight: bold;
+				margin-inline-start: 0.5rem;
 			}
 		</style>
 	</head>
 	<body>
-		<h1>tabbed-interface Demo</h1>
-
-		<p>
-			The <code>&lt;tabbed-interface&gt;</code> web component transforms
-			heading-structured content into an accessible tabbed interface.
-		</p>
-
-		<div class="example">
-			<h2>Basic Example</h2>
-			<tabbed-interface>
-				<h3>Getting Started</h3>
-				<p>
-					This is the first tab panel content. It demonstrates the
-					basic usage of the tabbed interface component.
-				</p>
-				<p>
-					Simply place your content with consistent heading levels,
-					and the component will automatically create tabs.
-				</p>
-
-				<h3>Features</h3>
-				<ul>
-					<li>Automatic tab creation from headings</li>
-					<li>Full keyboard navigation support</li>
-					<li>ARIA attributes for accessibility</li>
-					<li>CSS custom properties for styling</li>
-					<li>Hash-based navigation</li>
-				</ul>
-
-				<h3>Installation</h3>
-				<pre><code>npm install @aarongustafson/tabbed-interface</code></pre>
-				<p>Then import in your JavaScript:</p>
-				<pre><code>import '@aarongustafson/tabbed-interface';</code></pre>
-			</tabbed-interface>
-		</div>
-
-		<div class="example">
-			<h2>Pill-Style Tabs</h2>
-			<tabbed-interface class="pills" hide-headers="false">
-				<h3>Tab One</h3>
-				<p>
-					This example shows headers visible in the panel and a
-					different visual style using CSS custom properties.
-				</p>
-
-				<h3>Tab Two</h3>
-				<p>
-					The pill style is achieved entirely through CSS custom
-					properties - no JavaScript changes needed.
-				</p>
-
-				<h3>Tab Three</h3>
-				<p>Content for the third tab in pill style.</p>
-			</tabbed-interface>
-		</div>
-
-		<div class="example">
-			<h2>Custom Tab Titles</h2>
-			<tabbed-interface>
-				<h3 data-tab-title="Short">
-					Very Long Section Title That Wouldn't Fit Well In a Tab
-				</h3>
-				<p>
-					Use the <code>data-tab-title</code> attribute on headings to
-					provide a shorter tab label while keeping the full heading
-					visible in the panel.
-				</p>
-
-				<h3 data-tab-title="Emoji 🎉">Plain Heading</h3>
-				<p>You can even add emoji or other content to your tab titles!</p>
-			</tabbed-interface>
-		</div>
-
-		<div class="example">
-			<h2>Tabs After Content</h2>
-			<tabbed-interface tablist-position="after">
-				<h3>First Section</h3>
-				<p>
-					The <code>tablist-position="after"</code> attribute places
-					the tab list below the content.
-				</p>
-
-				<h3>Second Section</h3>
-				<p>This can be useful for certain layouts or design patterns.</p>
-			</tabbed-interface>
-		</div>
-
-		<div class="example">
-			<h2>Event Handling</h2>
-			<tabbed-interface id="event-demo">
-				<h3 id="intro">Introduction</h3>
-				<p>Click between tabs and watch the output below.</p>
-
-				<h3 id="details">Details</h3>
-				<p>
-					The <code>tabbed-interface:change</code> event fires whenever
-					the active tab changes.
-				</p>
-
-				<h3 id="api">API Reference</h3>
-				<p>
-					Access <code>activeIndex</code>, and methods like
-					<code>next()</code>, <code>previous()</code>,
-					<code>first()</code>, and <code>last()</code>.
-				</p>
-			</tabbed-interface>
-			<div id="output">Waiting for tab change...</div>
-		</div>
-
-		<div class="example">
-			<h2>Programmatic Control</h2>
-			<tabbed-interface id="programmatic-demo">
-				<h3>Panel A</h3>
-				<p>First panel content.</p>
-
-				<h3>Panel B</h3>
-				<p>Second panel content.</p>
-
-				<h3>Panel C</h3>
-				<p>Third panel content.</p>
-			</tabbed-interface>
+		<header>
+			<h1>&lt;tabbed-interface&gt;</h1>
 			<p>
-				<button onclick="document.querySelector('#programmatic-demo').first()">
-					First
-				</button>
-				<button
-					onclick="document.querySelector('#programmatic-demo').previous()"
+				A web component that transforms heading-structured content into
+				an accessible tabbed interface. See the
+				<a
+					href="https://github.com/aarongustafson/tabbed-interface/blob/main/README.md"
+					>README</a
 				>
-					Previous
-				</button>
-				<button onclick="document.querySelector('#programmatic-demo').next()">
-					Next
-				</button>
-				<button onclick="document.querySelector('#programmatic-demo').last()">
-					Last
-				</button>
+				for installation and API documentation.
 			</p>
-		</div>
+		</header>
 
+		<main>
+			<!-- Basic Example -->
+			<section>
+				<h2>Basic Example</h2>
+				<p>
+					The component automatically converts headings into tabs with
+					accessible keyboard navigation and ARIA attributes.
+				</p>
+
+				<div class="demo-section">
+					<h3>Basic Usage</h3>
+					<p>
+						Simply wrap your heading-structured content in the
+						<code>&lt;tabbed-interface&gt;</code> element.
+					</p>
+					<div class="code-demo-pair">
+						<pre><code><mark>&lt;tabbed-interface&gt;</mark>
+  &lt;h3&gt;Getting Started&lt;/h3&gt;
+  &lt;p&gt;First tab content.&lt;/p&gt;
+
+  &lt;h3&gt;Features&lt;/h3&gt;
+  &lt;p&gt;Second tab content.&lt;/p&gt;
+
+  &lt;h3&gt;Installation&lt;/h3&gt;
+  &lt;p&gt;Third tab content.&lt;/p&gt;
+<mark>&lt;/tabbed-interface&gt;</mark></code></pre>
+						<div class="demo">
+							<tabbed-interface>
+								<h3>Getting Started</h3>
+								<p>
+									This is the first tab panel. The component
+									automatically creates tabs from headings.
+								</p>
+								<p>Headers are hidden by default in panels.</p>
+
+								<h3>Features</h3>
+								<ul>
+									<li>Automatic tab creation from headings</li>
+									<li>Full keyboard navigation support</li>
+									<li>ARIA attributes for accessibility</li>
+									<li>CSS custom properties for styling</li>
+								</ul>
+
+								<h3>Installation</h3>
+								<pre><code>npm install @aarongustafson/tabbed-interface</code></pre>
+								<p>Then import in your JavaScript:</p>
+								<pre><code>import '@aarongustafson/tabbed-interface';</code></pre>
+							</tabbed-interface>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<!-- Attributes -->
+			<section>
+				<h2>Attributes</h2>
+				<p>
+					The component supports several attributes to customize its
+					behavior.
+				</p>
+
+				<div class="demo-section">
+					<h3>Visible Headers</h3>
+					<p>
+						Use <code>hide-headers="false"</code> to keep headings
+						visible in tab panels.
+					</p>
+					<div class="code-demo-pair">
+						<pre><code>&lt;tabbed-interface <mark>hide-headers="false"</mark>&gt;
+  &lt;h3&gt;Overview&lt;/h3&gt;
+  &lt;p&gt;Content here.&lt;/p&gt;
+
+  &lt;h3&gt;Details&lt;/h3&gt;
+  &lt;p&gt;More content.&lt;/p&gt;
+&lt;/tabbed-interface&gt;</code></pre>
+						<div class="demo">
+							<tabbed-interface hide-headers="false">
+								<h3>Overview</h3>
+								<p>
+									The heading is now visible inside the panel
+									along with the tab.
+								</p>
+
+								<h3>Details</h3>
+								<p>
+									This can be useful for certain design
+									patterns or when you want redundancy.
+								</p>
+							</tabbed-interface>
+						</div>
+					</div>
+				</div>
+
+				<div class="demo-section">
+					<h3>Tab List Position</h3>
+					<p>
+						Use <code>tablist-position="after"</code> to place tabs
+						below the content.
+					</p>
+					<div class="code-demo-pair">
+						<pre><code>&lt;tabbed-interface <mark>tablist-position="after"</mark>&gt;
+  &lt;h3&gt;First&lt;/h3&gt;
+  &lt;p&gt;Content appears above tabs.&lt;/p&gt;
+
+  &lt;h3&gt;Second&lt;/h3&gt;
+  &lt;p&gt;More content.&lt;/p&gt;
+&lt;/tabbed-interface&gt;</code></pre>
+						<div class="demo">
+							<tabbed-interface tablist-position="after">
+								<h3>First Section</h3>
+								<p>
+									The tabs appear below the content when using
+									<code>tablist-position="after"</code>.
+								</p>
+
+								<h3>Second Section</h3>
+								<p>
+									This can be useful for certain layouts or
+									design patterns.
+								</p>
+							</tabbed-interface>
+						</div>
+					</div>
+				</div>
+
+				<div class="demo-section">
+					<h3>Default Tab</h3>
+					<p>
+						Use <code>default-tab</code> to set which tab is active
+						initially (by index or heading ID).
+					</p>
+					<div class="code-demo-pair">
+						<pre><code>&lt;tabbed-interface <mark>default-tab="1"</mark>&gt;
+  &lt;h3&gt;Tab 0&lt;/h3&gt;
+  &lt;p&gt;First tab.&lt;/p&gt;
+
+  &lt;h3&gt;Tab 1&lt;/h3&gt;
+  &lt;p&gt;This tab is active by default.&lt;/p&gt;
+
+  &lt;h3&gt;Tab 2&lt;/h3&gt;
+  &lt;p&gt;Third tab.&lt;/p&gt;
+&lt;/tabbed-interface&gt;</code></pre>
+						<div class="demo">
+							<tabbed-interface default-tab="1">
+								<h3>Tab 0</h3>
+								<p>First tab content.</p>
+
+								<h3>Tab 1</h3>
+								<p>
+									This tab is active by default because of
+									<code>default-tab="1"</code>.
+								</p>
+
+								<h3>Tab 2</h3>
+								<p>Third tab content.</p>
+							</tabbed-interface>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<!-- Styling Variants -->
+			<section>
+				<h2>Styling Variants</h2>
+				<p>
+					Style the component using CSS custom properties for complete
+					visual control.
+				</p>
+
+				<div class="demo-section">
+					<h3>Pill-Style Tabs</h3>
+					<p>
+						Create rounded pill-style tabs using CSS custom
+						properties.
+					</p>
+					<div class="code-demo-pair">
+						<pre><code>&lt;tabbed-interface <mark>class="pills"</mark>&gt;
+  &lt;h3&gt;Tab One&lt;/h3&gt;
+  &lt;p&gt;Content here.&lt;/p&gt;
+
+  &lt;h3&gt;Tab Two&lt;/h3&gt;
+  &lt;p&gt;More content.&lt;/p&gt;
+&lt;/tabbed-interface&gt;</code></pre>
+						<div class="demo">
+							<tabbed-interface class="pills" hide-headers="false">
+								<h3>Tab One</h3>
+								<p>
+									The pill style is achieved entirely through
+									CSS custom properties.
+								</p>
+
+								<h3>Tab Two</h3>
+								<p>No JavaScript changes needed!</p>
+
+								<h3>Tab Three</h3>
+								<p>Fully customizable appearance.</p>
+							</tabbed-interface>
+						</div>
+					</div>
+				</div>
+
+				<div class="demo-section">
+					<h3>Minimal Style</h3>
+					<p>A clean, minimal style with an underline indicator.</p>
+					<div class="code-demo-pair">
+						<pre><code>&lt;tabbed-interface <mark>class="minimal"</mark>&gt;
+  &lt;h3&gt;Design&lt;/h3&gt;
+  &lt;p&gt;Content here.&lt;/p&gt;
+
+  &lt;h3&gt;Develop&lt;/h3&gt;
+  &lt;p&gt;More content.&lt;/p&gt;
+&lt;/tabbed-interface&gt;</code></pre>
+						<div class="demo">
+							<tabbed-interface class="minimal">
+								<h3>Design</h3>
+								<p>
+									A minimal design with just an underline for
+									the active tab.
+								</p>
+
+								<h3>Develop</h3>
+								<p>
+									Clean and simple, great for modern
+									interfaces.
+								</p>
+
+								<h3>Deploy</h3>
+								<p>Lightweight visual treatment.</p>
+							</tabbed-interface>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<!-- Advanced Features -->
+			<section>
+				<h2>Advanced Features</h2>
+				<p>
+					The component includes several advanced features for enhanced
+					functionality.
+				</p>
+
+				<div class="demo-section">
+					<h3>Custom Tab Titles</h3>
+					<p>
+						Use <code>data-tab-short-name</code> to show shorter labels
+						in tabs while keeping full headings in panels. The full text
+						is available as <code>aria-label</code> for screen readers.
+					</p>
+					<div class="code-demo-pair">
+						<pre><code>&lt;tabbed-interface&gt;
+  &lt;h3 <mark>data-tab-short-name="Short"</mark>&gt;
+    Very Long Section Title
+  &lt;/h3&gt;
+  &lt;p&gt;Content here.&lt;/p&gt;
+  
+  &lt;h3 <mark>data-tab-short-name="Emoji 🎉"</mark>&gt;
+    Plain Heading
+  &lt;/h3&gt;
+  &lt;p&gt;More content.&lt;/p&gt;
+&lt;/tabbed-interface&gt;</code></pre>
+						<div class="demo">
+							<tabbed-interface>
+								<h3 data-tab-short-name="Short">
+									Very Long Section Title That Wouldn't Fit
+									Well In a Tab
+								</h3>
+								<p>
+									The tab shows "Short" but the full heading
+									is visible in the panel and available to
+									screen readers.
+								</p>
+
+								<h3 data-tab-short-name="Emoji 🎉">Plain Heading</h3>
+								<p>
+									You can even add emoji or other content to
+									your tab titles!
+								</p>
+
+							<h3 data-tab-short-name="API">API Reference Guide</h3>
+							<p>Great for abbreviating long titles.</p>
+						</tabbed-interface>
+					</div>
+				</div>
+			</div>
+
+			<div class="demo-section">
+				<h3>Auto-Activation</h3>
+				<p>
+					Add the <code>auto-activate</code> attribute to make tabs
+					activate on focus. By default (without the attribute),
+					tabs require Enter or Space to activate, following the
+					manual activation pattern for better accessibility.
+				</p>
+				<div class="code-demo-pair">
+					<pre><code>&lt;tabbed-interface <mark>auto-activate</mark>&gt;
+  &lt;h3&gt;Tab One&lt;/h3&gt;
+  &lt;p&gt;Content here.&lt;/p&gt;
+  
+  &lt;h3&gt;Tab Two&lt;/h3&gt;
+  &lt;p&gt;More content.&lt;/p&gt;
+&lt;/tabbed-interface&gt;</code></pre>
+					<div class="demo">
+						<div class="note">
+							<strong>Try it:</strong> Use arrow keys to focus
+							different tabs. They activate automatically on focus.
+						</div>
+						<tabbed-interface auto-activate>
+							<h3>Auto Tab 1</h3>
+							<p>
+								With auto-activation, tabs activate immediately
+								when you focus them with arrow keys.
+							</p>
+
+							<h3>Auto Tab 2</h3>
+							<p>
+								This can be convenient for quick navigation
+								when you have few tabs.
+							</p>
+
+							<h3>Auto Tab 3</h3>
+							<p>
+								Just navigate with arrow keys and the panel
+								changes automatically.
+							</p>
+						</tabbed-interface>
+					</div>
+				</div>
+			</div>				<div class="demo-section">
+					<h3>Event Handling</h3>
+					<p>
+						Listen for <code>tabbed-interface:change</code> events
+						to respond to tab changes.
+					</p>
+					<div class="code-demo-pair">
+						<pre><code>document.querySelector('tabbed-interface')
+  .addEventListener(
+    <mark>'tabbed-interface:change'</mark>,
+    (event) =&gt; {
+      console.log(event.detail);
+    }
+  );</code></pre>
+						<div class="demo">
+							<tabbed-interface id="event-demo">
+								<h3 id="intro">Introduction</h3>
+								<p>Click between tabs and watch the output below.</p>
+
+								<h3 id="details">Details</h3>
+								<p>
+									The event fires whenever the active tab
+									changes and includes useful details.
+								</p>
+
+								<h3 id="api">API</h3>
+								<p>
+									Event detail includes
+									<code>tabIndex</code>, <code>tabId</code>,
+									and <code>tabpanelId</code>.
+								</p>
+							</tabbed-interface>
+							<div id="event-output" class="output">
+								<strong>Waiting for tab change...</strong>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="demo-section">
+					<h3>Programmatic Control</h3>
+					<p>
+						Control tabs programmatically using the JavaScript API.
+					</p>
+					<div class="code-demo-pair">
+						<pre><code>const tabs = document.querySelector(
+  'tabbed-interface'
+);
+
+// Navigate
+tabs.<mark>next()</mark>;
+tabs.<mark>previous()</mark>;
+tabs.<mark>first()</mark>;
+tabs.<mark>last()</mark>;
+
+// Set active tab directly
+tabs.<mark>activeIndex = 2</mark>;</code></pre>
+						<div class="demo">
+							<tabbed-interface id="programmatic-demo">
+								<h3>Panel A</h3>
+								<p>First panel content with some text.</p>
+
+								<h3>Panel B</h3>
+								<p>Second panel content with more information.</p>
+
+								<h3>Panel C</h3>
+								<p>Third panel content with additional details.</p>
+
+								<h3>Panel D</h3>
+								<p>Fourth panel content to demonstrate navigation.</p>
+							</tabbed-interface>
+							<div class="controls">
+								<button
+									onclick="document.querySelector('#programmatic-demo').first()"
+								>
+									First
+								</button>
+								<button
+									onclick="document.querySelector('#programmatic-demo').previous()"
+								>
+									Previous
+								</button>
+								<button
+									onclick="document.querySelector('#programmatic-demo').next()"
+								>
+									Next
+								</button>
+								<button
+									onclick="document.querySelector('#programmatic-demo').last()"
+								>
+									Last
+								</button>
+							</div>
+							<div id="programmatic-output" class="output">
+								<strong>Current tab:</strong> 0
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="demo-section">
+					<h3>Hash Navigation</h3>
+					<p>
+						The component supports URL hash navigation for deep
+						linking to specific tabs.
+					</p>
+					<div class="code-demo-pair">
+						<pre><code>&lt;a <mark>href="#features"</mark>&gt;
+  Go to Features
+&lt;/a&gt;
+
+&lt;tabbed-interface&gt;
+  &lt;h3 <mark>id="intro"</mark>&gt;Introduction&lt;/h3&gt;
+  &lt;p&gt;Content...&lt;/p&gt;
+
+  &lt;h3 <mark>id="features"</mark>&gt;Features&lt;/h3&gt;
+  &lt;p&gt;Content...&lt;/p&gt;
+&lt;/tabbed-interface&gt;</code></pre>
+						<div class="demo">
+							<p>
+								<a href="#hash-start">Jump to Start</a> |
+								<a href="#hash-middle">Jump to Middle</a> |
+								<a href="#hash-end">Jump to End</a>
+							</p>
+							<tabbed-interface>
+								<h3 id="hash-start">Start</h3>
+								<p>
+									This tab can be accessed via
+									<code>#hash-start</code>.
+								</p>
+
+								<h3 id="hash-middle">Middle</h3>
+								<p>
+									This tab can be accessed via
+									<code>#hash-middle</code>.
+								</p>
+
+								<h3 id="hash-end">End</h3>
+								<p>
+									This tab can be accessed via
+									<code>#hash-end</code>.
+								</p>
+							</tabbed-interface>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<!-- Accessibility -->
+			<section>
+				<h2>Accessibility</h2>
+				<p>
+					The component is built with accessibility as a core feature.
+				</p>
+
+				<div class="demo-section">
+					<h3>Keyboard Navigation</h3>
+					<p>
+						Full keyboard support following ARIA Authoring Practices.
+					</p>
+					<div class="code-demo-pair">
+						<pre><code>Arrow Keys    Navigate tabs
+Home          First tab
+End           Last tab
+Enter/Space   Activate tab and focus panel content</code></pre>
+						<div class="demo">
+							<div class="note">
+								<strong>Try it:</strong> Click on any tab below,
+								then use your keyboard to navigate.
+							</div>
+							<tabbed-interface>
+								<h3>Tab 1</h3>
+								<p>
+									Use Arrow keys to move between tabs. By default,
+									you must press Enter or Space to activate a tab
+									and view its content.
+								</p>
+
+								<h3>Tab 2</h3>
+								<p>
+									Press Home to jump to the first tab, or End
+									to jump to the last.
+								</p>
+
+								<h3>Tab 3</h3>
+								<p>
+									After activating, Enter or Space will move
+									focus to the first focusable element in the panel.
+								</p>
+							</tabbed-interface>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<!-- API Reference -->
+			<section class="api-reference">
+				<h2>API Reference</h2>
+				<p>
+					For complete documentation of attributes, properties, methods,
+					events, CSS custom properties, keyboard navigation, and
+					browser support, see the
+					<a
+						href="https://github.com/aarongustafson/tabbed-interface/blob/main/README.md"
+						>README</a
+					>.
+				</p>
+			</section>
+		</main>
+
+		<footer>
+			<p>
+				Made with ❤️ by
+				<a href="https://github.com/aarongustafson">Aaron Gustafson</a>.
+				View the source on
+				<a href="https://github.com/aarongustafson/tabbed-interface"
+					>GitHub</a
+				>.
+			</p>
+		</footer>
+
+		<script src="../define.js" type="module"></script>
 		<script type="module">
-			import '../define.js';
-
 			// Event listener demo
 			document
 				.querySelector('#event-demo')
 				.addEventListener('tabbed-interface:change', (event) => {
-					const output = document.querySelector('#output');
-					output.textContent = `Tab changed: index=${event.detail.tabIndex}, tabId=${event.detail.tabId}`;
+					const output = document.querySelector('#event-output');
+					output.innerHTML = `<strong>Tab changed:</strong> index=${event.detail.tabIndex}, tabId=${event.detail.tabId}, tabpanelId=${event.detail.tabpanelId}`;
+				});
+
+			// Programmatic control demo
+			document
+				.querySelector('#programmatic-demo')
+				.addEventListener('tabbed-interface:change', (event) => {
+					const output = document.querySelector('#programmatic-output');
+					output.innerHTML = `<strong>Current tab:</strong> ${event.detail.tabIndex}`;
 				});
 		</script>
 	</body>
