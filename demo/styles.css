@@ -5,6 +5,10 @@
 /* Base Layout
    ========================================================================== */
 
+:root {
+  color-scheme: light dark;
+}
+
 body {
 	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
 		Oxygen, Ubuntu, Cantarell, sans-serif;
@@ -111,7 +115,7 @@ footer {
 }
 
 .demo-section > p {
-	color: GrayText;
+	color: CanvasText;
 	margin-block-end: 1rem;
 }
 
@@ -330,4 +334,8 @@ small {
 
 .api-reference p {
 	margin: 0;
+}
+
+.api-reference a {
+  color: Canvas;
 }
