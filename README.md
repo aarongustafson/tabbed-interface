@@ -1,8 +1,8 @@
 # tabbed-interface
 
-A web component that transforms heading-structured content into an accessible tabbed interface. This is a modern web component port of the [jQuery TabInterface plugin](https://github.com/easy-designs/jquery.TabInterface.js).
+A web component that transforms heading-structured content into an accessible tabbed interface. This is a modern web component port of Aaron Gustafson’s original [TabInterface](https://github.com/easy-designs/TabInterface.js).
 
-## ✨ Features
+## Features
 
 - **Progressive Enhancement**: Works with semantic HTML structure
 - **Accessibility**: Full ARIA support and keyboard navigation
@@ -10,13 +10,13 @@ A web component that transforms heading-structured content into an accessible ta
 - **Lightweight**: No dependencies, pure vanilla JavaScript
 - **Modern**: Uses Shadow DOM and ES Modules
 
-## 🚀 Installation
+## Installation
 
 ```bash
 npm install @aarongustafson/tabbed-interface
 ```
 
-## 📖 Usage
+## Usage
 
 ### Basic Usage
 
@@ -57,7 +57,7 @@ import { TabbedInterfaceElement } from '@aarongustafson/tabbed-interface';
 // Element is registered AND class is available
 ```
 
-## 📋 Attributes
+## Attributes
 
 | Attribute | Type | Default | Description |
 |-----------|------|---------|-------------|
@@ -98,7 +98,7 @@ import { TabbedInterfaceElement } from '@aarongustafson/tabbed-interface';
 </tabbed-interface>
 ```
 
-## 📊 Properties
+## Properties
 
 | Property | Type | Description |
 |----------|------|-------------|
@@ -107,7 +107,7 @@ import { TabbedInterfaceElement } from '@aarongustafson/tabbed-interface';
 | `tablistPosition` | string | Get/set tablist position |
 | `autoActivate` | boolean | Get/set auto-activation behavior |
 
-## 🔧 Methods
+## Methods
 
 | Method | Description |
 |--------|-------------|
@@ -131,7 +131,7 @@ $tabs.last();
 $tabs.activeIndex = 2;
 ```
 
-## 🎯 Events
+## Events
 
 | Event | Detail | Description |
 |-------|--------|-------------|
@@ -144,7 +144,7 @@ document.querySelector('tabbed-interface')
   });
 ```
 
-## ⌨️ Keyboard Navigation
+## Keyboard Navigation
 
 | Key | Action |
 |-----|--------|
@@ -154,59 +154,100 @@ document.querySelector('tabbed-interface')
 | `End` | Last tab |
 | `Enter/Space` | Activate tab (when auto-activate is absent) and focus first focusable element in panel |
 
-## 🎨 CSS Custom Properties
+## Styling with CSS Parts
 
-Style the component using these CSS custom properties:
+Style the component's shadow DOM elements using CSS `::part()` selectors:
 
-### Tablist
+### Available Parts
 
-| Property | Default | Description |
-|----------|---------|-------------|
-| `--tabbed-interface-font-family` | `inherit` | Font family |
-| `--tabbed-interface-tablist-display` | `flex` | Display type |
-| `--tabbed-interface-tablist-gap` | `0` | Gap between tabs |
-| `--tabbed-interface-tablist-padding` | `0` | Tablist padding |
-| `--tabbed-interface-tablist-margin` | `0` | Tablist margin |
-| `--tabbed-interface-tablist-background` | `transparent` | Background color |
-| `--tabbed-interface-tablist-border` | `none` | Border |
+| Part | Description |
+|------|-------------|
+| `tablist` | The container for all tabs |
+| `tab` | Individual tab buttons |
+| `tabpanel` | Individual tab panel containers |
 
-### Tabs
+### Styling Examples
 
-| Property | Default | Description |
-|----------|---------|-------------|
-| `--tabbed-interface-tab-padding` | `0.5em 1em` | Tab padding |
-| `--tabbed-interface-tab-background` | `transparent` | Background |
-| `--tabbed-interface-tab-color` | `inherit` | Text color |
-| `--tabbed-interface-tab-border` | `1px solid ButtonBorder` | Border |
-| `--tabbed-interface-tab-border-radius` | `0` | Border radius |
-| `--tabbed-interface-tab-border-radius-block-end` | `0` | Border radius for block-end (used when tablist-position="after") |
-| `--tabbed-interface-tab-active-background` | `Canvas` | Active background |
-| `--tabbed-interface-tab-active-color` | `inherit` | Active text color |
-| `--tabbed-interface-tab-hover-background` | `ButtonFace` | Hover background |
-| `--tabbed-interface-tab-hover-color` | `inherit` | Hover text color |
-| `--tabbed-interface-tab-focus-outline` | `2px solid AccentColor` | Focus outline |
-
-### Tab Panels
-
-| Property | Default | Description |
-|----------|---------|-------------|
-| `--tabbed-interface-tabpanel-padding` | `1em` | Panel padding |
-| `--tabbed-interface-tabpanel-background` | `transparent` | Background |
-| `--tabbed-interface-tabpanel-border` | `1px solid ButtonBorder` | Border |
-
-### Example Styling
-
+**Basic styling:**
 ```css
-tabbed-interface {
-  --tabbed-interface-tablist-gap: 4px;
-  --tabbed-interface-tab-background: #f0f0f0;
-  --tabbed-interface-tab-border-radius: 4px 4px 0 0;
-  --tabbed-interface-tab-active-background: #fff;
-  --tabbed-interface-tabpanel-padding: 1.5em;
+tabbed-interface::part(tablist) {
+  gap: 4px;
+  background: #f0f0f0;
+  padding: 8px;
+}
+
+tabbed-interface::part(tab) {
+  padding: 0.75em 1.5em;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 4px 4px 0 0;
+  font-weight: 500;
+}
+
+tabbed-interface::part(tab):hover {
+  background: #e9e9e9;
+}
+
+tabbed-interface::part(tabpanel) {
+  padding: 2em;
+  border: 1px solid #ccc;
+  background: white;
 }
 ```
 
-## 🏷️ Custom Tab Titles
+**Targeting specific states:**
+```css
+/* Active tab - use attribute selector on the host */
+tabbed-interface::part(tab selected) {
+  background: white;
+  border-bottom-color: white;
+  font-weight: bold;
+}
+
+/* Focus styles */
+tabbed-interface::part(tab):focus-visible {
+  outline: 3px solid blue;
+  outline-offset: 2px;
+}
+```
+
+**Themed variations:**
+```css
+/* Pills style */
+.pills::part(tablist) {
+  gap: 8px;
+  background: transparent;
+}
+
+.pills::part(tab) {
+  border-radius: 20px;
+  background: #e0e0e0;
+}
+
+.pills::part(tab)[aria-selected="true"] {
+  background: #007bff;
+  color: white;
+}
+
+/* Minimal style */
+.minimal::part(tab) {
+  border: none;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  background: transparent;
+}
+
+.minimal::part(tab)[aria-selected="true"] {
+  border-bottom-color: #007bff;
+}
+
+.minimal::part(tabpanel) {
+  border: none;
+  padding-top: 1.5em;
+}
+```
+
+## Custom Tab Titles
 
 Use `data-tab-short-name` to show a different label in the tab than the heading. The full heading text is set as the `aria-label` for screen readers:
 
@@ -217,7 +258,7 @@ Use `data-tab-short-name` to show a different label in the tab than the heading.
 </tabbed-interface>
 ```
 
-## 🔗 Hash Navigation
+## Hash Navigation
 
 The component supports URL hash navigation. Link to specific tabs:
 
@@ -232,14 +273,14 @@ The component supports URL hash navigation. Link to specific tabs:
 </tabbed-interface>
 ```
 
-## 🌐 Browser Support
+## Browser Support
 
 Works in all modern browsers supporting:
 - Custom Elements v1
 - Shadow DOM v1
 - ES Modules
 
-## 🛠️ Development
+## Development
 
 ```bash
 # Install dependencies
@@ -258,10 +299,10 @@ npm run lint
 npm run format
 ```
 
-## 📄 License
+## License
 
 MIT - See [LICENSE](LICENSE)
 
-## 🙏 Credits
+## Credits
 
-Based on the [jQuery TabInterface plugin](https://github.com/easy-designs/jquery.TabInterface.js) by Aaron Gustafson.
+Based on the [jQuery TabInterface plugin](https://github.com/easy-designs/jquery.TabInterface.js) by Aaron Gustafson, which is itself a port of his original [TabInterface](https://github.com/easy-designs/TabInterface.js).
