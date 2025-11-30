@@ -1,7 +1,7 @@
 # Tabbed Interface Web Component
 
-[![npm version](https://img.shields.io/npm/v/@aarongustafson/pull-to-refresh.svg)](https://www.npmjs.com/package/@aarongustafson/tabbed-interface)
-[![Build Status](https://img.shields.io/github/actions/workflow/status/aarongustafson/pull-to-refresh/ci.yml?branch=main)](https://github.com/aarongustafson/tabbed-interface/actions)
+[![npm version](https://img.shields.io/npm/v/@aarongustafson/tabbed-interface.svg)](https://www.npmjs.com/package/@aarongustafson/tabbed-interface)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/aarongustafson/tabbed-interface/ci.yml?branch=main)](https://github.com/aarongustafson/tabbed-interface/actions)
 
 A web component that transforms heading-structured content into an accessible tabbed interface. This is a modern web component port of Aaron Gustafson’s original [TabInterface](https://github.com/easy-designs/TabInterface.js).
 
