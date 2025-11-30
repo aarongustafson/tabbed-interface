@@ -3,60 +3,65 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<title>&lt;tabbed-interface&gt; Web Component Demo</title>
+		<title>Tabbed Interface Web Component Demo</title>
 		<link rel="stylesheet" href="./styles.css" />
 		<style>
 			/* Component-specific demo styles */
 
-			/* Default styling for the tabbed interface */
-			tabbed-interface {
-				--tabbed-interface-tablist-gap: 4px;
-				--tabbed-interface-tablist-margin: 0 0 -1px 0;
-				--tabbed-interface-tab-background: ButtonFace;
-				--tabbed-interface-tab-border: 1px solid ButtonBorder;
-				--tabbed-interface-tab-border-radius: 0.25em 0.25em 0 0;
-				--tabbed-interface-tab-padding: 0.5em 1em;
-				--tabbed-interface-tab-active-background: Canvas;
-				--tabbed-interface-tab-hover-background: SelectedItem;
-				--tabbed-interface-tabpanel-padding: 1em;
-				--tabbed-interface-tabpanel-border: 1px solid ButtonBorder;
-			}
-
-			/* Tabs after content - curved corners on block end */
-			tabbed-interface[tablist-position="after"] {
-				--tabbed-interface-tablist-margin: -1px 0 0 0;
-				--tabbed-interface-tab-border-radius-block-end: 0.25em;
-			}
-
 			/* Pill-style variant */
-			.pills {
-				--tabbed-interface-tablist-gap: 8px;
-				--tabbed-interface-tablist-margin: 0 0 1em 0;
-				--tabbed-interface-tab-background: ButtonFace;
-				--tabbed-interface-tab-border: none;
-				--tabbed-interface-tab-border-radius: 999px;
-				--tabbed-interface-tab-padding: 0.5em 1.5em;
-				--tabbed-interface-tab-active-background: AccentColor;
-				--tabbed-interface-tab-active-color: AccentColorText;
-				--tabbed-interface-tab-hover-background: SelectedItem;
-				--tabbed-interface-tabpanel-border: none;
-				--tabbed-interface-tabpanel-background: ButtonFace;
+			tabbed-interface.pills::part(tablist) {
+				gap: 8px;
+				margin: 0 0 1em 0;
+			}
+
+			tabbed-interface.pills::part(tab) {
+				background-color: ButtonFace;
+				border: none;
+				border-radius: 999px;
+				padding: 0.5em 1.5em;
+			}
+
+			tabbed-interface.pills::part(tab):hover {
+				background-color: SelectedItem;
+			}
+
+			tabbed-interface.pills::part(tab selected),
+			tabbed-interface.pills::part(tabpanel) {
+				background-color: Highlight;
+				color: HighlightText;
+			}
+
+			tabbed-interface.pills::part(tabpanel) {
+				border: none;
 			}
 
 			/* Minimal variant */
-			.minimal {
-				--tabbed-interface-tablist-gap: 0;
-				--tabbed-interface-tablist-margin: 0 0 -1px 0;
-				--tabbed-interface-tab-background: transparent;
-				--tabbed-interface-tab-border: none;
-				--tabbed-interface-tab-border-radius: 0;
-				--tabbed-interface-tab-padding: 0.75em 1em;
-				--tabbed-interface-tab-active-background: transparent;
-				--tabbed-interface-tab-active-color: AccentColor;
-				--tabbed-interface-tab-hover-background: ButtonFace;
-				--tabbed-interface-tabpanel-padding: 1.5em 0;
-				--tabbed-interface-tabpanel-border: none;
-				--tabbed-interface-tabpanel-border-top: 2px solid AccentColor;
+			tabbed-interface.minimal::part(tablist) {
+				gap: 0;
+				margin: 0 0 -1px 0;
+			}
+
+			tabbed-interface.minimal::part(tab) {
+				background: transparent;
+				border: none;
+				border-radius: 0;
+				padding: 0.75em 1em;
+			}
+
+			tabbed-interface.minimal::part(tab):hover {
+				background: ButtonFace;
+			}
+
+			tabbed-interface.minimal::part(tab selected) {
+				background: transparent;
+				color: LinkText;
+				border-bottom: 2px solid LinkText;
+			}
+
+			tabbed-interface.minimal::part(tabpanel) {
+				padding: 1.5em 0;
+				border: none;
+				border-top: 2px solid AccentColor;
 			}
 
 			/* Control buttons */
@@ -115,7 +120,7 @@
 	</head>
 	<body>
 		<header>
-			<h1>&lt;tabbed-interface&gt;</h1>
+			<h1>Tabbed Interface Web Component</h1>
 			<p>
 				A web component that transforms heading-structured content into
 				an accessible tabbed interface. See the
@@ -164,7 +169,9 @@
 
 								<h3>Features</h3>
 								<ul>
-									<li>Automatic tab creation from headings</li>
+									<li>
+										Automatic tab creation from headings
+									</li>
 									<li>Full keyboard navigation support</li>
 									<li>ARIA attributes for accessibility</li>
 									<li>CSS custom properties for styling</li>
@@ -292,32 +299,51 @@
 			<section>
 				<h2>Styling Variants</h2>
 				<p>
-					Style the component using CSS custom properties for complete
-					visual control.
+					Style the component using CSS
+					<code>::part()</code> selectors for complete visual control.
 				</p>
-
 				<div class="demo-section">
 					<h3>Pill-Style Tabs</h3>
 					<p>
-						Create rounded pill-style tabs using CSS custom
-						properties.
+						Create rounded pill-style tabs using
+						<code>::part()</code> selectors.
 					</p>
 					<div class="code-demo-pair">
-						<pre><code>&lt;tabbed-interface <mark>class="pills"</mark>&gt;
-  &lt;h3&gt;Tab One&lt;/h3&gt;
-  &lt;p&gt;Content here.&lt;/p&gt;
+						<pre><code>tabbed-interface.pills::part(tablist) {
+  gap: 8px;
+  margin: 0 0 1em 0;
+}
 
-  &lt;h3&gt;Tab Two&lt;/h3&gt;
-  &lt;p&gt;More content.&lt;/p&gt;
-&lt;/tabbed-interface&gt;</code></pre>
+tabbed-interface.pills::part(tab) {
+  background-color: ButtonFace;
+  border: none;
+  border-radius: 999px;
+  padding: 0.5em 1.5em;
+}
+
+tabbed-interface.pills::part(tab):hover {
+  background-color: SelectedItem;
+}
+
+tabbed-interface.pills::part(tab selected),
+tabbed-interface.pills::part(tabpanel) {
+  background-color: Highlight;
+  color: HighlightText;
+}
+
+tabbed-interface.pills::part(tabpanel) {
+  border: none;
+}</code></pre>
 						<div class="demo">
-							<tabbed-interface class="pills" hide-headers="false">
+							<tabbed-interface
+								class="pills"
+								hide-headers="false"
+							>
 								<h3>Tab One</h3>
 								<p>
 									The pill style is achieved entirely through
-									CSS custom properties.
+									CSS <code>::part()</code> selectors.
 								</p>
-
 								<h3>Tab Two</h3>
 								<p>No JavaScript changes needed!</p>
 
@@ -332,13 +358,33 @@
 					<h3>Minimal Style</h3>
 					<p>A clean, minimal style with an underline indicator.</p>
 					<div class="code-demo-pair">
-						<pre><code>&lt;tabbed-interface <mark>class="minimal"</mark>&gt;
-  &lt;h3&gt;Design&lt;/h3&gt;
-  &lt;p&gt;Content here.&lt;/p&gt;
+						<pre><code>tabbed-interface.minimal::part(tablist) {
+  gap: 0;
+  margin: 0 0 -1px 0;
+}
 
-  &lt;h3&gt;Develop&lt;/h3&gt;
-  &lt;p&gt;More content.&lt;/p&gt;
-&lt;/tabbed-interface&gt;</code></pre>
+tabbed-interface.minimal::part(tab) {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0.75em 1em;
+}
+
+tabbed-interface.minimal::part(tab):hover {
+  background: ButtonFace;
+}
+
+tabbed-interface.minimal::part(tab selected) {
+  background: transparent;
+  color: LinkText;
+  border-bottom: 2px solid LinkText;
+}
+
+tabbed-interface.minimal::part(tabpanel) {
+  padding: 1.5em 0;
+  border: none;
+  border-top: 2px solid AccentColor;
+}</code></pre>
 						<div class="demo">
 							<tabbed-interface class="minimal">
 								<h3>Design</h3>
@@ -365,16 +411,17 @@
 			<section>
 				<h2>Advanced Features</h2>
 				<p>
-					The component includes several advanced features for enhanced
-					functionality.
+					The component includes several advanced features for
+					enhanced functionality.
 				</p>
 
 				<div class="demo-section">
 					<h3>Custom Tab Titles</h3>
 					<p>
-						Use <code>data-tab-short-name</code> to show shorter labels
-						in tabs while keeping full headings in panels. The full text
-						is available as <code>aria-label</code> for screen readers.
+						Use <code>data-tab-short-name</code> to show shorter
+						labels in tabs while keeping full headings in panels.
+						The full text is available as
+						<code>aria-label</code> for screen readers.
 					</p>
 					<div class="code-demo-pair">
 						<pre><code>&lt;tabbed-interface&gt;
@@ -400,62 +447,70 @@
 									screen readers.
 								</p>
 
-								<h3 data-tab-short-name="Emoji 🎉">Plain Heading</h3>
+								<h3 data-tab-short-name="Emoji 🎉">
+									Plain Heading
+								</h3>
 								<p>
 									You can even add emoji or other content to
 									your tab titles!
 								</p>
 
-							<h3 data-tab-short-name="API">API Reference Guide</h3>
-							<p>Great for abbreviating long titles.</p>
-						</tabbed-interface>
+								<h3 data-tab-short-name="API">
+									API Reference Guide
+								</h3>
+								<p>Great for abbreviating long titles.</p>
+							</tabbed-interface>
+						</div>
 					</div>
 				</div>
-			</div>
 
-			<div class="demo-section">
-				<h3>Auto-Activation</h3>
-				<p>
-					Add the <code>auto-activate</code> attribute to make tabs
-					activate on focus. By default (without the attribute),
-					tabs require Enter or Space to activate, following the
-					manual activation pattern for better accessibility.
-				</p>
-				<div class="code-demo-pair">
-					<pre><code>&lt;tabbed-interface <mark>auto-activate</mark>&gt;
+				<div class="demo-section">
+					<h3>Auto-Activation</h3>
+					<p>
+						Add the <code>auto-activate</code> attribute to make
+						tabs activate on focus. By default (without the
+						attribute), tabs require Enter or Space to activate,
+						following the manual activation pattern for better
+						accessibility.
+					</p>
+					<div class="code-demo-pair">
+						<pre><code>&lt;tabbed-interface <mark>auto-activate</mark>&gt;
   &lt;h3&gt;Tab One&lt;/h3&gt;
   &lt;p&gt;Content here.&lt;/p&gt;
 
   &lt;h3&gt;Tab Two&lt;/h3&gt;
   &lt;p&gt;More content.&lt;/p&gt;
 &lt;/tabbed-interface&gt;</code></pre>
-					<div class="demo">
-						<div class="note">
-							<strong>Try it:</strong> Use arrow keys to focus
-							different tabs. They activate automatically on focus.
+						<div class="demo">
+							<div class="note">
+								<strong>Try it:</strong> Use arrow keys to focus
+								different tabs. They activate automatically on
+								focus.
+							</div>
+							<tabbed-interface auto-activate>
+								<h3>Auto Tab 1</h3>
+								<p>
+									With auto-activation, tabs activate
+									immediately when you focus them with arrow
+									keys.
+								</p>
+
+								<h3>Auto Tab 2</h3>
+								<p>
+									This can be convenient for quick navigation
+									when you have few tabs.
+								</p>
+
+								<h3>Auto Tab 3</h3>
+								<p>
+									Just navigate with arrow keys and the panel
+									changes automatically.
+								</p>
+							</tabbed-interface>
 						</div>
-						<tabbed-interface auto-activate>
-							<h3>Auto Tab 1</h3>
-							<p>
-								With auto-activation, tabs activate immediately
-								when you focus them with arrow keys.
-							</p>
-
-							<h3>Auto Tab 2</h3>
-							<p>
-								This can be convenient for quick navigation
-								when you have few tabs.
-							</p>
-
-							<h3>Auto Tab 3</h3>
-							<p>
-								Just navigate with arrow keys and the panel
-								changes automatically.
-							</p>
-						</tabbed-interface>
 					</div>
 				</div>
-			</div>				<div class="demo-section">
+				<div class="demo-section">
 					<h3>Event Handling</h3>
 					<p>
 						Listen for <code>tabbed-interface:change</code> events
@@ -472,7 +527,10 @@
 						<div class="demo">
 							<tabbed-interface id="event-demo">
 								<h3 id="intro">Introduction</h3>
-								<p>Click between tabs and watch the output below.</p>
+								<p>
+									Click between tabs and watch the output
+									below.
+								</p>
 
 								<h3 id="details">Details</h3>
 								<p>
@@ -518,32 +576,55 @@ tabs.<mark>activeIndex = 2</mark>;</code></pre>
 								<p>First panel content with some text.</p>
 
 								<h3>Panel B</h3>
-								<p>Second panel content with more information.</p>
+								<p>
+									Second panel content with more information.
+								</p>
 
 								<h3>Panel C</h3>
-								<p>Third panel content with additional details.</p>
+								<p>
+									Third panel content with additional details.
+								</p>
 
 								<h3>Panel D</h3>
-								<p>Fourth panel content to demonstrate navigation.</p>
+								<p>
+									Fourth panel content to demonstrate
+									navigation.
+								</p>
 							</tabbed-interface>
 							<div class="controls">
 								<button
-									onclick="document.querySelector('#programmatic-demo').first()"
+									onclick="
+										document
+											.querySelector('#programmatic-demo')
+											.first()
+									"
 								>
 									First
 								</button>
 								<button
-									onclick="document.querySelector('#programmatic-demo').previous()"
+									onclick="
+										document
+											.querySelector('#programmatic-demo')
+											.previous()
+									"
 								>
 									Previous
 								</button>
 								<button
-									onclick="document.querySelector('#programmatic-demo').next()"
+									onclick="
+										document
+											.querySelector('#programmatic-demo')
+											.next()
+									"
 								>
 									Next
 								</button>
 								<button
-									onclick="document.querySelector('#programmatic-demo').last()"
+									onclick="
+										document
+											.querySelector('#programmatic-demo')
+											.last()
+									"
 								>
 									Last
 								</button>
@@ -613,7 +694,8 @@ tabs.<mark>activeIndex = 2</mark>;</code></pre>
 				<div class="demo-section">
 					<h3>Keyboard Navigation</h3>
 					<p>
-						Full keyboard support following ARIA Authoring Practices.
+						Full keyboard support following ARIA Authoring
+						Practices.
 					</p>
 					<div class="code-demo-pair">
 						<pre><code>Arrow Keys    Navigate tabs
@@ -628,9 +710,9 @@ Enter/Space   Activate tab and focus panel content</code></pre>
 							<tabbed-interface>
 								<h3>Tab 1</h3>
 								<p>
-									Use Arrow keys to move between tabs. By default,
-									you must press Enter or Space to activate a tab
-									and view its content.
+									Use Arrow keys to move between tabs. By
+									default, you must press Enter or Space to
+									activate a tab and view its content.
 								</p>
 
 								<h3>Tab 2</h3>
@@ -642,7 +724,8 @@ Enter/Space   Activate tab and focus panel content</code></pre>
 								<h3>Tab 3</h3>
 								<p>
 									After activating, Enter or Space will move
-									focus to the first focusable element in the panel.
+									focus to the first focusable element in the
+									panel.
 								</p>
 							</tabbed-interface>
 						</div>
@@ -654,9 +737,9 @@ Enter/Space   Activate tab and focus panel content</code></pre>
 			<section class="api-reference">
 				<h2>API Reference</h2>
 				<p>
-					For complete documentation of attributes, properties, methods,
-					events, CSS custom properties, keyboard navigation, and
-					browser support, see the
+					For complete documentation of attributes, properties,
+					methods, events, CSS custom properties, keyboard navigation,
+					and browser support, see the
 					<a
 						href="https://github.com/aarongustafson/tabbed-interface/blob/main/README.md"
 						>README</a
@@ -690,7 +773,9 @@ Enter/Space   Activate tab and focus panel content</code></pre>
 			document
 				.querySelector('#programmatic-demo')
 				.addEventListener('tabbed-interface:change', (event) => {
-					const output = document.querySelector('#programmatic-output');
+					const output = document.querySelector(
+						'#programmatic-output',
+					);
 					output.innerHTML = `<strong>Current tab:</strong> ${event.detail.tabIndex}`;
 				});
 		</script>
