@@ -196,13 +196,59 @@
 				</p>
 
 				<div class="demo-section">
+					<h3>Auto-Activation</h3>
+					<p>
+						Add the <code>auto-activate</code> attribute to make
+						tabs activate on focus. By default (without the
+						attribute), tabs require Enter or Space to activate,
+						following the manual activation pattern for better
+						accessibility.
+					</p>
+					<div class="code-demo-pair">
+						<pre><code>&lt;tabbed-interface <mark>auto-activate</mark>&gt;
+  &lt;h3&gt;Tab One&lt;/h3&gt;
+  &lt;p&gt;Content here.&lt;/p&gt;
+
+  &lt;h3&gt;Tab Two&lt;/h3&gt;
+  &lt;p&gt;More content.&lt;/p&gt;
+&lt;/tabbed-interface&gt;</code></pre>
+						<div class="demo">
+							<div class="note">
+								<strong>Try it:</strong> Use arrow keys to focus
+								different tabs. They activate automatically on
+								focus.
+							</div>
+							<tabbed-interface auto-activate>
+								<h3>Auto Tab 1</h3>
+								<p>
+									With auto-activation, tabs activate
+									immediately when you focus them with arrow
+									keys.
+								</p>
+
+								<h3>Auto Tab 2</h3>
+								<p>
+									This can be convenient for quick navigation
+									when you have few tabs.
+								</p>
+
+								<h3>Auto Tab 3</h3>
+								<p>
+									Just navigate with arrow keys and the panel
+									changes automatically.
+								</p>
+							</tabbed-interface>
+						</div>
+					</div>
+				</div>
+				<div class="demo-section">
 					<h3>Visible Headers</h3>
 					<p>
-						Use <code>hide-headers="false"</code> to keep headings
+						Use <code>show-headers</code> to keep headings
 						visible in tab panels.
 					</p>
 					<div class="code-demo-pair">
-						<pre><code>&lt;tabbed-interface <mark>hide-headers="false"</mark>&gt;
+						<pre><code>&lt;tabbed-interface <mark>show-headers</mark>&gt;
   &lt;h3&gt;Overview&lt;/h3&gt;
   &lt;p&gt;Content here.&lt;/p&gt;
 
@@ -210,7 +256,7 @@
   &lt;p&gt;More content.&lt;/p&gt;
 &lt;/tabbed-interface&gt;</code></pre>
 						<div class="demo">
-							<tabbed-interface hide-headers="false">
+							<tabbed-interface show-headers>
 								<h3>Overview</h3>
 								<p>
 									The heading is now visible inside the panel
@@ -337,7 +383,7 @@ tabbed-interface.pills::part(tabpanel) {
 						<div class="demo">
 							<tabbed-interface
 								class="pills"
-								hide-headers="false"
+								show-headers
 							>
 								<h3>Tab One</h3>
 								<p>
@@ -464,52 +510,6 @@ tabbed-interface.minimal::part(tabpanel) {
 					</div>
 				</div>
 
-				<div class="demo-section">
-					<h3>Auto-Activation</h3>
-					<p>
-						Add the <code>auto-activate</code> attribute to make
-						tabs activate on focus. By default (without the
-						attribute), tabs require Enter or Space to activate,
-						following the manual activation pattern for better
-						accessibility.
-					</p>
-					<div class="code-demo-pair">
-						<pre><code>&lt;tabbed-interface <mark>auto-activate</mark>&gt;
-  &lt;h3&gt;Tab One&lt;/h3&gt;
-  &lt;p&gt;Content here.&lt;/p&gt;
-
-  &lt;h3&gt;Tab Two&lt;/h3&gt;
-  &lt;p&gt;More content.&lt;/p&gt;
-&lt;/tabbed-interface&gt;</code></pre>
-						<div class="demo">
-							<div class="note">
-								<strong>Try it:</strong> Use arrow keys to focus
-								different tabs. They activate automatically on
-								focus.
-							</div>
-							<tabbed-interface auto-activate>
-								<h3>Auto Tab 1</h3>
-								<p>
-									With auto-activation, tabs activate
-									immediately when you focus them with arrow
-									keys.
-								</p>
-
-								<h3>Auto Tab 2</h3>
-								<p>
-									This can be convenient for quick navigation
-									when you have few tabs.
-								</p>
-
-								<h3>Auto Tab 3</h3>
-								<p>
-									Just navigate with arrow keys and the panel
-									changes automatically.
-								</p>
-							</tabbed-interface>
-						</div>
-					</div>
-				</div>
 				<div class="demo-section">
 					<h3>Event Handling</h3>
 					<p>

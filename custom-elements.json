@@ -19,9 +19,9 @@
 						},
 						{
 							"kind": "field",
-							"name": "hideHeaders",
+							"name": "showHeaders",
 							"type": { "text": "boolean" },
-							"description": "Whether to hide headers in tab panels"
+							"description": "Whether to show headers in tab panels"
 						},
 						{
 							"kind": "field",
@@ -61,9 +61,9 @@
 					],
 					"attributes": [
 						{
-							"name": "hide-headers",
+							"name": "show-headers",
 							"type": { "text": "boolean" },
-							"description": "When true, hides the heading elements within tab panels (default: true)"
+							"description": "When present, shows the heading elements within tab panels (default: false)"
 						},
 						{
 							"name": "tablist-position",

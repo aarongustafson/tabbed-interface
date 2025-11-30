@@ -3,7 +3,7 @@
  *
  * @element tabbed-interface
  *
- * @attr {boolean} hide-headers - When true, hides the heading elements within tab panels (default: true)
+ * @attr {boolean} show-headers - When present, shows the heading elements within tab panels (default: absent/false)
  * @attr {string} tablist-position - Position of the tab list: "before" (default) or "after" the content
  * @attr {string} default-tab - Index or heading ID of the tab to show by default (defaults to first tab)
  * @attr {boolean} auto-activate - When present, tabs activate on focus; when absent, use Enter/Space to activate (default: absent/false)
@@ -36,7 +36,7 @@
 export class TabbedInterfaceElement extends HTMLElement {
 	static get observedAttributes() {
 		return [
-			'hide-headers',
+			'show-headers',
 			'tablist-position',
 			'default-tab',
 			'auto-activate',
@@ -77,7 +77,7 @@ export class TabbedInterfaceElement extends HTMLElement {
 
 	attributeChangedCallback(name, oldValue, newValue) {
 		if (oldValue !== newValue && this.#initialized) {
-			if (name === 'hide-headers') {
+			if (name === 'show-headers') {
 				this.#updateHeaderVisibility();
 			} else if (name === 'tablist-position') {
 				this.#updateTablistPosition();
@@ -104,17 +104,20 @@ export class TabbedInterfaceElement extends HTMLElement {
 	}
 
 	/**
-	 * Whether to hide headers in tab panels
+	 * Whether to show headers in tab panels
 	 * @returns {boolean}
 	 */
-	get hideHeaders() {
-		const attr = this.getAttribute('hide-headers');
-		// Default to true unless explicitly set to "false"
-		return attr !== 'false';
+	get showHeaders() {
+		// Default to false; true when attribute is present
+		return this.hasAttribute('show-headers');
 	}
 
-	set hideHeaders(value) {
-		this.setAttribute('hide-headers', value ? 'true' : 'false');
+	set showHeaders(value) {
+		if (value) {
+			this.setAttribute('show-headers', '');
+		} else {
+			this.removeAttribute('show-headers');
+		}
 	}
 
 	/**
@@ -397,7 +400,7 @@ export class TabbedInterfaceElement extends HTMLElement {
 			// Store reference to original heading for ID lookups
 			clonedHeading.dataset.originalId = section.heading.id || '';
 
-			if (this.hideHeaders && !section.heading.dataset.tabShortName) {
+			if (!this.showHeaders && !section.heading.dataset.tabShortName) {
 				clonedHeading.classList.add('visually-hidden');
 			}
 
@@ -630,7 +633,7 @@ export class TabbedInterfaceElement extends HTMLElement {
 	}
 
 	#updateHeaderVisibility() {
-		const hideHeaders = this.hideHeaders;
+		const showHeaders = this.showHeaders;
 
 		this.#tabpanels.forEach((panel, index) => {
 			const heading = panel.querySelector('h1, h2, h3, h4, h5, h6');
@@ -638,7 +641,7 @@ export class TabbedInterfaceElement extends HTMLElement {
 				// If there's a custom tab title, always show the heading in the panel
 				const hasCustomTitle = this.#hasCustomTitle[index];
 
-				if (hideHeaders && !hasCustomTitle) {
+				if (!showHeaders && !hasCustomTitle) {
 					heading.classList.add('visually-hidden');
 				} else {
 					heading.classList.remove('visually-hidden');

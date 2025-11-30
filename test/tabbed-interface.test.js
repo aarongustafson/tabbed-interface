@@ -262,7 +262,7 @@ describe('TabbedInterfaceElement', () => {
 	});
 
 	describe('Attributes', () => {
-		describe('hide-headers', () => {
+		describe('show-headers', () => {
 			it('should hide headers by default', async () => {
 				element.innerHTML = `
 					<h2>Tab 1</h2>
@@ -281,8 +281,8 @@ describe('TabbedInterfaceElement', () => {
 				);
 			});
 
-			it('should show headers when hide-headers="false"', async () => {
-				element.setAttribute('hide-headers', 'false');
+			it('should show headers when show-headers is present', async () => {
+				element.setAttribute('show-headers', '');
 				element.innerHTML = `
 					<h2>Tab 1</h2>
 					<p>Content 1</p>
