@@ -301,7 +301,7 @@ describe('TabbedInterfaceElement', () => {
 			});
 		});
 
-		describe('tablist-position', () => {
+		describe('tablist-after', () => {
 			it('should place tablist before content by default', async () => {
 				element.innerHTML = `
 					<h2>Tab 1</h2>
@@ -318,8 +318,8 @@ describe('TabbedInterfaceElement', () => {
 				expect(firstChild.getAttribute('role')).toBe('tablist');
 			});
 
-			it('should place tablist after content when tablist-position="after"', async () => {
-				element.setAttribute('tablist-position', 'after');
+			it('should place tablist after content when tablist-after is present', async () => {
+				element.setAttribute('tablist-after', '');
 				element.innerHTML = `
 					<h2>Tab 1</h2>
 					<p>Content 1</p>

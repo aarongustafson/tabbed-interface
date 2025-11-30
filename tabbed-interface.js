@@ -4,7 +4,7 @@
  * @element tabbed-interface
  *
  * @attr {boolean} show-headers - When present, shows the heading elements within tab panels (default: absent/false)
- * @attr {string} tablist-position - Position of the tab list: "before" (default) or "after" the content
+ * @attr {boolean} tablist-after - When present, positions the tab list after the content; when absent, before the content (default: absent/false)
  * @attr {string} default-tab - Index or heading ID of the tab to show by default (defaults to first tab)
  * @attr {boolean} auto-activate - When present, tabs activate on focus; when absent, use Enter/Space to activate (default: absent/false)
  *
@@ -37,7 +37,7 @@ export class TabbedInterfaceElement extends HTMLElement {
 	static get observedAttributes() {
 		return [
 			'show-headers',
-			'tablist-position',
+			'tablist-after',
 			'default-tab',
 			'auto-activate',
 		];
@@ -79,7 +79,7 @@ export class TabbedInterfaceElement extends HTMLElement {
 		if (oldValue !== newValue && this.#initialized) {
 			if (name === 'show-headers') {
 				this.#updateHeaderVisibility();
-			} else if (name === 'tablist-position') {
+			} else if (name === 'tablist-after') {
 				this.#updateTablistPosition();
 			}
 		}
@@ -121,15 +121,20 @@ export class TabbedInterfaceElement extends HTMLElement {
 	}
 
 	/**
-	 * Position of the tablist
-	 * @returns {string} "before" or "after"
+	 * Whether tablist is positioned after content
+	 * @returns {boolean}
 	 */
-	get tablistPosition() {
-		return this.getAttribute('tablist-position') || 'before';
+	get tablistAfter() {
+		// Default to false; true when attribute is present
+		return this.hasAttribute('tablist-after');
 	}
 
-	set tablistPosition(value) {
-		this.setAttribute('tablist-position', value);
+	set tablistAfter(value) {
+		if (value) {
+			this.setAttribute('tablist-after', '');
+		} else {
+			this.removeAttribute('tablist-after');
+		}
 	}
 
 	/**
@@ -204,7 +209,7 @@ export class TabbedInterfaceElement extends HTMLElement {
 					scroll-margin-block-start: 2rem;
 				}
 
-				:host([tablist-position="after"]) [role="tablist"] {
+				:host([tablist-after]) [role="tablist"] {
 					margin-block-start: -1px;
 					margin-block-end: 0;
 				}
@@ -239,14 +244,14 @@ export class TabbedInterfaceElement extends HTMLElement {
 					color: CanvasText;
 				}
 
-				:host([tablist-position="after"]) [role="tab"] {
+				:host([tablist-after]) [role="tab"] {
 					border-start-start-radius: 0;
 					border-start-end-radius: 0;
 					border-end-start-radius: 3px;
 					border-end-end-radius: 3px;
 				}
 
-				:host([tablist-position="after"]) [role="tab"][aria-selected="true"] {
+				:host([tablist-after]) [role="tab"][aria-selected="true"] {
 					border-block-start-color: Canvas;
 					border-block-end-color: ButtonBorder;
 				}
@@ -416,7 +421,7 @@ export class TabbedInterfaceElement extends HTMLElement {
 		// Assemble the component
 		container.innerHTML = '';
 
-		if (this.tablistPosition === 'after') {
+		if (this.tablistAfter) {
 			this.#tabpanels.forEach((panel) => container.appendChild(panel));
 			container.appendChild(this.#tablist);
 		} else {
@@ -657,7 +662,7 @@ export class TabbedInterfaceElement extends HTMLElement {
 		// Remove tablist from current position
 		this.#tablist.remove();
 
-		if (this.tablistPosition === 'after') {
+		if (this.tablistAfter) {
 			container.appendChild(this.#tablist);
 		} else {
 			container.insertBefore(this.#tablist, container.firstChild);

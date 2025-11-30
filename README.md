@@ -62,7 +62,7 @@ import { TabbedInterfaceElement } from '@aarongustafson/tabbed-interface';
 | Attribute | Type | Default | Description |
 |-----------|------|---------|-------------|
 | `show-headers` | boolean | `false` | When present, shows headings in tab panels |
-| `tablist-position` | string | `"before"` | Position of tab list: `"before"` or `"after"` content |
+| `tablist-after` | boolean | `false` | When present, positions tab list after content |
 | `default-tab` | string | `"0"` | Initial active tab (index or heading ID) |
 | `auto-activate` | boolean | `false` | When present, tabs activate on focus; when absent, use Enter/Space to activate |
 
@@ -75,7 +75,7 @@ import { TabbedInterfaceElement } from '@aarongustafson/tabbed-interface';
 </tabbed-interface>
 
 <!-- Tabs after content -->
-<tabbed-interface tablist-position="after">
+<tabbed-interface tablist-after>
   ...
 </tabbed-interface>
 
@@ -104,7 +104,7 @@ import { TabbedInterfaceElement } from '@aarongustafson/tabbed-interface';
 |----------|------|-------------|
 | `activeIndex` | number | Get/set the currently active tab index |
 | `showHeaders` | boolean | Get/set header visibility |
-| `tablistPosition` | string | Get/set tablist position |
+| `tablistAfter` | boolean | Get/set tablist position |
 | `autoActivate` | boolean | Get/set auto-activation behavior |
 
 ## Methods

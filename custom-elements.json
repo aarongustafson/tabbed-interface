@@ -25,9 +25,9 @@
 						},
 						{
 							"kind": "field",
-							"name": "tablistPosition",
-							"type": { "text": "string" },
-							"description": "Position of the tablist: 'before' or 'after'"
+							"name": "tablistAfter",
+							"type": { "text": "boolean" },
+							"description": "Whether tablist is positioned after content"
 						},
 						{
 							"kind": "method",
@@ -66,9 +66,9 @@
 							"description": "When present, shows the heading elements within tab panels (default: false)"
 						},
 						{
-							"name": "tablist-position",
-							"type": { "text": "string" },
-							"description": "Position of the tab list: 'before' (default) or 'after' the content"
+							"name": "tablist-after",
+							"type": { "text": "boolean" },
+							"description": "When present, positions the tab list after the content (default: false)"
 						},
 						{
 							"name": "default-tab",
