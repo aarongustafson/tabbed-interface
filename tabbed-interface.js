@@ -35,13 +35,19 @@
  */
 export class TabbedInterfaceElement extends HTMLElement {
 	static get observedAttributes() {
-		return ['hide-headers', 'tablist-position', 'default-tab', 'auto-activate'];
+		return [
+			'hide-headers',
+			'tablist-position',
+			'default-tab',
+			'auto-activate',
+		];
 	}
 
 	#tablist = null;
 	#tabs = [];
 	#tabpanels = [];
 	#activeIndex = 0;
+	#focusedIndex = 0;
 	#initialized = false;
 	#slotElement = null;
 	#boundHashChange = null;
@@ -180,58 +186,75 @@ export class TabbedInterfaceElement extends HTMLElement {
 		this.shadowRoot.innerHTML = `
 			<style>
 				:host {
-				display: block;
-				font-family: var(--tabbed-interface-font-family, inherit);
-			}
+					display: block;
+				}
 
-			[role="tablist"] {
-				display: var(--tabbed-interface-tablist-display, flex);
-				gap: var(--tabbed-interface-tablist-gap, 0);
-				padding: var(--tabbed-interface-tablist-padding, 0);
-				margin: var(--tabbed-interface-tablist-margin, 0);
-				background: var(--tabbed-interface-tablist-background, transparent);
-				border: var(--tabbed-interface-tablist-border, none);
-				list-style: none;
-			}
+				[role="tablist"] {
+					display: flex;
+					gap: -1px;
+					padding: 0;
+					margin: 0;
+					margin-block-end: -1px;
+					background: transparent;
+					border: none;
+					list-style: none;
+					scroll-margin-block-start: 2rem;
+				}
 
-			[role="tab"] {
-				padding: var(--tabbed-interface-tab-padding, 0.5em 1em);
-				background: var(--tabbed-interface-tab-background, transparent);
-				color: var(--tabbed-interface-tab-color, inherit);
-				border: var(--tabbed-interface-tab-border, 1px solid ButtonBorder);
-				border-radius: var(--tabbed-interface-tab-border-radius, 0);
-				cursor: pointer;
-				font: inherit;
-				text-align: center;
-			}
+				:host([tablist-position="after"]) [role="tablist"] {
+					margin-block-start: -1px;
+					margin-block-end: 0;
+				}
 
-			[role="tab"]:hover {
-				background: var(--tabbed-interface-tab-hover-background, ButtonFace);
-				color: var(--tabbed-interface-tab-hover-color, inherit);
-			}
+				[role="tab"] {
+					padding: 0.5em 1em;
+					background-color: ButtonFace;
+					color: ButtonText;
+					border: 1px solid ButtonBorder;
+					border-radius: 0;
+					border-start-start-radius: 3px;
+					border-start-end-radius: 3px;
+					cursor: pointer;
+					font: inherit;
+					text-align: center;
+				}
 
-			[role="tab"]:focus {
-				outline: var(--tabbed-interface-tab-focus-outline, 2px solid AccentColor);
-				outline-offset: -2px;
-			}
+				[role="tab"]:hover,
+				[role="tab"]:focus {
+					background: ButtonFace;
+					color: inherit;
+				}
 
-			[role="tab"][aria-selected="true"] {
-				background: var(--tabbed-interface-tab-active-background, Canvas);
-				color: var(--tabbed-interface-tab-active-color, inherit);
-			}
+				[role="tab"]:focus-visible {
+					outline: 2px solid AccentColor;
+					outline-offset: 1px;
+				}
 
-			:host([tablist-position="after"]) [role="tab"] {
-				border-start-start-radius: var(--tabbed-interface-tab-border-radius-block-end, var(--tabbed-interface-tab-border-radius, 0));
-				border-start-end-radius: var(--tabbed-interface-tab-border-radius-block-end, var(--tabbed-interface-tab-border-radius, 0));
-				border-end-start-radius: 0;
-				border-end-end-radius: 0;
-			}
+				[role="tab"][aria-selected="true"] {
+					background: Canvas;
+					border-block-end-color: Canvas;
+					color: CanvasText;
+				}
 
-			[role="tabpanel"] {
-				padding: var(--tabbed-interface-tabpanel-padding, 1em);
-				background: var(--tabbed-interface-tabpanel-background, transparent);
-				border: var(--tabbed-interface-tabpanel-border, 1px solid ButtonBorder);
-			}				[role="tabpanel"][hidden] {
+				:host([tablist-position="after"]) [role="tab"] {
+					border-start-start-radius: 0;
+					border-start-end-radius: 0;
+					border-end-start-radius: 3px;
+					border-end-end-radius: 3px;
+				}
+
+				:host([tablist-position="after"]) [role="tab"][aria-selected="true"] {
+					border-block-start-color: Canvas;
+					border-block-end-color: ButtonBorder;
+				}
+
+				[role="tabpanel"] {
+					padding: 1em;
+					background: transparent;
+					border: 1px solid ButtonBorder;
+				}
+
+				[role="tabpanel"][hidden] {
 					display: none;
 				}
 
@@ -308,6 +331,7 @@ export class TabbedInterfaceElement extends HTMLElement {
 		// Create tablist
 		this.#tablist = document.createElement('div');
 		this.#tablist.setAttribute('role', 'tablist');
+		this.#tablist.setAttribute('part', 'tablist');
 
 		// Create tabs and panels
 		this.#tabs = [];
@@ -321,6 +345,7 @@ export class TabbedInterfaceElement extends HTMLElement {
 			// Create tab
 			const tab = document.createElement('button');
 			tab.setAttribute('role', 'tab');
+			tab.setAttribute('part', index === 0 ? 'tab selected' : 'tab');
 			tab.setAttribute('id', tabId);
 			tab.setAttribute('aria-controls', panelId);
 			tab.setAttribute('aria-selected', index === 0 ? 'true' : 'false');
@@ -333,23 +358,15 @@ export class TabbedInterfaceElement extends HTMLElement {
 
 			// If using short name, set aria-label to full text and hide the title
 			if (customTitle) {
-				tab.setAttribute('aria-label', section.heading.textContent.trim());
+				tab.setAttribute(
+					'aria-label',
+					section.heading.textContent.trim(),
+				);
 				tab.setAttribute('title', '');
 			}
 
 			// Track whether this tab has a custom title
 			this.#hasCustomTitle.push(Boolean(customTitle));
-
-			// Add thumbnail if specified
-			const thumbnail = section.heading.dataset.tabThumbnail;
-			if (thumbnail) {
-				const img = document.createElement('img');
-				img.src = thumbnail;
-				img.alt = '';
-				img.className = 'tab-thumbnail';
-				tab.appendChild(document.createTextNode(' '));
-				tab.appendChild(img);
-			}
 
 			// Event listeners
 			if (this.autoActivate) {
@@ -357,7 +374,9 @@ export class TabbedInterfaceElement extends HTMLElement {
 			} else {
 				tab.addEventListener('click', () => this.#activateTab(index));
 			}
-			tab.addEventListener('keydown', (e) => this.#handleKeydown(e, index));
+			tab.addEventListener('keydown', (e) =>
+				this.#handleKeydown(e, index),
+			);
 
 			this.#tablist.appendChild(tab);
 			this.#tabs.push(tab);
@@ -365,6 +384,7 @@ export class TabbedInterfaceElement extends HTMLElement {
 			// Create tabpanel
 			const panel = document.createElement('div');
 			panel.setAttribute('role', 'tabpanel');
+			panel.setAttribute('part', 'tabpanel');
 			panel.setAttribute('id', panelId);
 			panel.setAttribute('aria-labelledby', tabId);
 			// Tabpanels are not focusable themselves
@@ -471,6 +491,7 @@ export class TabbedInterfaceElement extends HTMLElement {
 				'false',
 			);
 			this.#tabs[this.#activeIndex].setAttribute('tabindex', '-1');
+			this.#tabs[this.#activeIndex].setAttribute('part', 'tab');
 		}
 		if (this.#tabpanels[this.#activeIndex]) {
 			this.#tabpanels[this.#activeIndex].setAttribute('hidden', '');
@@ -478,8 +499,10 @@ export class TabbedInterfaceElement extends HTMLElement {
 
 		// Activate new tab
 		this.#activeIndex = index;
+		this.#focusedIndex = index;
 		this.#tabs[index].setAttribute('aria-selected', 'true');
 		this.#tabs[index].setAttribute('tabindex', '0');
+		this.#tabs[index].setAttribute('part', 'tab selected');
 		this.#tabpanels[index].removeAttribute('hidden');
 
 		// Dispatch change event
@@ -503,38 +526,84 @@ export class TabbedInterfaceElement extends HTMLElement {
 			case 'ArrowLeft':
 			case 'ArrowUp':
 				event.preventDefault();
-				this.previous();
+				this.#navigatePrevious();
 				break;
 			case 'ArrowRight':
 			case 'ArrowDown':
 				event.preventDefault();
-				this.next();
+				this.#navigateNext();
 				break;
 			case 'Home':
 				event.preventDefault();
-				this.first();
+				this.#navigateFirst();
 				break;
 			case 'End':
 				event.preventDefault();
-				this.last();
+				this.#navigateLast();
 				break;
 			case 'Enter':
 			case ' ':
 				event.preventDefault();
 				// If auto-activate is disabled, activate the tab on Enter/Space
 				if (!this.autoActivate) {
-					this.#activateTab(tabIndex);
+					this.#activateTab(this.#focusedIndex);
 				}
 				// Focus the first focusable element in the active panel
 				const panel = this.#tabpanels[this.#activeIndex];
 				const focusable = panel.querySelector(
-					'a, button, input, textarea, select, details, [tabindex]:not([tabindex="-1"])'
+					'a, button, input, textarea, select, details, [tabindex]:not([tabindex="-1"])',
 				);
 				if (focusable) {
 					focusable.focus();
 				}
 				break;
 		}
+	}
+
+	#navigateNext() {
+		const currentFocus = this.autoActivate
+			? this.#activeIndex
+			: this.#focusedIndex;
+		const nextIndex = (currentFocus + 1) % this.#tabs.length;
+		if (this.autoActivate) {
+			this.#activateTab(nextIndex);
+		} else {
+			this.#focusedIndex = nextIndex;
+		}
+		this.#tabs[nextIndex].focus();
+	}
+
+	#navigatePrevious() {
+		const currentFocus = this.autoActivate
+			? this.#activeIndex
+			: this.#focusedIndex;
+		const prevIndex =
+			(currentFocus - 1 + this.#tabs.length) % this.#tabs.length;
+		if (this.autoActivate) {
+			this.#activateTab(prevIndex);
+		} else {
+			this.#focusedIndex = prevIndex;
+		}
+		this.#tabs[prevIndex].focus();
+	}
+
+	#navigateFirst() {
+		if (this.autoActivate) {
+			this.#activateTab(0);
+		} else {
+			this.#focusedIndex = 0;
+		}
+		this.#tabs[0].focus();
+	}
+
+	#navigateLast() {
+		const lastIndex = this.#tabs.length - 1;
+		if (this.autoActivate) {
+			this.#activateTab(lastIndex);
+		} else {
+			this.#focusedIndex = lastIndex;
+		}
+		this.#tabs[lastIndex].focus();
 	}
 
 	#handleHashChange() {
