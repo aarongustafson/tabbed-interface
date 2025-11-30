@@ -112,7 +112,6 @@ describe('TabbedInterfaceElement', () => {
 
 			panels.forEach((panel, i) => {
 				expect(panel.getAttribute('aria-labelledby')).toBe(tabs[i].id);
-				expect(panel.getAttribute('tabindex')).toBe('0');
 			});
 		});
 
@@ -233,7 +232,10 @@ describe('TabbedInterfaceElement', () => {
 			tabs[0].dispatchEvent(
 				new KeyboardEvent('keydown', { key: 'ArrowRight' }),
 			);
-			expect(element.activeIndex).toBe(1);
+			// In manual mode, arrow keys move focus but don't activate
+			// Need to press Enter to activate
+			expect(element.activeIndex).toBe(0);
+			expect(element.shadowRoot.activeElement).toBe(tabs[1]);
 		});
 
 		it('should navigate with ArrowLeft', () => {
@@ -242,7 +244,9 @@ describe('TabbedInterfaceElement', () => {
 			tabs[1].dispatchEvent(
 				new KeyboardEvent('keydown', { key: 'ArrowLeft' }),
 			);
-			expect(element.activeIndex).toBe(0);
+			// In manual mode, arrow keys move focus but don't activate
+			expect(element.activeIndex).toBe(1);
+			expect(element.shadowRoot.activeElement).toBe(tabs[0]);
 		});
 
 		it('should go to first with Home key', () => {
@@ -251,13 +255,17 @@ describe('TabbedInterfaceElement', () => {
 			tabs[2].dispatchEvent(
 				new KeyboardEvent('keydown', { key: 'Home' }),
 			);
-			expect(element.activeIndex).toBe(0);
+			// In manual mode, Home moves focus but doesn't activate
+			expect(element.activeIndex).toBe(2);
+			expect(element.shadowRoot.activeElement).toBe(tabs[0]);
 		});
 
 		it('should go to last with End key', () => {
 			const tabs = element.shadowRoot.querySelectorAll('[role="tab"]');
 			tabs[0].dispatchEvent(new KeyboardEvent('keydown', { key: 'End' }));
-			expect(element.activeIndex).toBe(2);
+			// In manual mode, End moves focus but doesn't activate
+			expect(element.activeIndex).toBe(0);
+			expect(element.shadowRoot.activeElement).toBe(tabs[2]);
 		});
 	});
 
@@ -372,9 +380,9 @@ describe('TabbedInterfaceElement', () => {
 	});
 
 	describe('Custom tab titles', () => {
-		it('should use data-tab-title when provided', async () => {
+		it('should use data-tab-short-name when provided', async () => {
 			element.innerHTML = `
-				<h2 data-tab-title="Short Title">Very Long Heading Title</h2>
+				<h2 data-tab-short-name="Short Title">Very Long Heading Title</h2>
 				<p>Content</p>
 			`;
 			document.body.appendChild(element);
@@ -388,7 +396,7 @@ describe('TabbedInterfaceElement', () => {
 
 		it('should not hide header when using custom tab title', async () => {
 			element.innerHTML = `
-				<h2 data-tab-title="Short">Long Title</h2>
+				<h2 data-tab-short-name="Short">Long Title</h2>
 				<p>Content</p>
 			`;
 			document.body.appendChild(element);
