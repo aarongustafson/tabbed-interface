@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>tabbed-interface via esm.sh</title>
+		<style>
+			body {
+				font-family: system-ui, sans-serif;
+				margin: 2rem;
+				line-height: 1.5;
+			}
+
+			tabbed-interface {
+				display: block;
+				max-width: 720px;
+			}
+
+			tabbed-interface::part(tab-list) {
+				display: flex;
+				gap: 0.5rem;
+				margin-bottom: 1rem;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>esm.sh CDN sanity check</h1>
+		<p>
+			This page loads the component class from <code>esm.sh</code> and
+			registers it manually.
+		</p>
+
+		<tabbed-interface>
+			<h2>Overview</h2>
+			<p>
+				Tabbed interfaces help organize related content into panels that
+				users can switch between.
+			</p>
+
+			<h2>Details</h2>
+			<p>
+				Each tab controls visibility for its associated panel and
+				supports keyboard navigation and ARIA attributes.
+			</p>
+
+			<h2>Usage</h2>
+			<p>
+				Wrap headings and their related content inside
+				<code>&lt;tabbed-interface&gt;</code> to enhance the layout.
+			</p>
+		</tabbed-interface>
+
+		<script type="module">
+			import { TabbedInterfaceElement } from 'https://esm.sh/@aarongustafson/tabbed-interface@2.0.0/tabbed-interface.js?bundle&target=es2022';
+
+			if (!customElements.get('tabbed-interface')) {
+				customElements.define(
+					'tabbed-interface',
+					TabbedInterfaceElement,
+				);
+			}
+		</script>
+	</body>
+</html>
