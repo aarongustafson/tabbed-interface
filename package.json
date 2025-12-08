@@ -1,6 +1,6 @@
 {
 	"name": "@aarongustafson/tabbed-interface",
-	"version": "1.0.4",
+	"version": "2.0.0",
 	"description": "A web component that transforms heading-structured content into an accessible tabbed interface",
 	"keywords": [
 		"html",
