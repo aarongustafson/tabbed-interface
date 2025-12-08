@@ -40,28 +40,30 @@ npm install @aarongustafson/tabbed-interface
 </tabbed-interface>
 
 <script type="module">
-  import '@aarongustafson/tabbed-interface';
+  import '@aarongustafson/tabbed-interface/define.js';
 </script>
 ```
 
 ### Import Options
 
-**Auto-define (easiest):**
+**Auto-define (browser environments only):**
 ```javascript
-import '@aarongustafson/tabbed-interface';
-// Element is automatically registered as <tabbed-interface>
+import '@aarongustafson/tabbed-interface/define.js';
+// Registers <tabbed-interface> when customElements is available
+```
+
+Prefer to control when registration happens? Call the helper directly:
+
+```javascript
+import { defineTabbedInterface } from '@aarongustafson/tabbed-interface/define.js';
+
+defineTabbedInterface();
 ```
 
 **Manual registration:**
 ```javascript
-import { TabbedInterfaceElement } from '@aarongustafson/tabbed-interface/tabbed-interface.js';
-customElements.define('my-tabs', TabbedInterfaceElement);
-```
-
-**Both (class + auto-define):**
-```javascript
 import { TabbedInterfaceElement } from '@aarongustafson/tabbed-interface';
-// Element is registered AND class is available
+customElements.define('my-tabs', TabbedInterfaceElement);
 ```
 
 ## Attributes
