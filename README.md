@@ -7,7 +7,9 @@ A web component that transforms heading-structured content into an accessible ta
 
 ## Demo
 
-[Live Demo](https://aarongustafson.github.io/tabbed-interface/demo/) ([Source](./demo/index.html))
+- [Live Demo](https://aarongustafson.github.io/tabbed-interface/demo/) ([Source](./demo/index.html))
+- [unpkg Demo](https://aarongustafson.github.io/tabbed-interface/demo/unpkg.html) ([Source](./demo/unpkg.html))
+- [esm.sh Demo](https://aarongustafson.github.io/tabbed-interface/demo/esm.html) ([Source](./demo/esm.html))
 
 ## Features
 
