@@ -36,7 +36,8 @@ describe('TabbedInterfaceElement - Style Inheritance', () => {
 			expect(hostStyle.color).toBe('rgb(255, 0, 0)');
 
 			// Check tabpanel has color: inherit in its CSS
-			const tabpanel = element.shadowRoot.querySelector('[role="tabpanel"]');
+			const tabpanel =
+				element.shadowRoot.querySelector('[role="tabpanel"]');
 			expect(tabpanel).toBeTruthy();
 
 			// The tabpanel should have color: inherit which allows it to inherit from :host
@@ -62,8 +63,12 @@ describe('TabbedInterfaceElement - Style Inheritance', () => {
 		});
 
 		it('should apply --tabbed-interface-tabpanel-padding', () => {
-			element.style.setProperty('--tabbed-interface-tabpanel-padding', '2em');
-			const tabpanel = element.shadowRoot.querySelector('[role="tabpanel"]');
+			element.style.setProperty(
+				'--tabbed-interface-tabpanel-padding',
+				'2em',
+			);
+			const tabpanel =
+				element.shadowRoot.querySelector('[role="tabpanel"]');
 			const style = window.getComputedStyle(tabpanel);
 
 			// The padding should be set (exact value depends on font size)
@@ -75,7 +80,8 @@ describe('TabbedInterfaceElement - Style Inheritance', () => {
 				'--tabbed-interface-tabpanel-background',
 				'rgb(173, 216, 230)',
 			);
-			const tabpanel = element.shadowRoot.querySelector('[role="tabpanel"]');
+			const tabpanel =
+				element.shadowRoot.querySelector('[role="tabpanel"]');
 			const style = window.getComputedStyle(tabpanel);
 
 			expect(style.backgroundColor).toBe('rgb(173, 216, 230)');
@@ -129,7 +135,8 @@ describe('TabbedInterfaceElement - Style Inheritance', () => {
 			await new Promise((resolve) => requestAnimationFrame(resolve));
 			await new Promise((resolve) => setTimeout(resolve, 10));
 
-			const tabpanel = element.shadowRoot.querySelector('[role="tabpanel"]');
+			const tabpanel =
+				element.shadowRoot.querySelector('[role="tabpanel"]');
 			const paragraph = tabpanel.querySelector('p');
 			const pStyle = window.getComputedStyle(paragraph);
 
