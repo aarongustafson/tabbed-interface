@@ -127,6 +127,21 @@ describe('TabbedInterfaceElement', () => {
 			expect(tabs[0].getAttribute('aria-selected')).toBe('false');
 			expect(tabs[1].getAttribute('aria-selected')).toBe('true');
 		});
+
+		it('should reinitialize when slotted content changes', async () => {
+			const newHeading = document.createElement('h2');
+			newHeading.textContent = 'Fourth Tab';
+			const newParagraph = document.createElement('p');
+			newParagraph.textContent = 'Fourth content';
+			element.appendChild(newHeading);
+			element.appendChild(newParagraph);
+
+			await new Promise((resolve) => requestAnimationFrame(resolve));
+			await new Promise((resolve) => setTimeout(resolve, 0));
+
+			const tabs = element.shadowRoot.querySelectorAll('[role="tab"]');
+			expect(tabs.length).toBe(4);
+		});
 	});
 
 	describe('Tab navigation', () => {
@@ -374,6 +389,86 @@ describe('TabbedInterfaceElement', () => {
 				await new Promise((resolve) => requestAnimationFrame(resolve));
 				await new Promise((resolve) => setTimeout(resolve, 0));
 
+				expect(element.activeIndex).toBe(1);
+			});
+
+			it('should honor defaultTab property set before connection', async () => {
+				const preConnected = document.createElement('tabbed-interface');
+				preConnected.defaultTab = 1;
+				preConnected.innerHTML = `
+					<h2>Tab 1</h2>
+					<p>Content 1</p>
+					<h2>Tab 2</h2>
+					<p>Content 2</p>
+				`;
+				document.body.appendChild(preConnected);
+
+				await new Promise((resolve) => requestAnimationFrame(resolve));
+				await new Promise((resolve) => setTimeout(resolve, 0));
+
+				expect(preConnected.activeIndex).toBe(1);
+
+				preConnected.remove();
+			});
+
+			it('should accept heading IDs via defaultTab property', async () => {
+				element.innerHTML = `
+					<h2 id="intro">Intro</h2>
+					<p>Content 1</p>
+					<h2 id="details">Details</h2>
+					<p>Content 2</p>
+				`;
+				document.body.appendChild(element);
+
+				await new Promise((resolve) => requestAnimationFrame(resolve));
+				await new Promise((resolve) => setTimeout(resolve, 0));
+
+				element.defaultTab = 'details';
+				await new Promise((resolve) => setTimeout(resolve, 0));
+
+				expect(element.activeIndex).toBe(1);
+			});
+
+			it('should update when default-tab changes after initialization', async () => {
+				element.innerHTML = `
+					<h2>First</h2>
+					<p>Content 1</p>
+					<h2>Second</h2>
+					<p>Content 2</p>
+					<h2>Third</h2>
+					<p>Content 3</p>
+				`;
+				document.body.appendChild(element);
+
+				await new Promise((resolve) => requestAnimationFrame(resolve));
+				await new Promise((resolve) => setTimeout(resolve, 0));
+
+				element.setAttribute('default-tab', '2');
+				await new Promise((resolve) => setTimeout(resolve, 0));
+
+				expect(element.activeIndex).toBe(2);
+			});
+		});
+
+		describe('auto-activate', () => {
+			it('should activate focused tab when enabled after init', async () => {
+				element.innerHTML = `
+					<h2>Tab 1</h2>
+					<p>Content 1</p>
+					<h2>Tab 2</h2>
+					<p>Content 2</p>
+				`;
+				document.body.appendChild(element);
+
+				await new Promise((resolve) => requestAnimationFrame(resolve));
+				await new Promise((resolve) => setTimeout(resolve, 0));
+
+				const tabs = element.shadowRoot.querySelectorAll('[role="tab"]');
+				tabs[1].dispatchEvent(new FocusEvent('focus'));
+				expect(element.activeIndex).toBe(0);
+
+				element.autoActivate = true;
+				tabs[1].dispatchEvent(new FocusEvent('focus'));
 				expect(element.activeIndex).toBe(1);
 			});
 		});
