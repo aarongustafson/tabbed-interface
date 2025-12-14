@@ -24,12 +24,10 @@
 	"type": "module",
 	"main": "index.js",
 	"module": "tabbed-interface.js",
-	"types": "tabbed-interface.d.ts",
 	"customElements": "custom-elements.json",
 	"exports": {
 		".": {
-			"import": "./index.js",
-			"types": "./tabbed-interface.d.ts"
+			"import": "./index.js"
 		},
 		"./tabbed-interface.js": {
 			"import": "./tabbed-interface.js",
