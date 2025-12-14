@@ -52,6 +52,14 @@ export class TabbedInterfaceElement extends HTMLElement {
 	#slotElement = null;
 	#boundHashChange = null;
 	#hasCustomTitle = [];
+	#pendingInitializationFrame = null;
+	#hashListenerAttached = false;
+	#onSlotChange = () => {
+		if (!this.isConnected) {
+			return;
+		}
+		this.#scheduleInitialization();
+	};
 
 	constructor() {
 		super();
@@ -60,28 +68,51 @@ export class TabbedInterfaceElement extends HTMLElement {
 	}
 
 	connectedCallback() {
+		this.#upgradeProperty('showHeaders');
+		this.#upgradeProperty('tablistAfter');
+		this.#upgradeProperty('defaultTab');
+		this.#upgradeProperty('autoActivate');
+		this.#upgradeProperty('activeIndex');
+
 		this.#render();
-		// Wait for content to be available
-		requestAnimationFrame(() => {
-			this.#initializeTabs();
-			// Listen for hash changes
-			window.addEventListener('hashchange', this.#boundHashChange);
-			// Check initial hash
-			this.#handleHashChange();
-		});
+		this.#scheduleInitialization();
 	}
 
 	disconnectedCallback() {
-		window.removeEventListener('hashchange', this.#boundHashChange);
+		if (this.#hashListenerAttached) {
+			window.removeEventListener('hashchange', this.#boundHashChange);
+			this.#hashListenerAttached = false;
+		}
+
+		if (this.#pendingInitializationFrame !== null) {
+			cancelAnimationFrame(this.#pendingInitializationFrame);
+			this.#pendingInitializationFrame = null;
+		}
+
+		this.#detachSlotListener();
+		this.#resetInternalState();
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
-		if (oldValue !== newValue && this.#initialized) {
-			if (name === 'show-headers') {
+		if (oldValue === newValue || !this.#initialized) {
+			return;
+		}
+
+		switch (name) {
+			case 'show-headers':
 				this.#updateHeaderVisibility();
-			} else if (name === 'tablist-after') {
+				break;
+			case 'tablist-after':
 				this.#updateTablistPosition();
-			}
+				break;
+			case 'default-tab':
+				this.#applyDefaultTab();
+				break;
+			case 'auto-activate':
+				this.#focusedIndex = this.#activeIndex;
+				break;
+			default:
+				break;
 		}
 	}
 
@@ -154,10 +185,32 @@ export class TabbedInterfaceElement extends HTMLElement {
 		}
 	}
 
+	get defaultTab() {
+		return this.getAttribute('default-tab');
+	}
+
+	set defaultTab(value) {
+		if (value === null || value === undefined) {
+			this.removeAttribute('default-tab');
+			return;
+		}
+
+		const stringValue = String(value).trim();
+		if (stringValue === '') {
+			this.removeAttribute('default-tab');
+			return;
+		}
+
+		this.setAttribute('default-tab', stringValue);
+	}
+
 	/**
 	 * Navigate to the next tab
 	 */
 	next() {
+		if (this.#tabs.length === 0) {
+			return;
+		}
 		const nextIndex = (this.#activeIndex + 1) % this.#tabs.length;
 		this.#activateTab(nextIndex);
 		this.#tabs[nextIndex].focus();
@@ -167,6 +220,9 @@ export class TabbedInterfaceElement extends HTMLElement {
 	 * Navigate to the previous tab
 	 */
 	previous() {
+		if (this.#tabs.length === 0) {
+			return;
+		}
 		const prevIndex =
 			(this.#activeIndex - 1 + this.#tabs.length) % this.#tabs.length;
 		this.#activateTab(prevIndex);
@@ -177,6 +233,9 @@ export class TabbedInterfaceElement extends HTMLElement {
 	 * Navigate to the first tab
 	 */
 	first() {
+		if (this.#tabs.length === 0) {
+			return;
+		}
 		this.#activateTab(0);
 		this.#tabs[0].focus();
 	}
@@ -185,12 +244,16 @@ export class TabbedInterfaceElement extends HTMLElement {
 	 * Navigate to the last tab
 	 */
 	last() {
+		if (this.#tabs.length === 0) {
+			return;
+		}
 		const lastIndex = this.#tabs.length - 1;
 		this.#activateTab(lastIndex);
 		this.#tabs[lastIndex].focus();
 	}
 
 	#render() {
+		this.#detachSlotListener();
 		this.shadowRoot.innerHTML = `
 			<style>
 				:host {
@@ -287,70 +350,92 @@ export class TabbedInterfaceElement extends HTMLElement {
 		`;
 
 		this.#slotElement = this.shadowRoot.querySelector('slot');
+		if (this.#slotElement) {
+			this.#slotElement.addEventListener('slotchange', this.#onSlotChange);
+		}
+	}
+
+	#scheduleInitialization() {
+		if (this.#pendingInitializationFrame !== null) {
+			cancelAnimationFrame(this.#pendingInitializationFrame);
+		}
+
+		this.#pendingInitializationFrame = requestAnimationFrame(() => {
+			this.#pendingInitializationFrame = null;
+			this.#initializeTabs();
+
+			if (this.#tabs.length === 0) {
+				if (this.#hashListenerAttached) {
+					window.removeEventListener('hashchange', this.#boundHashChange);
+					this.#hashListenerAttached = false;
+				}
+				return;
+			}
+
+			if (!this.#hashListenerAttached) {
+				window.addEventListener('hashchange', this.#boundHashChange);
+				this.#hashListenerAttached = true;
+			}
+
+			this.#handleHashChange();
+		});
 	}
 
 	#initializeTabs() {
 		const container = this.shadowRoot.querySelector('#container');
 		const slot = this.#slotElement;
 
-		// Get slotted content
+		if (!container || !slot) {
+			return;
+		}
+
+		this.#resetInternalState();
+
 		const slottedNodes = slot.assignedNodes({ flatten: true });
 
-		// Find the first heading to determine the heading level
-		let headingLevel = null;
 		let headingTag = null;
-
 		for (const node of slottedNodes) {
 			if (node.nodeType === Node.ELEMENT_NODE) {
 				const match = node.tagName.match(/^H([1-6])$/i);
 				if (match) {
-					headingLevel = parseInt(match[1], 10);
 					headingTag = node.tagName.toLowerCase();
 					break;
 				}
 			}
 		}
 
-		// If no heading found, don't transform
 		if (!headingTag) {
-			container.innerHTML = '<slot></slot>';
-			this.shadowRoot.querySelector('slot[style]').remove();
+			container.innerHTML = '';
+			slot.style.display = '';
 			return;
 		}
 
-		// Parse the content into sections based on headings
 		const sections = this.#parseContentIntoSections(
 			slottedNodes,
 			headingTag,
 		);
 
 		if (sections.length === 0) {
-			container.innerHTML = '<slot></slot>';
-			this.shadowRoot.querySelector('slot[style]').remove();
+			container.innerHTML = '';
+			slot.style.display = '';
 			return;
 		}
 
-		// Generate unique ID base
+		slot.style.display = 'none';
+
 		const baseId = this.id || `tabbed-interface-${this.#generateId()}`;
 		if (!this.id) {
 			this.id = baseId;
 		}
 
-		// Create tablist
 		this.#tablist = document.createElement('div');
 		this.#tablist.setAttribute('role', 'tablist');
 		this.#tablist.setAttribute('part', 'tablist');
-
-		// Create tabs and panels
-		this.#tabs = [];
-		this.#tabpanels = [];
-		this.#hasCustomTitle = [];
 
 		sections.forEach((section, index) => {
 			const tabId = `${baseId}-tab-${index}`;
 			const panelId = `${baseId}-panel-${index}`;
 
-			// Create tab
 			const tab = document.createElement('button');
 			tab.setAttribute('role', 'tab');
 			tab.setAttribute('part', index === 0 ? 'tab selected' : 'tab');
@@ -359,12 +444,10 @@ export class TabbedInterfaceElement extends HTMLElement {
 			tab.setAttribute('aria-selected', index === 0 ? 'true' : 'false');
 			tab.setAttribute('tabindex', index === 0 ? '0' : '-1');
 
-			// Get tab title from data attribute or heading content
 			const customTitle = section.heading.dataset.tabShortName;
 			const tabTitle = customTitle || section.heading.innerHTML;
 			tab.innerHTML = tabTitle;
 
-			// If using short name, set aria-label to full text and hide the title
 			if (customTitle) {
 				tab.setAttribute(
 					'aria-label',
@@ -373,15 +456,15 @@ export class TabbedInterfaceElement extends HTMLElement {
 				tab.setAttribute('title', '');
 			}
 
-			// Track whether this tab has a custom title
 			this.#hasCustomTitle.push(Boolean(customTitle));
 
-			// Event listeners
-			if (this.autoActivate) {
-				tab.addEventListener('focus', () => this.#activateTab(index));
-			} else {
-				tab.addEventListener('click', () => this.#activateTab(index));
-			}
+			tab.addEventListener('focus', () => {
+				this.#focusedIndex = index;
+				if (this.autoActivate) {
+					this.#activateTab(index);
+				}
+			});
+			tab.addEventListener('click', () => this.#activateTab(index));
 			tab.addEventListener('keydown', (e) =>
 				this.#handleKeydown(e, index),
 			);
@@ -389,20 +472,16 @@ export class TabbedInterfaceElement extends HTMLElement {
 			this.#tablist.appendChild(tab);
 			this.#tabs.push(tab);
 
-			// Create tabpanel
 			const panel = document.createElement('div');
 			panel.setAttribute('role', 'tabpanel');
 			panel.setAttribute('part', 'tabpanel');
 			panel.setAttribute('id', panelId);
 			panel.setAttribute('aria-labelledby', tabId);
-			// Tabpanels are not focusable themselves
 			if (index !== 0) {
 				panel.setAttribute('hidden', '');
 			}
 
-			// Clone heading and content into panel
 			const clonedHeading = section.heading.cloneNode(true);
-			// Store reference to original heading for ID lookups
 			clonedHeading.dataset.originalId = section.heading.id || '';
 
 			if (!this.showHeaders && !section.heading.dataset.tabShortName) {
@@ -418,7 +497,6 @@ export class TabbedInterfaceElement extends HTMLElement {
 			this.#tabpanels.push(panel);
 		});
 
-		// Assemble the component
 		container.innerHTML = '';
 
 		if (this.tablistAfter) {
@@ -429,24 +507,9 @@ export class TabbedInterfaceElement extends HTMLElement {
 			this.#tabpanels.forEach((panel) => container.appendChild(panel));
 		}
 
-		// Check for default tab
-		const defaultTab = this.getAttribute('default-tab');
-		if (defaultTab !== null) {
-			const index = parseInt(defaultTab, 10);
-			if (!isNaN(index) && index >= 0 && index < this.#tabs.length) {
-				this.#activateTab(index);
-			} else {
-				// Try to find by heading ID
-				const targetIndex = sections.findIndex(
-					(s) => s.heading.id === defaultTab,
-				);
-				if (targetIndex !== -1) {
-					this.#activateTab(targetIndex);
-				}
-			}
-		}
-
+		this.#applyDefaultTab({ force: true });
 		this.#initialized = true;
+		this.#focusedIndex = this.#activeIndex;
 	}
 
 	// eslint-disable-next-line class-methods-use-this
@@ -569,6 +632,9 @@ export class TabbedInterfaceElement extends HTMLElement {
 	}
 
 	#navigateNext() {
+		if (this.#tabs.length === 0) {
+			return;
+		}
 		const currentFocus = this.autoActivate
 			? this.#activeIndex
 			: this.#focusedIndex;
@@ -582,6 +648,9 @@ export class TabbedInterfaceElement extends HTMLElement {
 	}
 
 	#navigatePrevious() {
+		if (this.#tabs.length === 0) {
+			return;
+		}
 		const currentFocus = this.autoActivate
 			? this.#activeIndex
 			: this.#focusedIndex;
@@ -596,6 +665,9 @@ export class TabbedInterfaceElement extends HTMLElement {
 	}
 
 	#navigateFirst() {
+		if (this.#tabs.length === 0) {
+			return;
+		}
 		if (this.autoActivate) {
 			this.#activateTab(0);
 		} else {
@@ -605,6 +677,9 @@ export class TabbedInterfaceElement extends HTMLElement {
 	}
 
 	#navigateLast() {
+		if (this.#tabs.length === 0) {
+			return;
+		}
 		const lastIndex = this.#tabs.length - 1;
 		if (this.autoActivate) {
 			this.#activateTab(lastIndex);
@@ -631,7 +706,12 @@ export class TabbedInterfaceElement extends HTMLElement {
 			) {
 				this.#activateTab(i);
 				// Scroll to the tablist
-				this.#tablist.scrollIntoView({ behavior: 'smooth' });
+				if (
+					this.#tablist &&
+					typeof this.#tablist.scrollIntoView === 'function'
+				) {
+					this.#tablist.scrollIntoView({ behavior: 'smooth' });
+				}
 				return;
 			}
 		}
@@ -666,6 +746,72 @@ export class TabbedInterfaceElement extends HTMLElement {
 			container.appendChild(this.#tablist);
 		} else {
 			container.insertBefore(this.#tablist, container.firstChild);
+		}
+	}
+
+	#applyDefaultTab({ force = false } = {}) {
+		if (this.#tabs.length === 0) {
+			return;
+		}
+
+		if (!this.#initialized && !force) {
+			return;
+		}
+
+		const defaultTab = this.getAttribute('default-tab');
+		if (defaultTab === null || defaultTab === '') {
+			this.#activateTab(0);
+			return;
+		}
+
+		const numericIndex = Number(defaultTab);
+		if (
+			Number.isInteger(numericIndex) &&
+			numericIndex >= 0 &&
+			numericIndex < this.#tabs.length
+		) {
+			this.#activateTab(numericIndex);
+			return;
+		}
+
+		const matchedIndex = this.#tabpanels.findIndex((panel) => {
+			const heading = panel.querySelector('h1, h2, h3, h4, h5, h6');
+			if (!heading) {
+				return false;
+			}
+			const originalId = heading.dataset.originalId || heading.id || '';
+			return originalId === defaultTab || heading.id === defaultTab;
+		});
+
+		if (matchedIndex !== -1) {
+			this.#activateTab(matchedIndex);
+		} else {
+			this.#activateTab(0);
+		}
+	}
+
+	#resetInternalState() {
+		this.#tablist = null;
+		this.#tabs = [];
+		this.#tabpanels = [];
+		this.#hasCustomTitle = [];
+		this.#activeIndex = 0;
+		this.#focusedIndex = 0;
+		this.#initialized = false;
+	}
+
+	#detachSlotListener() {
+		if (this.#slotElement) {
+			this.#slotElement.removeEventListener('slotchange', this.#onSlotChange);
+			this.#slotElement = null;
+		}
+	}
+
+	#upgradeProperty(prop) {
+		if (Object.prototype.hasOwnProperty.call(this, prop)) {
+			const value = this[prop];
+			delete this[prop];
+			this[prop] = value;
 		}
 	}
 
