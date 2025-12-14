@@ -18,6 +18,14 @@ A web component that transforms heading-structured content into an accessible ta
 - **Customizable**: Extensive CSS custom properties for styling
 - **Lightweight**: No dependencies, pure vanilla JavaScript
 - **Modern**: Uses Shadow DOM and ES Modules
+- **TypeScript-ready**: Ships bundled type definitions for editors and build tooling
+
+## TypeScript & Framework Support
+
+- Bundled `.d.ts` files describe both `TabbedInterfaceElement` and `defineTabbedInterface`, so editors, bundlers, and framework toolchains get type information automatically.
+- The `showHeaders`, `tablistAfter`, `autoActivate`, and `defaultTab` properties reflect to attributes, keeping declarative markup and imperative code in sync.
+- A private `upgradeProperty` helper replays any property assignments that happen before the browser upgrades the element, which is especially helpful for SSR and hydration workflows.
+- The `defaultTab` property accepts either zero-based indices or heading IDs, making it easy to drive tab selection from reactive state or router parameters.
 
 ## Installation
 
