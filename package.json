@@ -24,13 +24,16 @@
 	"type": "module",
 	"main": "index.js",
 	"module": "tabbed-interface.js",
+	"types": "tabbed-interface.d.ts",
 	"customElements": "custom-elements.json",
 	"exports": {
 		".": {
-			"import": "./index.js"
+			"import": "./index.js",
+			"types": "./tabbed-interface.d.ts"
 		},
 		"./tabbed-interface.js": {
-			"import": "./tabbed-interface.js"
+			"import": "./tabbed-interface.js",
+			"types": "./tabbed-interface.d.ts"
 		},
 		"./define.js": {
 			"import": "./define.js"
@@ -39,6 +42,7 @@
 	},
 	"files": [
 		"tabbed-interface.js",
+		"tabbed-interface.d.ts",
 		"define.js",
 		"index.js",
 		"custom-elements.json",
@@ -46,7 +50,7 @@
 		"LICENSE"
 	],
 	"engines": {
-		"node": ">=14.0.0"
+		"node": ">=20.0.0"
 	},
 	"scripts": {
 		"test": "vitest",
