@@ -351,7 +351,10 @@ export class TabbedInterfaceElement extends HTMLElement {
 
 		this.#slotElement = this.shadowRoot.querySelector('slot');
 		if (this.#slotElement) {
-			this.#slotElement.addEventListener('slotchange', this.#onSlotChange);
+			this.#slotElement.addEventListener(
+				'slotchange',
+				this.#onSlotChange,
+			);
 		}
 	}
 
@@ -366,7 +369,10 @@ export class TabbedInterfaceElement extends HTMLElement {
 
 			if (this.#tabs.length === 0) {
 				if (this.#hashListenerAttached) {
-					window.removeEventListener('hashchange', this.#boundHashChange);
+					window.removeEventListener(
+						'hashchange',
+						this.#boundHashChange,
+					);
 					this.#hashListenerAttached = false;
 				}
 				return;
@@ -802,7 +808,10 @@ export class TabbedInterfaceElement extends HTMLElement {
 
 	#detachSlotListener() {
 		if (this.#slotElement) {
-			this.#slotElement.removeEventListener('slotchange', this.#onSlotChange);
+			this.#slotElement.removeEventListener(
+				'slotchange',
+				this.#onSlotChange,
+			);
 			this.#slotElement = null;
 		}
 	}

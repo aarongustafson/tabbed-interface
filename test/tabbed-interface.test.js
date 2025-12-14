@@ -463,7 +463,8 @@ describe('TabbedInterfaceElement', () => {
 				await new Promise((resolve) => requestAnimationFrame(resolve));
 				await new Promise((resolve) => setTimeout(resolve, 0));
 
-				const tabs = element.shadowRoot.querySelectorAll('[role="tab"]');
+				const tabs =
+					element.shadowRoot.querySelectorAll('[role="tab"]');
 				tabs[1].dispatchEvent(new FocusEvent('focus'));
 				expect(element.activeIndex).toBe(0);
 
