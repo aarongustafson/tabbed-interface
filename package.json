@@ -25,6 +25,7 @@
 	"main": "index.js",
 	"module": "tabbed-interface.js",
 	"customElements": "custom-elements.json",
+	"types": "tabbed-interface.d.ts",
 	"exports": {
 		".": {
 			"import": "./index.js"
