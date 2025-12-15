@@ -258,16 +258,18 @@ export class TabbedInterfaceElement extends HTMLElement {
 			<style>
 				:host {
 					display: block;
+					color: inherit;
+					font-family: var(--tabbed-interface-font-family, inherit);
 				}
 
 				[role="tablist"] {
-					display: flex;
-					gap: -1px;
-					padding: 0;
-					margin: 0;
+					display: var(--tabbed-interface-tablist-display, flex);
+					gap: var(--tabbed-interface-tablist-gap, -1px);
+					padding: var(--tabbed-interface-tablist-padding, 0);
+					margin: var(--tabbed-interface-tablist-margin, 0);
 					margin-block-end: -1px;
-					background: transparent;
-					border: none;
+					background: var(--tabbed-interface-tablist-background, transparent);
+					border: var(--tabbed-interface-tablist-border, none);
 					list-style: none;
 					scroll-margin-block-start: 2rem;
 				}
@@ -278,11 +280,11 @@ export class TabbedInterfaceElement extends HTMLElement {
 				}
 
 				[role="tab"] {
-					padding: 0.5em 1em;
-					background-color: ButtonFace;
-					color: ButtonText;
-					border: 1px solid ButtonBorder;
-					border-radius: 0;
+					padding: var(--tabbed-interface-tab-padding, 0.5em 1em);
+					background-color: var(--tabbed-interface-tab-background, ButtonFace);
+					color: var(--tabbed-interface-tab-color, ButtonText);
+					border: var(--tabbed-interface-tab-border, 1px solid ButtonBorder);
+					border-radius: var(--tabbed-interface-tab-border-radius, 0);
 					border-start-start-radius: 3px;
 					border-start-end-radius: 3px;
 					cursor: pointer;
@@ -292,19 +294,19 @@ export class TabbedInterfaceElement extends HTMLElement {
 
 				[role="tab"]:hover,
 				[role="tab"]:focus {
-					background: ButtonFace;
-					color: inherit;
+					background: var(--tabbed-interface-tab-hover-background, ButtonFace);
+					color: var(--tabbed-interface-tab-hover-color, inherit);
 				}
 
 				[role="tab"]:focus-visible {
-					outline: 2px solid AccentColor;
+					outline: var(--tabbed-interface-tab-focus-outline, 2px solid AccentColor);
 					outline-offset: 1px;
 				}
 
 				[role="tab"][aria-selected="true"] {
-					background: Canvas;
+					background: var(--tabbed-interface-tab-active-background, Canvas);
 					border-block-end-color: Canvas;
-					color: CanvasText;
+					color: var(--tabbed-interface-tab-active-color, CanvasText);
 				}
 
 				:host([tablist-after]) [role="tab"] {
@@ -320,9 +322,10 @@ export class TabbedInterfaceElement extends HTMLElement {
 				}
 
 				[role="tabpanel"] {
-					padding: 1em;
-					background: transparent;
-					border: 1px solid ButtonBorder;
+					padding: var(--tabbed-interface-tabpanel-padding, 1em);
+					background: var(--tabbed-interface-tabpanel-background, transparent);
+					border: var(--tabbed-interface-tabpanel-border, 1px solid ButtonBorder);
+					color: inherit;
 				}
 
 				[role="tabpanel"][hidden] {

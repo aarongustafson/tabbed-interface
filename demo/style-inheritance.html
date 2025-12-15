@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Style Inheritance Demo - Tabbed Interface</title>
+		<link rel="stylesheet" href="./styles.css" />
+		<style>
+			/* Demo-specific styles to show inheritance */
+
+			.hero {
+				background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+				color: white;
+				padding: 3rem 2rem;
+				border-radius: 12px;
+				margin: 2rem 0;
+				box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+			}
+
+			.hero h2 {
+				margin-top: 0;
+				font-size: 2rem;
+			}
+
+			.hero p {
+				font-size: 1.2rem;
+				line-height: 1.8;
+			}
+
+			.hero ul {
+				background: rgba(255, 255, 255, 0.15);
+				padding: 1.5rem 2rem;
+				border-radius: 8px;
+				backdrop-filter: blur(10px);
+			}
+
+			.hero li {
+				margin: 0.8rem 0;
+				font-size: 1.1rem;
+			}
+
+			/* Custom styled sections */
+			.custom-color {
+				--tabbed-interface-tab-background: #2c3e50;
+				--tabbed-interface-tab-color: #ecf0f1;
+				--tabbed-interface-tab-active-background: #e74c3c;
+				--tabbed-interface-tab-active-color: white;
+				--tabbed-interface-tab-hover-background: #34495e;
+				--tabbed-interface-tabpanel-padding: 2rem;
+				--tabbed-interface-tabpanel-background: #ecf0f1;
+				--tabbed-interface-tabpanel-border: none;
+				color: #2c3e50;
+				font-size: 1.1rem;
+			}
+
+			.elegant {
+				--tabbed-interface-font-family: 'Georgia', serif;
+				--tabbed-interface-tab-background: transparent;
+				--tabbed-interface-tab-color: #3498db;
+				--tabbed-interface-tab-border: none;
+				--tabbed-interface-tab-active-color: #2c3e50;
+				--tabbed-interface-tab-hover-background: #ecf0f1;
+				--tabbed-interface-tabpanel-padding: 2rem 1rem;
+				--tabbed-interface-tabpanel-background: transparent;
+				--tabbed-interface-tabpanel-border: none;
+				color: #34495e;
+				font-family: Georgia, serif;
+				font-size: 1.1rem;
+				line-height: 1.8;
+			}
+
+			.monospace-code {
+				--tabbed-interface-tab-padding: 0.75rem 1.5rem;
+				--tabbed-interface-tab-background: #1e1e1e;
+				--tabbed-interface-tab-color: #d4d4d4;
+				--tabbed-interface-tab-active-background: #007acc;
+				--tabbed-interface-tabpanel-padding: 1.5rem;
+				--tabbed-interface-tabpanel-background: #1e1e1e;
+				--tabbed-interface-tabpanel-border: 1px solid #444;
+				color: #d4d4d4;
+				font-family: 'Courier New', Courier, monospace;
+				font-size: 14px;
+				line-height: 1.6;
+			}
+
+			.comparison {
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				gap: 2rem;
+				margin: 2rem 0;
+			}
+
+			@media (max-width: 768px) {
+				.comparison {
+					grid-template-columns: 1fr;
+				}
+			}
+
+			.comparison-box {
+				padding: 1.5rem;
+				border: 2px solid #ddd;
+				border-radius: 8px;
+				background: white;
+			}
+
+			.comparison-box h3 {
+				margin-top: 0;
+				color: #2c3e50;
+			}
+
+			.success {
+				border-color: #27ae60;
+			}
+
+			.success h3 {
+				color: #27ae60;
+			}
+
+			.highlight-box {
+				background: #fff3cd;
+				border-left: 4px solid #ffc107;
+				padding: 1rem 1.5rem;
+				margin: 1.5rem 0;
+				border-radius: 4px;
+			}
+
+			.highlight-box strong {
+				color: #856404;
+			}
+		</style>
+	</head>
+	<body>
+		<header>
+			<h1>Style Inheritance Demo</h1>
+			<p>
+				This page demonstrates how the tabbed interface now supports
+				style inheritance through the shadow DOM boundary using CSS
+				custom properties and inherited properties.
+			</p>
+		</header>
+
+		<main>
+			<!-- Example 1: Color and Font Inheritance -->
+			<section>
+				<h2>Example 1: Inherited Properties</h2>
+				<p>
+					Properties like <code>color</code> and
+					<code>font-family</code> naturally inherit through shadow
+					DOM boundaries. The component now properly passes these
+					through to tab panel content.
+				</p>
+
+				<div class="hero">
+					<tabbed-interface>
+						<h2>Welcome</h2>
+						<p>
+							This text inherits the white color from the parent
+							.hero div.
+						</p>
+						<p>
+							The gradient background is on the parent, and the
+							text color flows through the shadow DOM boundary.
+						</p>
+
+						<h2>Features</h2>
+						<ul>
+							<li>Color inheritance works seamlessly</li>
+							<li>Font family is inherited from parent</li>
+							<li>
+								Text maintains the same styling as the
+								surrounding context
+							</li>
+							<li>No special configuration needed!</li>
+						</ul>
+
+						<h2>How It Works</h2>
+						<p>
+							The component uses <code>color: inherit</code> on
+							both <code>:host</code> and
+							<code>[role="tabpanel"]</code>.
+						</p>
+						<p>
+							This allows inherited CSS properties to flow through
+							the shadow DOM boundary naturally.
+						</p>
+					</tabbed-interface>
+				</div>
+
+				<div class="highlight-box">
+					<strong>Key Insight:</strong> The white text you see in the
+					tabs above is inherited from the parent .hero div, not set
+					directly on the component. This is exactly what the bug
+					report requested!
+				</div>
+			</section>
+
+			<!-- Example 2: CSS Custom Properties -->
+			<section>
+				<h2>Example 2: CSS Custom Properties</h2>
+				<p>
+					The component now implements all documented CSS custom
+					properties, allowing you to customize the appearance without
+					piercing the shadow DOM.
+				</p>
+
+				<div class="custom-color">
+					<tabbed-interface>
+						<h2>Dark Theme</h2>
+						<p>
+							This tabbed interface uses CSS custom properties to
+							achieve a dark theme with red accents.
+						</p>
+						<p>
+							The text color (dark gray) is inherited from the
+							parent element.
+						</p>
+
+						<h2>Customization</h2>
+						<p>All styling is done with CSS custom properties:</p>
+						<ul>
+							<li>
+								<code>--tabbed-interface-tab-background</code>
+							</li>
+							<li>
+								<code>--tabbed-interface-tab-active-background</code>
+							</li>
+							<li>
+								<code>--tabbed-interface-tabpanel-padding</code>
+							</li>
+							<li>And many more!</li>
+						</ul>
+
+						<h2>Benefits</h2>
+						<p>
+							Using CSS custom properties allows for complete
+							customization while respecting the component
+							boundary.
+						</p>
+					</tabbed-interface>
+				</div>
+			</section>
+
+			<!-- Example 3: Elegant Typography -->
+			<section>
+				<h2>Example 3: Typography Inheritance</h2>
+				<p>
+					Font family and size are inherited, allowing the component
+					to adapt to different typographic contexts.
+				</p>
+
+				<div class="elegant">
+					<tabbed-interface>
+						<h2>Typography</h2>
+						<p>
+							This example uses Georgia serif font, inherited from
+							the parent container. The font family flows through
+							to all text within the tabbed interface.
+						</p>
+						<p>
+							Line height and font size are also inherited,
+							ensuring consistent typography throughout.
+						</p>
+
+						<h2>Readability</h2>
+						<p>
+							Proper typography inheritance ensures that your
+							content maintains its intended readability and
+							aesthetic, regardless of where it's placed.
+						</p>
+						<p>
+							The component adapts to your design system rather
+							than imposing its own styles.
+						</p>
+
+						<h2>Design Systems</h2>
+						<p>
+							This makes the component perfect for use in design
+							systems where consistent typography is essential.
+						</p>
+					</tabbed-interface>
+				</div>
+			</section>
+
+			<!-- Example 4: Code-style Theme -->
+			<section>
+				<h2>Example 4: VS Code Dark Theme</h2>
+				<p>
+					A practical example showing how the component can adapt to a
+					code editor aesthetic.
+				</p>
+
+				<div class="monospace-code">
+					<tabbed-interface>
+						<h2>JavaScript</h2>
+						<p>const message = 'Hello World';</p>
+						<p>console.log(message);</p>
+						<p>// This code uses VS Code dark theme colors</p>
+
+						<h2>CSS</h2>
+						<p>.container {</p>
+						<p>&nbsp;&nbsp;display: flex;</p>
+						<p>&nbsp;&nbsp;color: inherit;</p>
+						<p>}</p>
+
+						<h2>HTML</h2>
+						<p>&lt;div class="container"&gt;</p>
+						<p>&nbsp;&nbsp;&lt;p&gt;Content here&lt;/p&gt;</p>
+						<p>&lt;/div&gt;</p>
+					</tabbed-interface>
+				</div>
+			</section>
+
+			<!-- Comparison -->
+			<section>
+				<h2>Before vs After</h2>
+
+				<div class="comparison">
+					<div class="comparison-box">
+						<h3>❌ Before (Browser Defaults)</h3>
+						<p>
+							<strong>Issue:</strong> Content lost its styling
+							when wrapped in a tabpanel
+						</p>
+						<ul>
+							<li>Text reverted to black (#000)</li>
+							<li>Font family reset to browser default</li>
+							<li>Custom backgrounds lost</li>
+							<li>Design system styles not applied</li>
+						</ul>
+					</div>
+
+					<div class="comparison-box success">
+						<h3>✅ After (With Inheritance)</h3>
+						<p><strong>Fixed:</strong> Styles properly inherited</p>
+						<ul>
+							<li>Text color inherited from parent</li>
+							<li>Font family preserved</li>
+							<li>Typography maintained</li>
+							<li>CSS custom properties work</li>
+						</ul>
+					</div>
+				</div>
+			</section>
+
+			<!-- Technical Details -->
+			<section>
+				<h2>Technical Implementation</h2>
+
+				<div class="highlight-box">
+					<strong>What Changed:</strong>
+					<ul>
+						<li>
+							Added <code>color: inherit</code> to
+							<code>:host</code> element
+						</li>
+						<li>
+							Added <code>color: inherit</code> to
+							<code>[role="tabpanel"]</code>
+						</li>
+						<li>
+							Implemented all documented CSS custom properties
+						</li>
+						<li>
+							Properties can now be customized with
+							<code>var(--tabbed-interface-*)</code>
+						</li>
+					</ul>
+				</div>
+
+				<h3>Available CSS Custom Properties</h3>
+				<ul>
+					<li><code>--tabbed-interface-font-family</code></li>
+					<li><code>--tabbed-interface-tablist-display</code></li>
+					<li><code>--tabbed-interface-tablist-gap</code></li>
+					<li><code>--tabbed-interface-tablist-padding</code></li>
+					<li><code>--tabbed-interface-tablist-margin</code></li>
+					<li><code>--tabbed-interface-tablist-background</code></li>
+					<li><code>--tabbed-interface-tablist-border</code></li>
+					<li><code>--tabbed-interface-tab-padding</code></li>
+					<li><code>--tabbed-interface-tab-background</code></li>
+					<li><code>--tabbed-interface-tab-color</code></li>
+					<li><code>--tabbed-interface-tab-border</code></li>
+					<li><code>--tabbed-interface-tab-border-radius</code></li>
+					<li>
+						<code>--tabbed-interface-tab-active-background</code>
+					</li>
+					<li><code>--tabbed-interface-tab-active-color</code></li>
+					<li><code>--tabbed-interface-tab-hover-background</code></li>
+					<li><code>--tabbed-interface-tab-hover-color</code></li>
+					<li><code>--tabbed-interface-tab-focus-outline</code></li>
+					<li><code>--tabbed-interface-tabpanel-padding</code></li>
+					<li><code>--tabbed-interface-tabpanel-background</code></li>
+					<li><code>--tabbed-interface-tabpanel-border</code></li>
+				</ul>
+			</section>
+		</main>
+
+		<footer>
+			<p>
+				<a href="index.html">← Back to Main Demo</a> |
+				<a href="../">View Documentation</a>
+			</p>
+		</footer>
+
+		<script src="../define.js" type="module"></script>
+	</body>
+</html>
