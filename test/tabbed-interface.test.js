@@ -6,6 +6,7 @@ describe('TabbedInterfaceElement', () => {
 
 	beforeEach(() => {
 		element = document.createElement('tabbed-interface');
+		element.setAttribute('fixed-tabs', '');
 	});
 
 	afterEach(() => {
@@ -136,6 +137,7 @@ describe('TabbedInterfaceElement', () => {
 			element.appendChild(newHeading);
 			element.appendChild(newParagraph);
 
+			await new Promise((resolve) => setTimeout(resolve, 0));
 			await new Promise((resolve) => requestAnimationFrame(resolve));
 			await new Promise((resolve) => setTimeout(resolve, 0));
 
@@ -296,12 +298,9 @@ describe('TabbedInterfaceElement', () => {
 				await new Promise((resolve) => requestAnimationFrame(resolve));
 				await new Promise((resolve) => setTimeout(resolve, 0));
 
-				const panel =
-					element.shadowRoot.querySelector('[role="tabpanel"]');
-				const heading = panel.querySelector('h2');
-				expect(heading.classList.contains('visually-hidden')).toBe(
-					true,
-				);
+				const slot =
+					element.shadowRoot.querySelector('[data-panel-slot]');
+				expect(slot.hasAttribute('data-hide-heading')).toBe(true);
 			});
 
 			it('should show headers when show-headers is present', async () => {
@@ -315,12 +314,9 @@ describe('TabbedInterfaceElement', () => {
 				await new Promise((resolve) => requestAnimationFrame(resolve));
 				await new Promise((resolve) => setTimeout(resolve, 0));
 
-				const panel =
-					element.shadowRoot.querySelector('[role="tabpanel"]');
-				const heading = panel.querySelector('h2');
-				expect(heading.classList.contains('visually-hidden')).toBe(
-					false,
-				);
+				const slot =
+					element.shadowRoot.querySelector('[data-panel-slot]');
+				expect(slot.hasAttribute('data-hide-heading')).toBe(false);
 			});
 		});
 
@@ -336,7 +332,7 @@ describe('TabbedInterfaceElement', () => {
 				await new Promise((resolve) => setTimeout(resolve, 0));
 
 				const container =
-					element.shadowRoot.querySelector('#container');
+					element.shadowRoot.querySelector('#presentation');
 				const firstChild = container.firstElementChild;
 				expect(firstChild.getAttribute('role')).toBe('tablist');
 			});
@@ -353,7 +349,7 @@ describe('TabbedInterfaceElement', () => {
 				await new Promise((resolve) => setTimeout(resolve, 0));
 
 				const container =
-					element.shadowRoot.querySelector('#container');
+					element.shadowRoot.querySelector('#presentation');
 				const lastChild = container.lastElementChild;
 				expect(lastChild.getAttribute('role')).toBe('tablist');
 			});
@@ -473,6 +469,18 @@ describe('TabbedInterfaceElement', () => {
 				expect(element.activeIndex).toBe(1);
 			});
 		});
+
+		describe('fixed-tabs', () => {
+			it('should reflect the fixedTabs property', () => {
+				expect(element.fixedTabs).toBe(true);
+
+				element.fixedTabs = false;
+				expect(element.hasAttribute('fixed-tabs')).toBe(false);
+
+				element.fixedTabs = true;
+				expect(element.hasAttribute('fixed-tabs')).toBe(true);
+			});
+		});
 	});
 
 	describe('Custom tab titles', () => {
@@ -500,9 +508,8 @@ describe('TabbedInterfaceElement', () => {
 			await new Promise((resolve) => requestAnimationFrame(resolve));
 			await new Promise((resolve) => setTimeout(resolve, 0));
 
-			const panel = element.shadowRoot.querySelector('[role="tabpanel"]');
-			const heading = panel.querySelector('h2');
-			expect(heading.classList.contains('visually-hidden')).toBe(false);
+			const slot = element.shadowRoot.querySelector('[data-panel-slot]');
+			expect(slot.hasAttribute('data-hide-heading')).toBe(false);
 		});
 	});
 
@@ -535,9 +542,8 @@ describe('TabbedInterfaceElement', () => {
 			await new Promise((resolve) => requestAnimationFrame(resolve));
 			await new Promise((resolve) => setTimeout(resolve, 0));
 
-			const panels =
-				element.shadowRoot.querySelectorAll('[role="tabpanel"]');
-			expect(panels[0].querySelector('h4')).toBeTruthy();
+			const heading = element.querySelector('h4');
+			expect(heading).toBeTruthy();
 		});
 	});
 });

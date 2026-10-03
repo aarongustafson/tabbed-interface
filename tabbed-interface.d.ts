@@ -12,6 +12,7 @@ export declare class TabbedInterfaceElement extends HTMLElement {
 	tablistAfter: boolean;
 	defaultTab: string | null;
 	autoActivate: boolean;
+	fixedTabs: boolean;
 
 	next(): void;
 	previous(): void;

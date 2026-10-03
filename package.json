@@ -53,6 +53,7 @@
 	},
 	"scripts": {
 		"test": "vitest",
+		"test:browser": "playwright test",
 		"test:ui": "vitest --ui",
 		"test:run": "vitest run",
 		"test:coverage": "vitest run --coverage",
@@ -67,6 +68,7 @@
 	},
 	"devDependencies": {
 		"@open-wc/eslint-config": "^13.1.0",
+		"@playwright/test": "^1.63.0",
 		"@testing-library/dom": "^10.4.2",
 		"@testing-library/user-event": "^14.6.7",
 		"@vitest/coverage-v8": "^4.1.11",

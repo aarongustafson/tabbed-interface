@@ -4,6 +4,7 @@ export default defineConfig({
 	test: {
 		environment: 'happy-dom',
 		globals: true,
+		include: ['test/**/*.test.js'],
 		setupFiles: ['./test/setup.js'],
 	},
 });

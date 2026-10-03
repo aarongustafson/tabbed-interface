@@ -84,6 +84,7 @@ customElements.define('my-tabs', TabbedInterfaceElement);
 | `tablist-after` | boolean | `false` | When present, positions tab list after content |
 | `default-tab` | string | `"0"` | Initial active tab (index or heading ID) |
 | `auto-activate` | boolean | `false` | When present, tabs activate on focus; when absent, use Enter/Space to activate |
+| `fixed-tabs` | boolean | `false` | When present, keeps tabs active even when the complete tablist does not fit |
 
 ### Examples
 
@@ -115,6 +116,27 @@ customElements.define('my-tabs', TabbedInterfaceElement);
 <tabbed-interface auto-activate>
   ...
 </tabbed-interface>
+
+<!-- Always use tabs; the implementor handles any overflow -->
+<tabbed-interface fixed-tabs>
+  ...
+</tabbed-interface>
+```
+
+## Responsive Behavior
+
+The component uses tabs only when the complete, styled tablist fits on one horizontal row. Tab labels may wrap within their buttons. If the tablist does not fit, the component automatically presents the original content as fully expanded linear sections with visible headings.
+
+Fit is based on rendered styles rather than a viewport breakpoint. Fonts, padding, borders, CSS parts, custom properties, selected-tab styling, translated labels, and container resizing all participate in the calculation.
+
+Use `fixed-tabs` only when you want tabs at every available width and will handle overflow yourself.
+
+The current presentation is reflected as `data-layout="tabs"` or `data-layout="linear"` on the component for state-specific styling:
+
+```css
+tabbed-interface[data-layout="linear"] {
+  margin-block: 2rem;
+}
 ```
 
 ## Properties
@@ -125,6 +147,7 @@ customElements.define('my-tabs', TabbedInterfaceElement);
 | `showHeaders` | boolean | Get/set header visibility |
 | `tablistAfter` | boolean | Get/set tablist position |
 | `autoActivate` | boolean | Get/set auto-activation behavior |
+| `fixedTabs` | boolean | Get/set whether tabs remain active when they do not fit |
 
 ## Methods
 
@@ -173,7 +196,26 @@ document.querySelector('tabbed-interface')
 | `End` | Last tab |
 | `Enter/Space` | Activate tab (when auto-activate is absent) and focus first focusable element in panel |
 
-## Styling with CSS Parts
+## Styling
+
+### Authored panel content
+
+Panel content remains in light DOM and retains its original node identity. Style the content you own with ordinary selectors:
+
+```css
+.article tabbed-interface p {
+  max-inline-size: 65ch;
+}
+
+.article tabbed-interface .callout {
+  padding: 1rem;
+  background: var(--callout-background);
+}
+```
+
+Event listeners, live form values, form ownership, nested custom elements, IDs, and runtime state remain attached to the visible authored nodes.
+
+### Component structure
 
 Style the component's shadow DOM elements using CSS `::part()` selectors:
 
@@ -183,6 +225,7 @@ Style the component's shadow DOM elements using CSS `::part()` selectors:
 |------|-------------|
 | `tablist` | The container for all tabs |
 | `tab` | Individual tab buttons |
+| `selected` | The currently selected tab |
 | `tabpanel` | Individual tab panel containers |
 
 ### Styling Examples
@@ -216,7 +259,7 @@ tabbed-interface::part(tabpanel) {
 
 **Targeting specific states:**
 ```css
-/* Active tab - use attribute selector on the host */
+/* Active tab */
 tabbed-interface::part(tab selected) {
   background: white;
   border-bottom-color: white;
@@ -243,7 +286,7 @@ tabbed-interface::part(tab):focus-visible {
   background: #e0e0e0;
 }
 
-.pills::part(tab)[aria-selected="true"] {
+.pills::part(tab selected) {
   background: #007bff;
   color: white;
 }
@@ -256,7 +299,7 @@ tabbed-interface::part(tab):focus-visible {
   background: transparent;
 }
 
-.minimal::part(tab)[aria-selected="true"] {
+.minimal::part(tab selected) {
   border-bottom-color: #007bff;
 }
 
@@ -265,6 +308,39 @@ tabbed-interface::part(tab):focus-visible {
   padding-top: 1.5em;
 }
 ```
+
+The responsive measurement probe receives the same parts and inherited styles as the visible tablist. Keep hover and focus styles metric-stable; normal and selected states are included in fit calculation.
+
+### CSS custom properties
+
+CSS custom properties offer convenient theme-level control without replacing parts:
+
+| Property | Purpose |
+|----------|---------|
+| `--tabbed-interface-font-family` | Component font family |
+| `--tabbed-interface-tablist-display` | Tablist display mode |
+| `--tabbed-interface-tablist-gap` | Gap between tabs |
+| `--tabbed-interface-tablist-padding` | Tablist padding |
+| `--tabbed-interface-tablist-margin` | Tablist margin |
+| `--tabbed-interface-tablist-background` | Tablist background |
+| `--tabbed-interface-tablist-border` | Tablist border |
+| `--tabbed-interface-tab-padding` | Tab padding |
+| `--tabbed-interface-tab-background` | Default tab background |
+| `--tabbed-interface-tab-color` | Default tab text color |
+| `--tabbed-interface-tab-border` | Tab border |
+| `--tabbed-interface-tab-border-radius` | Tab border radius |
+| `--tabbed-interface-tab-active-background` | Selected tab background |
+| `--tabbed-interface-tab-active-color` | Selected tab text color |
+| `--tabbed-interface-tab-hover-background` | Hover/focus background |
+| `--tabbed-interface-tab-hover-color` | Hover/focus text color |
+| `--tabbed-interface-tab-focus-outline` | Keyboard focus outline |
+| `--tabbed-interface-tabpanel-padding` | Panel padding |
+| `--tabbed-interface-tabpanel-background` | Panel background |
+| `--tabbed-interface-tabpanel-border` | Panel border |
+
+## Printing
+
+Print mode hides the tab controls and reveals every section and original heading in source order. The on-screen selected tab and responsive presentation are restored after printing.
 
 ## Custom Tab Titles
 
