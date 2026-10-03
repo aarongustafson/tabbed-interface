@@ -654,8 +654,12 @@ export class TabbedInterfaceElement extends HTMLElement {
 		this.#focusedIndex = this.#activeIndex;
 		this.#updateHeaderVisibility();
 		this.#buildMeasurementTablist();
-		this.#applyLayout('linear');
-		this.#scheduleLayoutEvaluation();
+		if (this.fixedTabs) {
+			this.#applyLayout('tabs');
+		} else {
+			this.#applyLayout('linear');
+			this.#scheduleLayoutEvaluation();
+		}
 	}
 
 	// eslint-disable-next-line class-methods-use-this
