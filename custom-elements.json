@@ -30,6 +30,24 @@
 							"description": "Whether tablist is positioned after content"
 						},
 						{
+							"kind": "field",
+							"name": "autoActivate",
+							"type": { "text": "boolean" },
+							"description": "Whether tabs activate when they receive focus"
+						},
+						{
+							"kind": "field",
+							"name": "defaultTab",
+							"type": { "text": "string | null" },
+							"description": "Initial active tab index or heading ID"
+						},
+						{
+							"kind": "field",
+							"name": "fixedTabs",
+							"type": { "text": "boolean" },
+							"description": "Whether to keep tabs active when the tablist does not fit"
+						},
+						{
 							"kind": "method",
 							"name": "next",
 							"description": "Navigate to the next tab"
@@ -74,7 +92,57 @@
 							"name": "default-tab",
 							"type": { "text": "string" },
 							"description": "Index or heading ID of the tab to show by default"
+						},
+						{
+							"name": "auto-activate",
+							"type": { "text": "boolean" },
+							"description": "When present, tabs activate when they receive focus"
+						},
+						{
+							"name": "fixed-tabs",
+							"type": { "text": "boolean" },
+							"description": "When present, keeps the tabbed presentation even when the tablist does not fit"
 						}
+					],
+					"cssParts": [
+						{
+							"name": "tablist",
+							"description": "The container for all tabs"
+						},
+						{
+							"name": "tab",
+							"description": "An individual tab button"
+						},
+						{
+							"name": "selected",
+							"description": "The currently selected tab"
+						},
+						{
+							"name": "tabpanel",
+							"description": "An individual tab panel container"
+						}
+					],
+					"cssProperties": [
+						{ "name": "--tabbed-interface-font-family" },
+						{ "name": "--tabbed-interface-tablist-display" },
+						{ "name": "--tabbed-interface-tablist-gap" },
+						{ "name": "--tabbed-interface-tablist-padding" },
+						{ "name": "--tabbed-interface-tablist-margin" },
+						{ "name": "--tabbed-interface-tablist-background" },
+						{ "name": "--tabbed-interface-tablist-border" },
+						{ "name": "--tabbed-interface-tab-padding" },
+						{ "name": "--tabbed-interface-tab-background" },
+						{ "name": "--tabbed-interface-tab-color" },
+						{ "name": "--tabbed-interface-tab-border" },
+						{ "name": "--tabbed-interface-tab-border-radius" },
+						{ "name": "--tabbed-interface-tab-active-background" },
+						{ "name": "--tabbed-interface-tab-active-color" },
+						{ "name": "--tabbed-interface-tab-hover-background" },
+						{ "name": "--tabbed-interface-tab-hover-color" },
+						{ "name": "--tabbed-interface-tab-focus-outline" },
+						{ "name": "--tabbed-interface-tabpanel-padding" },
+						{ "name": "--tabbed-interface-tabpanel-background" },
+						{ "name": "--tabbed-interface-tabpanel-border" }
 					],
 					"superclass": {
 						"name": "HTMLElement"
