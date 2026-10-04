@@ -112,6 +112,11 @@
 				font-weight: bold;
 				margin-inline-start: 0.5rem;
 			}
+
+			/* Keep the responsive example as wide as its section. */
+			.responsive-demo-pair {
+				flex-direction: column;
+			}
 		</style>
 	</head>
 	<body>
@@ -332,6 +337,71 @@
 
 								<h3>Tab 2</h3>
 								<p>Third tab content.</p>
+							</tabbed-interface>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<!-- Responsive Layout -->
+			<section>
+				<h2>Responsive Layout</h2>
+				<p>
+					Tabs are used only while the complete tablist fits on one
+					row. Resize the browser to see long tab labels switch to
+					readable linear sections on smaller screens.
+				</p>
+
+				<div class="demo-section">
+					<h3>Long Tab Titles</h3>
+					<div class="code-demo-pair responsive-demo-pair">
+						<pre><code>&lt;tabbed-interface&gt;
+  &lt;h3&gt;Understanding Progressive Enhancement&lt;/h3&gt;
+  &lt;p&gt;Content here.&lt;/p&gt;
+
+  &lt;h3&gt;Designing Accessible Interaction Patterns&lt;/h3&gt;
+  &lt;p&gt;More content.&lt;/p&gt;
+
+  &lt;h3&gt;Supporting International&amp;shy;ized Tab Labels&lt;/h3&gt;
+  &lt;p&gt;More content.&lt;/p&gt;
+
+  &lt;h3&gt;Testing Responsive Behavior Across Browsers&lt;/h3&gt;
+  &lt;p&gt;More content.&lt;/p&gt;
+&lt;/tabbed-interface&gt;</code></pre>
+						<div class="demo">
+							<tabbed-interface id="responsive-layout-demo">
+								<h3>Understanding Progressive Enhancement</h3>
+								<p>
+									The original heading-structured content
+									remains useful before the component loads
+									and whenever the linear layout is active.
+								</p>
+
+								<h3>
+									Designing Accessible Interaction Patterns
+								</h3>
+								<p>
+									The tabbed layout supplies familiar keyboard
+									navigation and accessible relationships while
+									there is enough room for it.
+								</p>
+
+								<h3>
+									Supporting International&shy;ized Tab Labels
+								</h3>
+								<p>
+									The fit decision uses rendered labels, so
+									long translations participate naturally.
+								</p>
+
+								<h3>
+									Testing Responsive Behavior Across Browsers
+								</h3>
+								<p>
+									When the labels no longer fit in one row, all
+									sections and headings become visible without
+									introducing another interaction pattern.
+								</p>
 							</tabbed-interface>
 						</div>
 					</div>
