@@ -38,12 +38,40 @@ test('all primary demo components upgrade successfully', async ({ page }) => {
 			}),
 		);
 
-	expect(demos).toHaveLength(12);
+	expect(demos).toHaveLength(13);
 	for (const demo of demos) {
 		expect(['tabs', 'linear']).toContain(demo.layout);
 		expect(demo.panelCount).toBe(demo.headingCount);
 		expect(demo.tabCount).toBe(demo.headingCount);
 	}
+});
+
+test('long-title demo switches to linear layout on smaller screens', async ({
+	page,
+}) => {
+	await page.setViewportSize({ width: 1400, height: 900 });
+	await page.goto('/demo/index.html');
+
+	const demo = page.locator('#responsive-layout-demo');
+	await expect(demo).toHaveAttribute('data-layout', 'tabs');
+
+	await page.setViewportSize({ width: 390, height: 900 });
+	await expect(demo).toHaveAttribute('data-layout', 'linear');
+
+	const state = await demo.evaluate((host) => ({
+		headingsVisible: [...host.querySelectorAll(':scope > h3')].every(
+			(heading) => getComputedStyle(heading).display !== 'none',
+		),
+		tabRoles: host.shadowRoot.querySelectorAll('[role="tab"]').length,
+		tabpanelRoles:
+			host.shadowRoot.querySelectorAll('[role="tabpanel"]').length,
+	}));
+
+	expect(state).toEqual({
+		headingsVisible: true,
+		tabRoles: 0,
+		tabpanelRoles: 0,
+	});
 });
 
 test('part selector variants style their selected tabs', async ({ page }) => {
