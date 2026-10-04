@@ -260,7 +260,7 @@ tabbed-interface::part(tabpanel) {
 **Targeting specific states:**
 ```css
 /* Active tab */
-tabbed-interface::part(tab selected) {
+tabbed-interface::part(selected) {
   background: white;
   border-bottom-color: white;
   font-weight: bold;
@@ -286,7 +286,7 @@ tabbed-interface::part(tab):focus-visible {
   background: #e0e0e0;
 }
 
-.pills::part(tab selected) {
+.pills::part(selected) {
   background: #007bff;
   color: white;
 }
@@ -299,7 +299,7 @@ tabbed-interface::part(tab):focus-visible {
   background: transparent;
 }
 
-.minimal::part(tab selected) {
+.minimal::part(selected) {
   border-bottom-color: #007bff;
 }
 

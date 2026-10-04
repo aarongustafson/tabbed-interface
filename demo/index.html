@@ -25,7 +25,7 @@
 				background-color: SelectedItem;
 			}
 
-			tabbed-interface.pills::part(tab selected),
+			tabbed-interface.pills::part(selected),
 			tabbed-interface.pills::part(tabpanel) {
 				background-color: Highlight;
 				color: HighlightText;
@@ -52,7 +52,7 @@
 				background: ButtonFace;
 			}
 
-			tabbed-interface.minimal::part(tab selected) {
+			tabbed-interface.minimal::part(selected) {
 				background: transparent;
 				color: LinkText;
 				border-bottom: 2px solid LinkText;
@@ -119,7 +119,8 @@
 			<h1>Tabbed Interface Web Component</h1>
 			<p>
 				A web component that transforms heading-structured content into
-				an accessible tabbed interface. See the
+				an accessible tabbed interface when the tabs fit, and readable
+				linear sections when they do not. See the
 				<a
 					href="../"
 					>README</a
@@ -341,8 +342,9 @@
 			<section>
 				<h2>Styling Variants</h2>
 				<p>
-					Style the component using CSS
-					<code>::part()</code> selectors for complete visual control.
+					Style authored panel content with ordinary CSS. Style the
+					component-owned controls and panel containers using
+					<code>::part()</code> selectors.
 				</p>
 				<div class="demo-section">
 					<h3>Pill-Style Tabs</h3>
@@ -367,7 +369,7 @@ tabbed-interface.pills::part(tab):hover {
   background-color: SelectedItem;
 }
 
-tabbed-interface.pills::part(tab selected),
+tabbed-interface.pills::part(selected),
 tabbed-interface.pills::part(tabpanel) {
   background-color: Highlight;
   color: HighlightText;
@@ -413,7 +415,7 @@ tabbed-interface.minimal::part(tab):hover {
   background: ButtonFace;
 }
 
-tabbed-interface.minimal::part(tab selected) {
+tabbed-interface.minimal::part(selected) {
   background: transparent;
   color: LinkText;
   border-bottom: 2px solid LinkText;
