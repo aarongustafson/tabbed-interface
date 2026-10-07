@@ -28,6 +28,7 @@
 	"types": "tabbed-interface.d.ts",
 	"exports": {
 		".": {
+			"types": "./tabbed-interface.d.ts",
 			"import": "./index.js"
 		},
 		"./tabbed-interface.js": {
@@ -49,7 +50,7 @@
 		"LICENSE"
 	],
 	"engines": {
-		"node": ">=20.0.0"
+		"node": ">=22.0.0"
 	},
 	"scripts": {
 		"test": "vitest",
