@@ -20,8 +20,6 @@ export declare class TabbedInterfaceElement extends HTMLElement {
 	last(): void;
 }
 
-export declare function defineTabbedInterface(tagName?: string): boolean;
-
 declare global {
 	interface HTMLElementTagNameMap {
 		'tabbed-interface': TabbedInterfaceElement;
