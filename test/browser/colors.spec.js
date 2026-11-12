@@ -392,6 +392,63 @@ for (const scheme of ['light', 'dark']) {
 		await probe.evaluate((element) => element.remove());
 	});
 
+	for (const example of ['live', 'copyable']) {
+		test(`${scheme}: ${example} selected pills retain their pair on hover and focus`, async ({
+			page,
+		}) => {
+			await page.emulateMedia({ colorScheme: scheme });
+			await page.setViewportSize({ width: 1400, height: 900 });
+			await page.goto('/demo/index.html');
+			const host = page.locator('tabbed-interface.pills');
+			await expect(host).toHaveAttribute('data-layout', 'tabs');
+			if (example === 'copyable') {
+				const css = await page
+					.locator('pre code')
+					.filter({
+						hasText: 'tabbed-interface.pills::part(tablist)',
+					})
+					.textContent();
+				await page.locator('head > style').evaluate((style, css) => {
+					style.textContent = css;
+				}, css);
+			}
+			await page.mouse.move(0, 0);
+			const selected = host.getByRole('tab', { selected: true });
+			const pair = await selected.evaluate((tab) => ({
+				color: getComputedStyle(tab).color,
+				background: getComputedStyle(tab).backgroundColor,
+			}));
+			const unselected = host
+				.getByRole('tab', { selected: false })
+				.first();
+			await expect(unselected).not.toHaveCSS(
+				'background-color',
+				pair.background,
+			);
+			await selected.focus();
+			await expect(selected).toHaveCSS('color', pair.color);
+			await expect(selected).toHaveCSS(
+				'background-color',
+				pair.background,
+			);
+			await selected.hover();
+			await expect(selected).toHaveCSS('color', pair.color);
+			await expect(selected).toHaveCSS(
+				'background-color',
+				pair.background,
+			);
+			await page.keyboard.press('ArrowRight');
+			await page.keyboard.press('Space');
+			await expect(selected).toBeFocused();
+			await selected.hover();
+			await expect(selected).toHaveCSS('color', pair.color);
+			await expect(selected).toHaveCSS(
+				'background-color',
+				pair.background,
+			);
+		});
+	}
+
 	test(`${scheme}: demo variants, controls and status surfaces keep readable pairs`, async ({
 		page,
 		browserName,

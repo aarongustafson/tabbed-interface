@@ -27,7 +27,8 @@
 				color: ButtonText;
 			}
 
-			tabbed-interface.pills::part(selected) {
+			tabbed-interface.pills::part(selected),
+			tabbed-interface.pills::part(selected):hover {
 				background-color: CanvasText;
 				color: Canvas;
 				border-color: CanvasText;
@@ -442,7 +443,8 @@ tabbed-interface.pills::part(tab):hover {
   color: ButtonText;
 }
 
-tabbed-interface.pills::part(selected) {
+tabbed-interface.pills::part(selected),
+tabbed-interface.pills::part(selected):hover {
   background-color: CanvasText;
   color: Canvas;
   border-color: CanvasText;
