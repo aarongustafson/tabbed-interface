@@ -131,15 +131,47 @@
 						{ "name": "--tabbed-interface-tablist-background" },
 						{ "name": "--tabbed-interface-tablist-border" },
 						{ "name": "--tabbed-interface-tab-padding" },
-						{ "name": "--tabbed-interface-tab-background" },
-						{ "name": "--tabbed-interface-tab-color" },
-						{ "name": "--tabbed-interface-tab-border" },
+						{
+							"name": "--tabbed-interface-tab-background",
+							"default": "ButtonFace",
+							"description": "Ordinary tab background; pair with --tabbed-interface-tab-color."
+						},
+						{
+							"name": "--tabbed-interface-tab-color",
+							"default": "ButtonText",
+							"description": "Ordinary tab foreground."
+						},
+						{
+							"name": "--tabbed-interface-tab-border",
+							"default": "1px solid currentColor",
+							"description": "Tab boundary. Selected tabs also have a metric-stable underline in forced colors, or when forced-colors media queries are unsupported."
+						},
 						{ "name": "--tabbed-interface-tab-border-radius" },
-						{ "name": "--tabbed-interface-tab-active-background" },
-						{ "name": "--tabbed-interface-tab-active-color" },
-						{ "name": "--tabbed-interface-tab-hover-background" },
-						{ "name": "--tabbed-interface-tab-hover-color" },
-						{ "name": "--tabbed-interface-tab-focus-outline" },
+						{
+							"name": "--tabbed-interface-tab-active-background",
+							"default": "Canvas",
+							"description": "Selected tab background; pair with --tabbed-interface-tab-active-color."
+						},
+						{
+							"name": "--tabbed-interface-tab-active-color",
+							"default": "CanvasText",
+							"description": "Selected tab foreground."
+						},
+						{
+							"name": "--tabbed-interface-tab-hover-background",
+							"default": "ButtonFace",
+							"description": "Hover/focus background; pair with --tabbed-interface-tab-hover-color."
+						},
+						{
+							"name": "--tabbed-interface-tab-hover-color",
+							"default": "ButtonText",
+							"description": "Hover/focus foreground, independent of the host foreground."
+						},
+						{
+							"name": "--tabbed-interface-tab-focus-outline",
+							"default": "revert",
+							"description": "Keyboard focus outline; uses browser-native focus unless overridden."
+						},
 						{ "name": "--tabbed-interface-tabpanel-padding" },
 						{ "name": "--tabbed-interface-tabpanel-background" },
 						{ "name": "--tabbed-interface-tabpanel-border" }

@@ -115,9 +115,7 @@ test('part selector variants style their selected tabs', async ({ page }) => {
 	);
 	expect(styles.minimal.selectedBorderBottomWidth).toBe('2px');
 	expect(styles.minimal.unselectedBorderBottomWidth).toBe('0px');
-	expect(styles.minimal.selectedColor).not.toBe(
-		styles.minimal.unselectedColor,
-	);
+	expect(styles.minimal.selectedColor).toBe(styles.minimal.unselectedColor);
 });
 
 test('interactive demos respond to user actions', async ({ page }) => {

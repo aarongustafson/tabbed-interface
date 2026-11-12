@@ -19,31 +19,78 @@
 		</style>
 	</head>
 	<body>
-		<h1>esm.sh CDN sanity check</h1>
-		<p>
-			This page loads the component class from <code>esm.sh</code> and
-			registers it manually.
-		</p>
-
-		<tabbed-interface>
-			<h2>Overview</h2>
+		<header>
+			<h1>tabbed-interface via esm.sh</h1>
 			<p>
-				Tabbed interfaces help organize related content into panels that
-				users can switch between.
+				This page loads the component class from <code>esm.sh</code> and
+				registers it manually.
 			</p>
-
-			<h2>Details</h2>
 			<p>
-				Each tab controls visibility for its associated panel and
-				supports keyboard navigation and ARIA attributes.
+				See the <a href="../README.md">README</a> for installation and
+				API documentation.
 			</p>
+		</header>
+		<main>
+			<section class="demo-section">
+				<h2>Class-only import</h2>
+				<p>
+					Importing the class does not register it. Register once to
+					enhance the original sections.
+				</p>
+				<div class="code-demo-pair">
+					<pre><code>import { TabbedInterfaceElement } from
+  'https://esm.sh/@aarongustafson/tabbed-interface@3.0.1/tabbed-interface.js?bundle&amp;target=es2022';
+customElements.define('tabbed-interface', TabbedInterfaceElement);
 
-			<h2>Usage</h2>
+&lt;tabbed-interface&gt;
+  &lt;h2&gt;Overview&lt;/h2&gt;
+  &lt;p&gt;Related content.&lt;/p&gt;
+  &lt;h2&gt;Details&lt;/h2&gt;
+  &lt;p&gt;More content.&lt;/p&gt;
+  &lt;h2&gt;Usage&lt;/h2&gt;
+  &lt;p&gt;Wrap headings and their content.&lt;/p&gt;
+&lt;/tabbed-interface&gt;</code></pre>
+					<div class="demo">
+						<tabbed-interface>
+							<h2>Overview</h2>
+							<p>
+								Tabbed interfaces help organize related content
+								into panels that users can switch between.
+							</p>
+
+							<h2>Details</h2>
+							<p>
+								Each tab controls visibility for its associated
+								panel and supports keyboard navigation and ARIA
+								attributes.
+							</p>
+
+							<h2>Usage</h2>
+							<p>
+								Wrap headings and their related content inside
+								<code>&lt;tabbed-interface&gt;</code> to enhance
+								the layout.
+							</p>
+						</tabbed-interface>
+					</div>
+				</div>
+			</section>
 			<p>
-				Wrap headings and their related content inside
-				<code>&lt;tabbed-interface&gt;</code> to enhance the layout.
+				Without JavaScript or if the module cannot load, all authored
+				sections remain readable. Narrow layouts also show every section
+				without tab controls.
 			</p>
-		</tabbed-interface>
+		</main>
+		<footer>
+			<p>
+				Made with ❤️ by
+				<a href="https://github.com/aarongustafson">Aaron Gustafson</a>.
+				View the source on
+				<a href="https://github.com/aarongustafson/tabbed-interface"
+					>GitHub</a
+				>.
+			</p>
+		</footer>
 
 		<script type="module">
 			import { TabbedInterfaceElement } from 'https://esm.sh/@aarongustafson/tabbed-interface@3.0.1/tabbed-interface.js?bundle&target=es2022';

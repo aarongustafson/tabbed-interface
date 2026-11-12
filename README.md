@@ -3,7 +3,13 @@
 [![npm version](https://img.shields.io/npm/v/@aarongustafson/tabbed-interface.svg)](https://www.npmjs.com/package/@aarongustafson/tabbed-interface)
 [![Build Status](https://img.shields.io/github/actions/workflow/status/aarongustafson/tabbed-interface/ci.yml?branch=main)](https://github.com/aarongustafson/tabbed-interface/actions)
 
-A web component that transforms heading-structured content into an accessible tabbed interface. This is a modern web component port of Aaron Gustafson's original [TabInterface](https://github.com/easy-designs/TabInterface.js).
+A web component that turns heading-structured content into tabs with keyboard
+navigation and named panels. When the tabs do not fit, it shows the original
+sections in reading order. Without JavaScript, or if the module fails to load,
+the authored headings and content remain readable.
+
+This is a web component port of Aaron Gustafson’s original
+[TabInterface](https://github.com/easy-designs/TabInterface.js).
 
 ## Demo
 
@@ -57,6 +63,7 @@ npm install @aarongustafson/tabbed-interface
 ### Import Options
 
 **Auto-define (browser environments only):**
+
 ```javascript
 import '@aarongustafson/tabbed-interface/define.js';
 // Registers <tabbed-interface> when customElements is available
@@ -71,6 +78,7 @@ defineTabbedInterface();
 ```
 
 **Manual registration:**
+
 ```javascript
 import { TabbedInterfaceElement } from '@aarongustafson/tabbed-interface';
 customElements.define('my-tabs', TabbedInterfaceElement);
@@ -78,31 +86,25 @@ customElements.define('my-tabs', TabbedInterfaceElement);
 
 ## Attributes
 
-| Attribute | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `show-headers` | boolean | `false` | When present, shows headings in tab panels |
-| `tablist-after` | boolean | `false` | When present, positions tab list after content |
-| `default-tab` | string | `"0"` | Initial active tab (index or heading ID) |
+| Attribute       | Type    | Default | Description                                                                    |
+| --------------- | ------- | ------- | ------------------------------------------------------------------------------ |
+| `show-headers`  | boolean | `false` | When present, shows headings in tab panels                                     |
+| `tablist-after` | boolean | `false` | When present, positions tab list after content                                 |
+| `default-tab`   | string  | `"0"`   | Initial active tab (index or heading ID)                                       |
 | `auto-activate` | boolean | `false` | When present, tabs activate on focus; when absent, use Enter/Space to activate |
-| `fixed-tabs` | boolean | `false` | When present, keeps tabs active even when the complete tablist does not fit |
+| `fixed-tabs`    | boolean | `false` | When present, keeps tabs active even when the complete tablist does not fit    |
 
 ### Examples
 
 ```html
 <!-- Show headings in panels -->
-<tabbed-interface show-headers>
-  ...
-</tabbed-interface>
+<tabbed-interface show-headers> ... </tabbed-interface>
 
 <!-- Tabs after content -->
-<tabbed-interface tablist-after>
-  ...
-</tabbed-interface>
+<tabbed-interface tablist-after> ... </tabbed-interface>
 
 <!-- Start on specific tab -->
-<tabbed-interface default-tab="2">
-  ...
-</tabbed-interface>
+<tabbed-interface default-tab="2"> ... </tabbed-interface>
 
 <!-- Start on tab by heading ID -->
 <tabbed-interface default-tab="features">
@@ -113,14 +115,10 @@ customElements.define('my-tabs', TabbedInterfaceElement);
 </tabbed-interface>
 
 <!-- Auto-activation (tabs activate on focus) -->
-<tabbed-interface auto-activate>
-  ...
-</tabbed-interface>
+<tabbed-interface auto-activate> ... </tabbed-interface>
 
 <!-- Always use tabs; the implementor handles any overflow -->
-<tabbed-interface fixed-tabs>
-  ...
-</tabbed-interface>
+<tabbed-interface fixed-tabs> ... </tabbed-interface>
 ```
 
 ## Responsive Behavior
@@ -134,29 +132,29 @@ Use `fixed-tabs` only when you want tabs at every available width and will handl
 The current presentation is reflected as `data-layout="tabs"` or `data-layout="linear"` on the component for state-specific styling:
 
 ```css
-tabbed-interface[data-layout="linear"] {
+tabbed-interface[data-layout='linear'] {
   margin-block: 2rem;
 }
 ```
 
 ## Properties
 
-| Property | Type | Description |
-|----------|------|-------------|
-| `activeIndex` | number | Get/set the currently active tab index |
-| `showHeaders` | boolean | Get/set header visibility |
-| `tablistAfter` | boolean | Get/set tablist position |
-| `autoActivate` | boolean | Get/set auto-activation behavior |
-| `fixedTabs` | boolean | Get/set whether tabs remain active when they do not fit |
+| Property       | Type    | Description                                             |
+| -------------- | ------- | ------------------------------------------------------- |
+| `activeIndex`  | number  | Get/set the currently active tab index                  |
+| `showHeaders`  | boolean | Get/set header visibility                               |
+| `tablistAfter` | boolean | Get/set tablist position                                |
+| `autoActivate` | boolean | Get/set auto-activation behavior                        |
+| `fixedTabs`    | boolean | Get/set whether tabs remain active when they do not fit |
 
 ## Methods
 
-| Method | Description |
-|--------|-------------|
-| `next()` | Navigate to the next tab |
+| Method       | Description                  |
+| ------------ | ---------------------------- |
+| `next()`     | Navigate to the next tab     |
 | `previous()` | Navigate to the previous tab |
-| `first()` | Navigate to the first tab |
-| `last()` | Navigate to the last tab |
+| `first()`    | Navigate to the first tab    |
+| `last()`     | Navigate to the last tab     |
 
 ### Programmatic Control
 
@@ -175,12 +173,13 @@ $tabs.activeIndex = 2;
 
 ## Events
 
-| Event | Detail | Description |
-|-------|--------|-------------|
+| Event                     | Detail                            | Description                   |
+| ------------------------- | --------------------------------- | ----------------------------- |
 | `tabbed-interface:change` | `{ tabId, tabpanelId, tabIndex }` | Fired when active tab changes |
 
 ```javascript
-document.querySelector('tabbed-interface')
+document
+  .querySelector('tabbed-interface')
   .addEventListener('tabbed-interface:change', (e) => {
     console.log(`Switched to tab ${e.detail.tabIndex}`);
   });
@@ -188,13 +187,13 @@ document.querySelector('tabbed-interface')
 
 ## Keyboard Navigation
 
-| Key | Action |
-|-----|--------|
-| `Arrow Left/Up` | Previous tab |
-| `Arrow Right/Down` | Next tab |
-| `Home` | First tab |
-| `End` | Last tab |
-| `Enter/Space` | Activate tab (when auto-activate is absent) and focus first focusable element in panel |
+| Key                | Action                                                                                 |
+| ------------------ | -------------------------------------------------------------------------------------- |
+| `Arrow Left/Up`    | Previous tab                                                                           |
+| `Arrow Right/Down` | Next tab                                                                               |
+| `Home`             | First tab                                                                              |
+| `End`              | Last tab                                                                               |
+| `Enter/Space`      | Activate tab (when auto-activate is absent) and focus first focusable element in panel |
 
 ## Styling
 
@@ -221,16 +220,43 @@ Style the component's shadow DOM elements using CSS `::part()` selectors:
 
 ### Available Parts
 
-| Part | Description |
-|------|-------------|
-| `tablist` | The container for all tabs |
-| `tab` | Individual tab buttons |
-| `selected` | The currently selected tab |
+| Part       | Description                     |
+| ---------- | ------------------------------- |
+| `tablist`  | The container for all tabs      |
+| `tab`      | Individual tab buttons          |
+| `selected` | The currently selected tab      |
 | `tabpanel` | Individual tab panel containers |
 
 ### Styling Examples
 
+Defaults use `ButtonText` on `ButtonFace` for ordinary and hovered/focused tabs,
+and `CanvasText` on `Canvas` for the selected tab. In forced colors, selection
+also has a two-pixel underline so it remains distinguishable when user colors
+flatten the surfaces. The underline is off in ordinary light/dark mode and
+does not change the tab’s measured size. Browsers without `forced-colors`
+media-query support retain the underline as a fallback.
+
+Keyboard focus uses the browser’s native outline unless you set
+`--tabbed-interface-tab-focus-outline` or a `::part(tab):focus-visible` rule.
+Selection and focus are separate: with manual activation, an arrow key can
+focus an unselected tab without changing selection or, in forced colors,
+moving the selected underline.
+
+Pair every custom background with a readable foreground, including hover/focus
+and selected states. Panels are transparent and inherit their host foreground
+by default; if you paint a panel, set its foreground with `::part(tabpanel)`.
+Keep automatic forced-color adjustment enabled, and check your actual
+surfaces, keyboard focus, and reading order. System-color pairs and automated
+checks do not guarantee contrast for every browser or user palette.
+
+**Migration:** hover/focus text previously inherited the host foreground.
+It now defaults to `ButtonText`. If your theme overrides a hover/focus fill,
+set `--tabbed-interface-tab-hover-color` too. Existing color hooks and parts
+remain supported. To replace the forced-color selected underline, provide an
+equally clear non-color selected cue through `::part(selected)`.
+
 **Basic styling:**
+
 ```css
 tabbed-interface::part(tablist) {
   gap: 4px;
@@ -241,39 +267,45 @@ tabbed-interface::part(tablist) {
 tabbed-interface::part(tab) {
   padding: 0.75em 1.5em;
   background: white;
-  border: 1px solid #ccc;
+  color: #202020;
+  border: 1px solid #202020;
   border-radius: 4px 4px 0 0;
   font-weight: 500;
 }
 
 tabbed-interface::part(tab):hover {
   background: #e9e9e9;
+  color: #202020;
 }
 
 tabbed-interface::part(tabpanel) {
   padding: 2em;
-  border: 1px solid #ccc;
+  border: 1px solid #202020;
   background: white;
+  color: #202020;
 }
 ```
 
 **Targeting specific states:**
+
 ```css
 /* Active tab */
 tabbed-interface::part(selected) {
   background: white;
+  color: #202020;
   border-bottom-color: white;
   font-weight: bold;
 }
 
 /* Focus styles */
 tabbed-interface::part(tab):focus-visible {
-  outline: 3px solid blue;
+  outline: 3px solid currentColor;
   outline-offset: 2px;
 }
 ```
 
 **Themed variations:**
+
 ```css
 /* Pills style */
 .pills::part(tablist) {
@@ -283,12 +315,15 @@ tabbed-interface::part(tab):focus-visible {
 
 .pills::part(tab) {
   border-radius: 20px;
-  background: #e0e0e0;
+  background: ButtonFace;
+  color: ButtonText;
+  border: 1px solid ButtonText;
 }
 
 .pills::part(selected) {
-  background: #007bff;
-  color: white;
+  background: CanvasText;
+  color: Canvas;
+  border-color: CanvasText;
 }
 
 /* Minimal style */
@@ -296,11 +331,14 @@ tabbed-interface::part(tab):focus-visible {
   border: none;
   border-bottom: 2px solid transparent;
   border-radius: 0;
-  background: transparent;
+  background: Canvas;
+  color: CanvasText;
 }
 
 .minimal::part(selected) {
-  border-bottom-color: #007bff;
+  background: Canvas;
+  color: CanvasText;
+  border-bottom-color: CanvasText;
 }
 
 .minimal::part(tabpanel) {
@@ -315,28 +353,28 @@ The responsive measurement probe receives the same parts and inherited styles as
 
 CSS custom properties offer convenient theme-level control without replacing parts:
 
-| Property | Purpose |
-|----------|---------|
-| `--tabbed-interface-font-family` | Component font family |
-| `--tabbed-interface-tablist-display` | Tablist display mode |
-| `--tabbed-interface-tablist-gap` | Gap between tabs |
-| `--tabbed-interface-tablist-padding` | Tablist padding |
-| `--tabbed-interface-tablist-margin` | Tablist margin |
-| `--tabbed-interface-tablist-background` | Tablist background |
-| `--tabbed-interface-tablist-border` | Tablist border |
-| `--tabbed-interface-tab-padding` | Tab padding |
-| `--tabbed-interface-tab-background` | Default tab background |
-| `--tabbed-interface-tab-color` | Default tab text color |
-| `--tabbed-interface-tab-border` | Tab border |
-| `--tabbed-interface-tab-border-radius` | Tab border radius |
-| `--tabbed-interface-tab-active-background` | Selected tab background |
-| `--tabbed-interface-tab-active-color` | Selected tab text color |
-| `--tabbed-interface-tab-hover-background` | Hover/focus background |
-| `--tabbed-interface-tab-hover-color` | Hover/focus text color |
-| `--tabbed-interface-tab-focus-outline` | Keyboard focus outline |
-| `--tabbed-interface-tabpanel-padding` | Panel padding |
-| `--tabbed-interface-tabpanel-background` | Panel background |
-| `--tabbed-interface-tabpanel-border` | Panel border |
+| Property                                   | Purpose                                              |
+| ------------------------------------------ | ---------------------------------------------------- |
+| `--tabbed-interface-font-family`           | Component font family                                |
+| `--tabbed-interface-tablist-display`       | Tablist display mode                                 |
+| `--tabbed-interface-tablist-gap`           | Gap between tabs                                     |
+| `--tabbed-interface-tablist-padding`       | Tablist padding                                      |
+| `--tabbed-interface-tablist-margin`        | Tablist margin                                       |
+| `--tabbed-interface-tablist-background`    | Tablist background                                   |
+| `--tabbed-interface-tablist-border`        | Tablist border                                       |
+| `--tabbed-interface-tab-padding`           | Tab padding                                          |
+| `--tabbed-interface-tab-background`        | Default tab background (`ButtonFace`)                |
+| `--tabbed-interface-tab-color`             | Default tab text color (`ButtonText`)                |
+| `--tabbed-interface-tab-border`            | Tab border (`1px solid currentColor`)                |
+| `--tabbed-interface-tab-border-radius`     | Tab border radius                                    |
+| `--tabbed-interface-tab-active-background` | Selected tab background (`Canvas`)                   |
+| `--tabbed-interface-tab-active-color`      | Selected tab text color (`CanvasText`)               |
+| `--tabbed-interface-tab-hover-background`  | Hover/focus background (`ButtonFace`)                |
+| `--tabbed-interface-tab-hover-color`       | Hover/focus text color (`ButtonText`)                |
+| `--tabbed-interface-tab-focus-outline`     | Keyboard focus outline (browser-native via `revert`) |
+| `--tabbed-interface-tabpanel-padding`      | Panel padding                                        |
+| `--tabbed-interface-tabpanel-background`   | Panel background                                     |
+| `--tabbed-interface-tabpanel-border`       | Panel border                                         |
 
 ## Printing
 
@@ -371,6 +409,7 @@ The component supports URL hash navigation. Link to specific tabs:
 ## Browser Support
 
 Works in all modern browsers supporting:
+
 - Custom Elements v1
 - Shadow DOM v1
 - ES Modules
