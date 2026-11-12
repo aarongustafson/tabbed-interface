@@ -4,7 +4,8 @@ export interface TabbedInterfaceChangeDetail {
 	tabIndex: number;
 }
 
-export type TabbedInterfaceChangeEvent = CustomEvent<TabbedInterfaceChangeDetail>;
+export type TabbedInterfaceChangeEvent =
+	CustomEvent<TabbedInterfaceChangeDetail>;
 
 export declare class TabbedInterfaceElement extends HTMLElement {
 	activeIndex: number;

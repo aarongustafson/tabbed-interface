@@ -19,15 +19,15 @@
  * @cssprop --tabbed-interface-tablist-background - Background color for tablist
  * @cssprop --tabbed-interface-tablist-border - Border for tablist
  * @cssprop --tabbed-interface-tab-padding - Padding for tabs (default: 0.5em 1em)
- * @cssprop --tabbed-interface-tab-background - Background color for tabs
- * @cssprop --tabbed-interface-tab-color - Text color for tabs
- * @cssprop --tabbed-interface-tab-border - Border for tabs
+ * @cssprop --tabbed-interface-tab-background - Background color for tabs (default: ButtonFace)
+ * @cssprop --tabbed-interface-tab-color - Text color for tabs (default: ButtonText)
+ * @cssprop --tabbed-interface-tab-border - Border for tabs (default: 1px solid currentColor)
  * @cssprop --tabbed-interface-tab-border-radius - Border radius for tabs
- * @cssprop --tabbed-interface-tab-active-background - Background color for active tab
- * @cssprop --tabbed-interface-tab-active-color - Text color for active tab
- * @cssprop --tabbed-interface-tab-hover-background - Background color for hovered tab
- * @cssprop --tabbed-interface-tab-hover-color - Text color for hovered tab
- * @cssprop --tabbed-interface-tab-focus-outline - Focus outline for tabs
+ * @cssprop --tabbed-interface-tab-active-background - Background color for active tab (default: Canvas)
+ * @cssprop --tabbed-interface-tab-active-color - Text color for active tab (default: CanvasText)
+ * @cssprop --tabbed-interface-tab-hover-background - Hover/focus background (default: ButtonFace)
+ * @cssprop --tabbed-interface-tab-hover-color - Hover/focus foreground (default: ButtonText)
+ * @cssprop --tabbed-interface-tab-focus-outline - Keyboard focus outline (default: revert, browser-native)
  * @cssprop --tabbed-interface-tabpanel-padding - Padding for tab panels
  * @cssprop --tabbed-interface-tabpanel-background - Background color for tab panels
  * @cssprop --tabbed-interface-tabpanel-border - Border for tab panels
@@ -356,7 +356,7 @@ export class TabbedInterfaceElement extends HTMLElement {
 					padding: var(--tabbed-interface-tab-padding, 0.5em 1em);
 					background-color: var(--tabbed-interface-tab-background, ButtonFace);
 					color: var(--tabbed-interface-tab-color, ButtonText);
-					border: var(--tabbed-interface-tab-border, 1px solid ButtonBorder);
+					border: var(--tabbed-interface-tab-border, 1px solid currentColor);
 					border-radius: var(--tabbed-interface-tab-border-radius, 0);
 					border-start-start-radius: 3px;
 					border-start-end-radius: 3px;
@@ -369,11 +369,11 @@ export class TabbedInterfaceElement extends HTMLElement {
 				[data-tab]:hover,
 				[data-tab]:focus {
 					background: var(--tabbed-interface-tab-hover-background, ButtonFace);
-					color: var(--tabbed-interface-tab-hover-color, inherit);
+					color: var(--tabbed-interface-tab-hover-color, ButtonText);
 				}
 
 				[data-tab]:focus-visible {
-					outline: var(--tabbed-interface-tab-focus-outline, 2px solid AccentColor);
+					outline: var(--tabbed-interface-tab-focus-outline, revert);
 					outline-offset: 1px;
 				}
 
@@ -381,6 +381,9 @@ export class TabbedInterfaceElement extends HTMLElement {
 					background: var(--tabbed-interface-tab-active-background, Canvas);
 					border-block-end-color: Canvas;
 					color: var(--tabbed-interface-tab-active-color, CanvasText);
+					text-decoration: underline;
+					text-decoration-thickness: 2px;
+					text-underline-offset: 0.2em;
 				}
 
 				:host([tablist-after]) [data-tab] {
@@ -392,7 +395,7 @@ export class TabbedInterfaceElement extends HTMLElement {
 
 				:host([tablist-after]) [data-tab][aria-selected="true"] {
 					border-block-start-color: Canvas;
-					border-block-end-color: ButtonBorder;
+					border-block-end-color: currentColor;
 				}
 
 				[data-panel] {
