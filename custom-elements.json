@@ -144,7 +144,7 @@
 						{
 							"name": "--tabbed-interface-tab-border",
 							"default": "1px solid currentColor",
-							"description": "Tab boundary. Selected tabs also have a metric-stable underline."
+							"description": "Tab boundary. Selected tabs also have a metric-stable underline in forced colors, or when forced-colors media queries are unsupported."
 						},
 						{ "name": "--tabbed-interface-tab-border-radius" },
 						{

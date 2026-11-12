@@ -160,17 +160,35 @@ test('hover uses a complete control pair instead of inheriting the host foregrou
 	expect((await measurements(tab)).text).toBeGreaterThanOrEqual(4.5);
 });
 
-test('selected cues are metric-stable, native focus remains available, and focus hooks work', async ({
+for (const scheme of ['light', 'dark']) {
+	test(`${scheme}: selected tabs omit the forced-color underline`, async ({
+		page,
+	}) => {
+		await page.emulateMedia({ colorScheme: scheme, forcedColors: 'none' });
+		const host = await fixture(page);
+		await expect(host.getByRole('tab', { selected: true })).toHaveCSS(
+			'text-decoration-line',
+			'none',
+		);
+		await host.getByRole('tab').nth(1).click();
+		await expect(host.getByRole('tab', { selected: true })).toHaveCSS(
+			'text-decoration-line',
+			'none',
+		);
+	});
+}
+
+test('selection is metric-stable, native focus remains available, and focus hooks work', async ({
 	page,
 }) => {
 	const host = await fixture(page);
 	const tabs = host.getByRole('tab');
 	const first = tabs.first();
-	await expect(first).toHaveCSS('text-decoration-line', 'underline');
+	await expect(first).toHaveCSS('text-decoration-line', 'none');
 	const before = await first.boundingBox();
 	await tabs.nth(1).click();
 	await expect(first).toHaveCSS('text-decoration-line', 'none');
-	await expect(tabs.nth(1)).toHaveCSS('text-decoration-line', 'underline');
+	await expect(tabs.nth(1)).toHaveCSS('text-decoration-line', 'none');
 	const after = await first.boundingBox();
 	expect(after.width).toBe(before.width);
 	expect(after.height).toBe(before.height);
@@ -442,7 +460,7 @@ for (const scheme of ['light', 'dark']) {
 			}
 			await expect(host.getByRole('tab', { selected: true })).toHaveCSS(
 				'text-decoration-line',
-				'underline',
+				'none',
 			);
 			expect(
 				(await measurements(host.getByRole('tabpanel'))).text,

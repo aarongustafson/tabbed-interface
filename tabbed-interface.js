@@ -386,6 +386,12 @@ export class TabbedInterfaceElement extends HTMLElement {
 					text-underline-offset: 0.2em;
 				}
 
+				@media (forced-colors: none) {
+					[data-tab][aria-selected="true"] {
+						text-decoration: none;
+					}
+				}
+
 				:host([tablist-after]) [data-tab] {
 					border-start-start-radius: 0;
 					border-start-end-radius: 0;

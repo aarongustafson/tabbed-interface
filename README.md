@@ -230,14 +230,17 @@ Style the component's shadow DOM elements using CSS `::part()` selectors:
 ### Styling Examples
 
 Defaults use `ButtonText` on `ButtonFace` for ordinary and hovered/focused tabs,
-and `CanvasText` on `Canvas` for the selected tab. Selection also has a
-two-pixel underline, so it remains distinguishable when user colors flatten
-the surfaces. The underline does not change the tab’s measured size.
+and `CanvasText` on `Canvas` for the selected tab. In forced colors, selection
+also has a two-pixel underline so it remains distinguishable when user colors
+flatten the surfaces. The underline is off in ordinary light/dark mode and
+does not change the tab’s measured size. Browsers without `forced-colors`
+media-query support retain the underline as a fallback.
 
 Keyboard focus uses the browser’s native outline unless you set
 `--tabbed-interface-tab-focus-outline` or a `::part(tab):focus-visible` rule.
 Selection and focus are separate: with manual activation, an arrow key can
-focus an unselected tab without moving the selected underline.
+focus an unselected tab without changing selection or, in forced colors,
+moving the selected underline.
 
 Pair every custom background with a readable foreground, including hover/focus
 and selected states. Panels are transparent and inherit their host foreground
@@ -249,8 +252,8 @@ checks do not guarantee contrast for every browser or user palette.
 **Migration:** hover/focus text previously inherited the host foreground.
 It now defaults to `ButtonText`. If your theme overrides a hover/focus fill,
 set `--tabbed-interface-tab-hover-color` too. Existing color hooks and parts
-remain supported. To replace the selected underline, provide an equally clear
-non-color selected cue through `::part(selected)`.
+remain supported. To replace the forced-color selected underline, provide an
+equally clear non-color selected cue through `::part(selected)`.
 
 **Basic styling:**
 
