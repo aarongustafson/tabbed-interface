@@ -1,7 +1,10 @@
 # Tabbed Interface Web Component
 
 [![npm version](https://img.shields.io/npm/v/@aarongustafson/tabbed-interface.svg)](https://www.npmjs.com/package/@aarongustafson/tabbed-interface)
-[![Build Status](https://img.shields.io/github/actions/workflow/status/aarongustafson/tabbed-interface/ci.yml?branch=main)](https://github.com/aarongustafson/tabbed-interface/actions)
+[![CI status](https://img.shields.io/github/actions/workflow/status/aarongustafson/tabbed-interface/ci.yml?branch=main&label=CI)](https://github.com/aarongustafson/tabbed-interface/actions/workflows/ci.yml)
+[![Minified + gzipped size](https://img.shields.io/bundlejs/size/@aarongustafson/tabbed-interface?format=minzip&label=min%2Bgzip)](https://bundlejs.com/?q=@aarongustafson/tabbed-interface)
+[![License](https://img.shields.io/npm/l/@aarongustafson/tabbed-interface)](https://github.com/aarongustafson/tabbed-interface/blob/main/LICENSE)
+[![Type definitions](https://img.shields.io/npm/types/@aarongustafson/tabbed-interface)](https://github.com/aarongustafson/tabbed-interface/blob/main/tabbed-interface.d.ts)
 
 A web component that turns heading-structured content into tabs with keyboard
 navigation and named panels. When the tabs do not fit, it shows the original
