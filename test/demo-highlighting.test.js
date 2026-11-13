@@ -73,6 +73,7 @@ it('marks each component tag, API attribute, import, and registration without ne
 			new RegExp(`<\\/?${component}\\b[^>]*>`, 'g'),
 			new RegExp(`['"]${component}:[\\w-]+['"]`, 'g'),
 			/\bevent\.detail\b/g,
+			/\b(?:next|previous|first|last)\(\)|\bactiveIndex = \d+/g,
 			/\bimport\s+(?!map)[^;]+;/g,
 			/\b(?:customElements\.define|define[A-Z]\w*)\([^;]+;/g,
 			/\bdata-(?:tab-short-name|sort-value|sort-as|table-sort-group)(?:="[^"]*")?/g,
