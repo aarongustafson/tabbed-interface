@@ -183,7 +183,7 @@
 								<h3>Installation</h3>
 								<pre><code>npm install @aarongustafson/tabbed-interface</code></pre>
 								<p>Then import in your JavaScript:</p>
-								<pre><code>import '@aarongustafson/tabbed-interface/define.js';</code></pre>
+								<pre><code><mark>import '@aarongustafson/tabbed-interface/define.js';</mark></code></pre>
 							</tabbed-interface>
 						</div>
 					</div>
@@ -208,13 +208,13 @@
 						accessibility.
 					</p>
 					<div class="code-demo-pair">
-						<pre><code>&lt;tabbed-interface <mark>auto-activate</mark>&gt;
+						<pre><code><mark>&lt;tabbed-interface auto-activate&gt;</mark>
   &lt;h3&gt;Tab One&lt;/h3&gt;
   &lt;p&gt;Content here.&lt;/p&gt;
 
   &lt;h3&gt;Tab Two&lt;/h3&gt;
   &lt;p&gt;More content.&lt;/p&gt;
-&lt;/tabbed-interface&gt;</code></pre>
+<mark>&lt;/tabbed-interface&gt;</mark></code></pre>
 						<div class="demo">
 							<div class="note">
 								<strong>Try it:</strong> Use arrow keys to focus
@@ -251,13 +251,13 @@
 						in tab panels.
 					</p>
 					<div class="code-demo-pair">
-						<pre><code>&lt;tabbed-interface <mark>show-headers</mark>&gt;
+						<pre><code><mark>&lt;tabbed-interface show-headers&gt;</mark>
   &lt;h3&gt;Overview&lt;/h3&gt;
   &lt;p&gt;Content here.&lt;/p&gt;
 
   &lt;h3&gt;Details&lt;/h3&gt;
   &lt;p&gt;More content.&lt;/p&gt;
-&lt;/tabbed-interface&gt;</code></pre>
+<mark>&lt;/tabbed-interface&gt;</mark></code></pre>
 						<div class="demo">
 							<tabbed-interface show-headers>
 								<h3>Overview</h3>
@@ -283,13 +283,13 @@
 						content.
 					</p>
 					<div class="code-demo-pair">
-						<pre><code>&lt;tabbed-interface <mark>tablist-after</mark>&gt;
+						<pre><code><mark>&lt;tabbed-interface tablist-after&gt;</mark>
   &lt;h3&gt;First&lt;/h3&gt;
   &lt;p&gt;Content appears above tabs.&lt;/p&gt;
 
   &lt;h3&gt;Second&lt;/h3&gt;
   &lt;p&gt;More content.&lt;/p&gt;
-&lt;/tabbed-interface&gt;</code></pre>
+<mark>&lt;/tabbed-interface&gt;</mark></code></pre>
 						<div class="demo">
 							<tabbed-interface tablist-after>
 								<h3>First Section</h3>
@@ -315,7 +315,7 @@
 						initially (by index or heading ID).
 					</p>
 					<div class="code-demo-pair">
-						<pre><code>&lt;tabbed-interface <mark>default-tab="1"</mark>&gt;
+						<pre><code><mark>&lt;tabbed-interface default-tab="1"&gt;</mark>
   &lt;h3&gt;Tab 0&lt;/h3&gt;
   &lt;p&gt;First tab.&lt;/p&gt;
 
@@ -324,7 +324,7 @@
 
   &lt;h3&gt;Tab 2&lt;/h3&gt;
   &lt;p&gt;Third tab.&lt;/p&gt;
-&lt;/tabbed-interface&gt;</code></pre>
+<mark>&lt;/tabbed-interface&gt;</mark></code></pre>
 						<div class="demo">
 							<tabbed-interface default-tab="1">
 								<h3>Tab 0</h3>
@@ -356,7 +356,7 @@
 				<div class="demo-section">
 					<h3>Long Tab Titles</h3>
 					<div class="code-demo-pair responsive-demo-pair">
-						<pre><code>&lt;tabbed-interface&gt;
+						<pre><code><mark>&lt;tabbed-interface&gt;</mark>
   &lt;h3&gt;Understanding Progressive Enhancement&lt;/h3&gt;
   &lt;p&gt;Content here.&lt;/p&gt;
 
@@ -368,7 +368,7 @@
 
   &lt;h3&gt;Testing Responsive Behavior Across Browsers&lt;/h3&gt;
   &lt;p&gt;More content.&lt;/p&gt;
-&lt;/tabbed-interface&gt;</code></pre>
+<mark>&lt;/tabbed-interface&gt;</mark></code></pre>
 						<div class="demo">
 							<tabbed-interface id="responsive-layout-demo">
 								<h3>Understanding Progressive Enhancement</h3>
@@ -544,7 +544,7 @@ tabbed-interface.minimal::part(tabpanel) {
 						<code>aria-label</code> for screen readers.
 					</p>
 					<div class="code-demo-pair">
-						<pre><code>&lt;tabbed-interface&gt;
+						<pre><code><mark>&lt;tabbed-interface&gt;</mark>
   &lt;h3 <mark>data-tab-short-name="Short"</mark>&gt;
     Very Long Section Title
   &lt;/h3&gt;
@@ -554,7 +554,7 @@ tabbed-interface.minimal::part(tabpanel) {
     Plain Heading
   &lt;/h3&gt;
   &lt;p&gt;More content.&lt;/p&gt;
-&lt;/tabbed-interface&gt;</code></pre>
+<mark>&lt;/tabbed-interface&gt;</mark></code></pre>
 						<div class="demo">
 							<tabbed-interface>
 								<h3 data-tab-short-name="Short">
@@ -595,7 +595,7 @@ tabbed-interface.minimal::part(tabpanel) {
   .addEventListener(
     <mark>'tabbed-interface:change'</mark>,
     (event) =&gt; {
-      console.log(event.detail);
+      console.log(<mark>event.detail</mark>);
     }
   );</code></pre>
 						<div class="demo">
@@ -721,13 +721,13 @@ tabs.<mark>activeIndex = 2</mark>;</code></pre>
   Go to Features
 &lt;/a&gt;
 
-&lt;tabbed-interface&gt;
+<mark>&lt;tabbed-interface&gt;</mark>
   &lt;h3 <mark>id="intro"</mark>&gt;Introduction&lt;/h3&gt;
   &lt;p&gt;Content...&lt;/p&gt;
 
   &lt;h3 <mark>id="features"</mark>&gt;Features&lt;/h3&gt;
   &lt;p&gt;Content...&lt;/p&gt;
-&lt;/tabbed-interface&gt;</code></pre>
+<mark>&lt;/tabbed-interface&gt;</mark></code></pre>
 						<div class="demo">
 							<p>
 								<a href="#hash-start">Jump to Start</a> |
