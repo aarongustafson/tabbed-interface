@@ -425,12 +425,12 @@
 						<code>::part()</code> selectors.
 					</p>
 					<div class="code-demo-pair">
-						<pre><code>tabbed-interface.pills::part(tablist) {
+						<pre><code><mark>tabbed-interface.pills::part(tablist)</mark> {
   gap: 8px;
   margin: 0 0 1em 0;
 }
 
-tabbed-interface.pills::part(tab) {
+<mark>tabbed-interface.pills::part(tab)</mark> {
   background-color: ButtonFace;
   color: ButtonText;
   border: 1px solid ButtonText;
@@ -438,19 +438,19 @@ tabbed-interface.pills::part(tab) {
   padding: 0.5em 1.5em;
 }
 
-tabbed-interface.pills::part(tab):hover {
+<mark>tabbed-interface.pills::part(tab):hover</mark> {
   background-color: ButtonFace;
   color: ButtonText;
 }
 
-tabbed-interface.pills::part(selected),
-tabbed-interface.pills::part(selected):hover {
+<mark>tabbed-interface.pills::part(selected)</mark>,
+<mark>tabbed-interface.pills::part(selected):hover</mark> {
   background-color: CanvasText;
   color: Canvas;
   border-color: CanvasText;
 }
 
-tabbed-interface.pills::part(tabpanel) {
+<mark>tabbed-interface.pills::part(tabpanel)</mark> {
   background-color: Canvas;
   color: CanvasText;
   border: none;
@@ -476,12 +476,12 @@ tabbed-interface.pills::part(tabpanel) {
 					<h3>Minimal Style</h3>
 					<p>A clean, minimal style with an underline indicator.</p>
 					<div class="code-demo-pair">
-						<pre><code>tabbed-interface.minimal::part(tablist) {
+						<pre><code><mark>tabbed-interface.minimal::part(tablist)</mark> {
   gap: 0;
   margin: 0 0 -1px 0;
 }
 
-tabbed-interface.minimal::part(tab) {
+<mark>tabbed-interface.minimal::part(tab)</mark> {
   background: Canvas;
   color: CanvasText;
   border: none;
@@ -489,18 +489,18 @@ tabbed-interface.minimal::part(tab) {
   padding: 0.75em 1em;
 }
 
-tabbed-interface.minimal::part(tab):hover {
+<mark>tabbed-interface.minimal::part(tab):hover</mark> {
   background: ButtonFace;
   color: ButtonText;
 }
 
-tabbed-interface.minimal::part(selected) {
+<mark>tabbed-interface.minimal::part(selected)</mark> {
   background: Canvas;
   color: CanvasText;
   border-bottom: 2px solid CanvasText;
 }
 
-tabbed-interface.minimal::part(tabpanel) {
+<mark>tabbed-interface.minimal::part(tabpanel)</mark> {
   padding: 1.5em 0;
   border: none;
   border-top: 2px solid CanvasText;
