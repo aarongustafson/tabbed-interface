@@ -282,14 +282,19 @@ test('keeps the measurement UI out of interaction and accessibility semantics', 
 	});
 });
 
-test('shows all sections for print and restores the screen layout', async ({
+test('keeps queued layouts from hiding printed sections and restores the screen layout', async ({
 	page,
 }) => {
 	await render(page, { width: 150, attributes: 'fixed-tabs' });
 	const element = page.locator('tabbed-interface');
 	await expect(element).toHaveAttribute('data-layout', 'tabs');
 
-	await page.evaluate(() => window.dispatchEvent(new Event('beforeprint')));
+	await element.evaluate(async (host) => {
+		host.fixedTabs = false;
+		host.fixedTabs = true;
+		window.dispatchEvent(new Event('beforeprint'));
+		await new Promise((resolve) => requestAnimationFrame(resolve));
+	});
 	await expect(element).toHaveAttribute('data-layout', 'linear');
 
 	const printState = await element.evaluate((host) => ({

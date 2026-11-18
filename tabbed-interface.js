@@ -825,6 +825,9 @@ export class TabbedInterfaceElement extends HTMLElement {
 
 		this.#pendingLayoutFrame = requestAnimationFrame(() => {
 			this.#pendingLayoutFrame = null;
+			if (this.#printing) {
+				return;
+			}
 			const nextLayout =
 				this.fixedTabs || this.#tabsFit() ? 'tabs' : 'linear';
 			this.#applyLayout(nextLayout);
