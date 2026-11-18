@@ -606,6 +606,10 @@ for (const demo of ['index.html', 'esm.html', 'unpkg.html']) {
 				colorScheme: 'dark',
 				viewport: { width: 320, height: 900 },
 			});
+			await context.route(
+				'https://cdn.jsdelivr.net/npm/microlighter@2.2.0/dist/**',
+				(route) => route.abort(),
+			);
 			try {
 				const page = await context.newPage();
 				if (mode === 'module failure')
@@ -614,6 +618,10 @@ for (const demo of ['index.html', 'esm.html', 'unpkg.html']) {
 						(route) => route.abort(),
 					);
 				await page.goto(`/demo/${demo}`);
+				if (mode === 'module failure')
+					await expect(
+						page.locator('#microlighter-status'),
+					).toContainText('MicroLighter could not load.');
 				for (const host of await page
 					.locator('tabbed-interface')
 					.all()) {
