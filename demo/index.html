@@ -5,6 +5,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<title>Tabbed Interface Web Component Demo</title>
 		<link rel="stylesheet" href="./styles.css" />
+		<link rel="stylesheet" href="./demo-shell.css" />
 		<style>
 			/* Component-specific demo styles */
 
@@ -99,7 +100,7 @@
 				background: ButtonFace;
 				color: ButtonText;
 				border-radius: 4px;
-				font-family: 'Courier New', Courier, monospace;
+				font-family: system-monospace, monospace;
 				font-size: 0.875rem;
 				margin-block-start: 1rem;
 				border: 1px solid ButtonBorder;
@@ -118,24 +119,44 @@
 			}
 
 			/* The long-title fit demonstration needs the section's full width. */
-			.responsive-demo-pair {
-				flex-direction: column;
+			.code-demo-pair.responsive-demo-pair {
+				grid-template-columns: minmax(0, 1fr);
 			}
 		</style>
 	</head>
-	<body>
+	<body data-syntax-theme="github">
+		<a class="skip-link" href="#main">Skip to examples</a>
 		<header>
-			<h1>Tabbed Interface Web Component</h1>
-			<p>
+			<p class="eyebrow">Web component / Examples</p>
+			<h1>&lt;tabbed-interface&gt;</h1>
+			<p class="lede">
 				A web component that transforms heading-structured content into
 				an accessible tabbed interface when the tabs fit, and readable
 				linear sections when they do not. See the
 				<a href="../">README</a>
 				for installation and API documentation.
 			</p>
+			<nav aria-label="Component resources">
+				<a
+					href="https://github.com/aarongustafson/tabbed-interface/blob/main/README.md"
+					>Read the README</a
+				>
+				<a href="https://github.com/aarongustafson/tabbed-interface"
+					>View on GitHub</a
+				>
+				<a href="./esm.html">esm.sh example</a>
+				<a href="./unpkg.html">unpkg example</a>
+			</nav>
 		</header>
 
-		<main>
+		<main id="main" tabindex="-1">
+			<p
+				id="microlighter-status"
+				class="enhancement-status"
+				role="status"
+				hidden
+			></p>
+
 			<!-- Basic Example -->
 			<section>
 				<h2>Basic Example</h2>
@@ -151,7 +172,16 @@
 						<code>&lt;tabbed-interface&gt;</code> element.
 					</p>
 					<div class="code-demo-pair">
-						<pre><code><mark>&lt;tabbed-interface&gt;</mark>
+						<micro-lighter
+							class="code-panel"
+							language="html"
+							controls="copy"
+							data-label="HTML"
+						>
+							<pre
+								aria-label="Basic Usage code 1"
+								tabindex="0"
+							><code><mark>&lt;tabbed-interface&gt;</mark>
   &lt;h3&gt;Getting Started&lt;/h3&gt;
   &lt;p&gt;First tab content.&lt;/p&gt;
 
@@ -161,6 +191,7 @@
   &lt;h3&gt;Installation&lt;/h3&gt;
   &lt;p&gt;Third tab content.&lt;/p&gt;
 <mark>&lt;/tabbed-interface&gt;</mark></code></pre>
+						</micro-lighter>
 						<div class="demo">
 							<tabbed-interface>
 								<h3>Getting Started</h3>
@@ -181,9 +212,29 @@
 								</ul>
 
 								<h3>Installation</h3>
-								<pre><code>npm install @aarongustafson/tabbed-interface</code></pre>
+								<micro-lighter
+									class="code-panel"
+									language="bash"
+									controls="copy"
+									data-label="BASH"
+								>
+									<pre
+										aria-label="Basic Usage code 2"
+										tabindex="0"
+									><code>npm install @aarongustafson/tabbed-interface</code></pre>
+								</micro-lighter>
 								<p>Then import in your JavaScript:</p>
-								<pre><code><mark>import '@aarongustafson/tabbed-interface/define.js';</mark></code></pre>
+								<micro-lighter
+									class="code-panel"
+									language="javascript"
+									controls="copy"
+									data-label="JavaScript"
+								>
+									<pre
+										aria-label="Basic Usage code 3"
+										tabindex="0"
+									><code><mark>import '@aarongustafson/tabbed-interface/define.js';</mark></code></pre>
+								</micro-lighter>
 							</tabbed-interface>
 						</div>
 					</div>
@@ -208,13 +259,23 @@
 						accessibility.
 					</p>
 					<div class="code-demo-pair">
-						<pre><code><mark>&lt;tabbed-interface auto-activate&gt;</mark>
+						<micro-lighter
+							class="code-panel"
+							language="html"
+							controls="copy"
+							data-label="HTML"
+						>
+							<pre
+								aria-label="Auto-Activation code 4"
+								tabindex="0"
+							><code><mark>&lt;tabbed-interface auto-activate&gt;</mark>
   &lt;h3&gt;Tab One&lt;/h3&gt;
   &lt;p&gt;Content here.&lt;/p&gt;
 
   &lt;h3&gt;Tab Two&lt;/h3&gt;
   &lt;p&gt;More content.&lt;/p&gt;
 <mark>&lt;/tabbed-interface&gt;</mark></code></pre>
+						</micro-lighter>
 						<div class="demo">
 							<div class="note">
 								<strong>Try it:</strong> Use arrow keys to focus
@@ -251,13 +312,23 @@
 						in tab panels.
 					</p>
 					<div class="code-demo-pair">
-						<pre><code><mark>&lt;tabbed-interface show-headers&gt;</mark>
+						<micro-lighter
+							class="code-panel"
+							language="html"
+							controls="copy"
+							data-label="HTML"
+						>
+							<pre
+								aria-label="Visible Headers code 5"
+								tabindex="0"
+							><code><mark>&lt;tabbed-interface show-headers&gt;</mark>
   &lt;h3&gt;Overview&lt;/h3&gt;
   &lt;p&gt;Content here.&lt;/p&gt;
 
   &lt;h3&gt;Details&lt;/h3&gt;
   &lt;p&gt;More content.&lt;/p&gt;
 <mark>&lt;/tabbed-interface&gt;</mark></code></pre>
+						</micro-lighter>
 						<div class="demo">
 							<tabbed-interface show-headers>
 								<h3>Overview</h3>
@@ -283,13 +354,23 @@
 						content.
 					</p>
 					<div class="code-demo-pair">
-						<pre><code><mark>&lt;tabbed-interface tablist-after&gt;</mark>
+						<micro-lighter
+							class="code-panel"
+							language="html"
+							controls="copy"
+							data-label="HTML"
+						>
+							<pre
+								aria-label="Tab List Position code 6"
+								tabindex="0"
+							><code><mark>&lt;tabbed-interface tablist-after&gt;</mark>
   &lt;h3&gt;First&lt;/h3&gt;
   &lt;p&gt;Content appears above tabs.&lt;/p&gt;
 
   &lt;h3&gt;Second&lt;/h3&gt;
   &lt;p&gt;More content.&lt;/p&gt;
 <mark>&lt;/tabbed-interface&gt;</mark></code></pre>
+						</micro-lighter>
 						<div class="demo">
 							<tabbed-interface tablist-after>
 								<h3>First Section</h3>
@@ -315,7 +396,16 @@
 						initially (by index or heading ID).
 					</p>
 					<div class="code-demo-pair">
-						<pre><code><mark>&lt;tabbed-interface default-tab="1"&gt;</mark>
+						<micro-lighter
+							class="code-panel"
+							language="html"
+							controls="copy"
+							data-label="HTML"
+						>
+							<pre
+								aria-label="Default Tab code 7"
+								tabindex="0"
+							><code><mark>&lt;tabbed-interface default-tab="1"&gt;</mark>
   &lt;h3&gt;Tab 0&lt;/h3&gt;
   &lt;p&gt;First tab.&lt;/p&gt;
 
@@ -325,6 +415,7 @@
   &lt;h3&gt;Tab 2&lt;/h3&gt;
   &lt;p&gt;Third tab.&lt;/p&gt;
 <mark>&lt;/tabbed-interface&gt;</mark></code></pre>
+						</micro-lighter>
 						<div class="demo">
 							<tabbed-interface default-tab="1">
 								<h3>Tab 0</h3>
@@ -356,7 +447,16 @@
 				<div class="demo-section">
 					<h3>Long Tab Titles</h3>
 					<div class="code-demo-pair responsive-demo-pair">
-						<pre><code><mark>&lt;tabbed-interface&gt;</mark>
+						<micro-lighter
+							class="code-panel"
+							language="html"
+							controls="copy"
+							data-label="HTML"
+						>
+							<pre
+								aria-label="Long Tab Titles code 8"
+								tabindex="0"
+							><code><mark>&lt;tabbed-interface&gt;</mark>
   &lt;h3&gt;Understanding Progressive Enhancement&lt;/h3&gt;
   &lt;p&gt;Content here.&lt;/p&gt;
 
@@ -369,6 +469,7 @@
   &lt;h3&gt;Testing Responsive Behavior Across Browsers&lt;/h3&gt;
   &lt;p&gt;More content.&lt;/p&gt;
 <mark>&lt;/tabbed-interface&gt;</mark></code></pre>
+						</micro-lighter>
 						<div class="demo">
 							<tabbed-interface id="responsive-layout-demo">
 								<h3>Understanding Progressive Enhancement</h3>
@@ -425,7 +526,16 @@
 						<code>::part()</code> selectors.
 					</p>
 					<div class="code-demo-pair">
-						<pre><code><mark>tabbed-interface.pills::part(tablist)</mark> {
+						<micro-lighter
+							class="code-panel"
+							language="css"
+							controls="copy"
+							data-label="CSS"
+						>
+							<pre
+								aria-label="Pill-Style Tabs code 9"
+								tabindex="0"
+							><code><mark>tabbed-interface.pills::part(tablist)</mark> {
   gap: 8px;
   margin: 0 0 1em 0;
 }
@@ -455,6 +565,7 @@
   color: CanvasText;
   border: none;
 }</code></pre>
+						</micro-lighter>
 						<div class="demo">
 							<tabbed-interface class="pills" show-headers>
 								<h3>Tab One</h3>
@@ -476,7 +587,16 @@
 					<h3>Minimal Style</h3>
 					<p>A clean, minimal style with an underline indicator.</p>
 					<div class="code-demo-pair">
-						<pre><code><mark>tabbed-interface.minimal::part(tablist)</mark> {
+						<micro-lighter
+							class="code-panel"
+							language="css"
+							controls="copy"
+							data-label="CSS"
+						>
+							<pre
+								aria-label="Minimal Style code 10"
+								tabindex="0"
+							><code><mark>tabbed-interface.minimal::part(tablist)</mark> {
   gap: 0;
   margin: 0 0 -1px 0;
 }
@@ -505,6 +625,7 @@
   border: none;
   border-top: 2px solid CanvasText;
 }</code></pre>
+						</micro-lighter>
 						<div class="demo">
 							<tabbed-interface class="minimal">
 								<h3>Design</h3>
@@ -544,7 +665,16 @@
 						<code>aria-label</code> for screen readers.
 					</p>
 					<div class="code-demo-pair">
-						<pre><code><mark>&lt;tabbed-interface&gt;</mark>
+						<micro-lighter
+							class="code-panel"
+							language="html"
+							controls="copy"
+							data-label="HTML"
+						>
+							<pre
+								aria-label="Custom Tab Titles code 11"
+								tabindex="0"
+							><code><mark>&lt;tabbed-interface&gt;</mark>
   &lt;h3 <mark>data-tab-short-name="Short"</mark>&gt;
     Very Long Section Title
   &lt;/h3&gt;
@@ -555,6 +685,7 @@
   &lt;/h3&gt;
   &lt;p&gt;More content.&lt;/p&gt;
 <mark>&lt;/tabbed-interface&gt;</mark></code></pre>
+						</micro-lighter>
 						<div class="demo">
 							<tabbed-interface>
 								<h3 data-tab-short-name="Short">
@@ -591,13 +722,23 @@
 						to respond to tab changes.
 					</p>
 					<div class="code-demo-pair">
-						<pre><code>document.querySelector('tabbed-interface')
+						<micro-lighter
+							class="code-panel"
+							language="javascript"
+							controls="copy"
+							data-label="JavaScript"
+						>
+							<pre
+								aria-label="Event Handling code 12"
+								tabindex="0"
+							><code>document.querySelector('tabbed-interface')
   .addEventListener(
     <mark>'tabbed-interface:change'</mark>,
     (event) =&gt; {
       console.log(<mark>event.detail</mark>);
     }
   );</code></pre>
+						</micro-lighter>
 						<div class="demo">
 							<tabbed-interface id="event-demo">
 								<h3 id="intro">Introduction</h3>
@@ -632,7 +773,16 @@
 						Control tabs programmatically using the JavaScript API.
 					</p>
 					<div class="code-demo-pair">
-						<pre><code>const tabs = document.querySelector(
+						<micro-lighter
+							class="code-panel"
+							language="javascript"
+							controls="copy"
+							data-label="JavaScript"
+						>
+							<pre
+								aria-label="Programmatic Control code 13"
+								tabindex="0"
+							><code>const tabs = document.querySelector(
   'tabbed-interface'
 );
 
@@ -644,6 +794,7 @@ tabs.<mark>last()</mark>;
 
 // Set active tab directly
 tabs.<mark>activeIndex = 2</mark>;</code></pre>
+						</micro-lighter>
 						<div class="demo">
 							<tabbed-interface id="programmatic-demo">
 								<h3>Panel A</h3>
@@ -717,7 +868,16 @@ tabs.<mark>activeIndex = 2</mark>;</code></pre>
 						linking to specific tabs.
 					</p>
 					<div class="code-demo-pair">
-						<pre><code>&lt;a <mark>href="#features"</mark>&gt;
+						<micro-lighter
+							class="code-panel"
+							language="html"
+							controls="copy"
+							data-label="HTML"
+						>
+							<pre
+								aria-label="Hash Navigation code 14"
+								tabindex="0"
+							><code>&lt;a <mark>href="#features"</mark>&gt;
   Go to Features
 &lt;/a&gt;
 
@@ -728,6 +888,7 @@ tabs.<mark>activeIndex = 2</mark>;</code></pre>
   &lt;h3 <mark>id="features"</mark>&gt;Features&lt;/h3&gt;
   &lt;p&gt;Content...&lt;/p&gt;
 <mark>&lt;/tabbed-interface&gt;</mark></code></pre>
+						</micro-lighter>
 						<div class="demo">
 							<p>
 								<a href="#hash-start">Jump to Start</a> |
@@ -772,10 +933,20 @@ tabs.<mark>activeIndex = 2</mark>;</code></pre>
 						Practices.
 					</p>
 					<div class="code-demo-pair">
-						<pre><code>Arrow Keys    Navigate tabs
+						<micro-lighter
+							class="code-panel"
+							language="html"
+							controls="copy"
+							data-label="HTML"
+						>
+							<pre
+								aria-label="Keyboard Navigation code 15"
+								tabindex="0"
+							><code>Arrow Keys    Navigate tabs
 Home          First tab
 End           Last tab
 Enter/Space   Activate tab and focus panel content</code></pre>
+						</micro-lighter>
 						<div class="demo">
 							<div class="note">
 								<strong>Try it:</strong> Click on any tab below,
@@ -850,5 +1021,6 @@ Enter/Space   Activate tab and focus panel content</code></pre>
 					output.innerHTML = `<strong>Current tab:</strong> ${event.detail.tabIndex}`;
 				});
 		</script>
+		<script type="module" src="./code-examples.js"></script>
 	</body>
 </html>

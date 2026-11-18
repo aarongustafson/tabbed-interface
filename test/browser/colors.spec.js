@@ -1,14 +1,24 @@
 import { readFile } from 'node:fs/promises';
 import { test, expect } from '@playwright/test';
 
+test.beforeEach(async ({ page }) => {
+	await page.route(
+		'https://cdn.jsdelivr.net/npm/microlighter@2.2.0/dist/**',
+		(route) => route.abort(),
+	);
+});
+
 const source = await readFile(
 	new URL('../../tabbed-interface.js', import.meta.url),
 	'utf8',
 );
-const demoCSS = await readFile(
-	new URL('../../demo/styles.css', import.meta.url),
-	'utf8',
-);
+const demoCSS = (
+	await Promise.all(
+		['styles.css', 'demo-shell.css'].map((file) =>
+			readFile(new URL(`../../demo/${file}`, import.meta.url), 'utf8'),
+		),
+	)
+).join('\n');
 const definitionSource = await readFile(
 	new URL('../../define.js', import.meta.url),
 	'utf8',
@@ -247,18 +257,18 @@ test('19 study palettes retain tab text and boundaries in resting, hover, and se
 	}
 });
 
-test('19 study palettes retain paired demo controls, supporting text and themed tabs', async ({
-	page,
-}) => {
-	await page.setViewportSize({ width: 1400, height: 900 });
-	await page.goto('/demo/index.html');
-	await expect(page.locator('tabbed-interface.pills')).toHaveAttribute(
-		'data-layout',
-		'tabs',
-	);
-	const componentCSS = source.match(/<style>([\s\S]*?)<\/style>/)[1];
-	const inlineCSS = demoSource.match(/<style>([\s\S]*?)<\/style>/)[1];
-	for (const [index, palette] of palettes.entries()) {
+for (const [index, palette] of palettes.entries()) {
+	test(`study palette ${index} retains paired demo controls, supporting text and themed tabs`, async ({
+		page,
+	}) => {
+		await page.setViewportSize({ width: 1400, height: 900 });
+		await page.goto('/demo/index.html');
+		await expect(page.locator('tabbed-interface.pills')).toHaveAttribute(
+			'data-layout',
+			'tabs',
+		);
+		const componentCSS = source.match(/<style>([\s\S]*?)<\/style>/)[1];
+		const inlineCSS = demoSource.match(/<style>([\s\S]*?)<\/style>/)[1];
 		const style = await page.addStyleTag({
 			content: substitute(demoCSS + inlineCSS, palette),
 		});
@@ -301,8 +311,8 @@ test('19 study palettes retain paired demo controls, supporting text and themed 
 			).toBeGreaterThanOrEqual(4.5);
 		}
 		await style.evaluate((element) => element.remove());
-	}
-});
+	});
+}
 
 test('custom normal, hover and active color pairs retain precedence', async ({
 	page,
@@ -569,7 +579,9 @@ for (const demo of ['index.html', 'esm.html', 'unpkg.html']) {
 			const pairs = page.locator('.code-demo-pair');
 			expect(await pairs.count()).toBeGreaterThan(0);
 			for (const pair of await pairs.all()) {
-				const code = await pair.locator(':scope > pre').boundingBox();
+				const code = await pair
+					.locator(':scope > micro-lighter')
+					.boundingBox();
 				const live = await pair.locator(':scope > .demo').boundingBox();
 				expect(code).not.toBeNull();
 				expect(live).not.toBeNull();
@@ -594,6 +606,10 @@ for (const demo of ['index.html', 'esm.html', 'unpkg.html']) {
 				colorScheme: 'dark',
 				viewport: { width: 320, height: 900 },
 			});
+			await context.route(
+				'https://cdn.jsdelivr.net/npm/microlighter@2.2.0/dist/**',
+				(route) => route.abort(),
+			);
 			try {
 				const page = await context.newPage();
 				if (mode === 'module failure')
@@ -602,6 +618,10 @@ for (const demo of ['index.html', 'esm.html', 'unpkg.html']) {
 						(route) => route.abort(),
 					);
 				await page.goto(`/demo/${demo}`);
+				if (mode === 'module failure')
+					await expect(
+						page.locator('#microlighter-status'),
+					).toContainText('MicroLighter could not load.');
 				for (const host of await page
 					.locator('tabbed-interface')
 					.all()) {
