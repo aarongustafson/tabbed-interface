@@ -1,6 +1,13 @@
 import { readFile } from 'node:fs/promises';
 import { test, expect } from '@playwright/test';
 
+test.beforeEach(async ({ page }) => {
+	await page.route(
+		'https://cdn.jsdelivr.net/npm/microlighter@2.2.0/dist/**',
+		(route) => route.abort(),
+	);
+});
+
 const source = await readFile(
 	new URL('../../tabbed-interface.js', import.meta.url),
 	'utf8',
@@ -569,7 +576,9 @@ for (const demo of ['index.html', 'esm.html', 'unpkg.html']) {
 			const pairs = page.locator('.code-demo-pair');
 			expect(await pairs.count()).toBeGreaterThan(0);
 			for (const pair of await pairs.all()) {
-				const code = await pair.locator(':scope > pre').boundingBox();
+				const code = await pair
+					.locator(':scope > micro-lighter')
+					.boundingBox();
 				const live = await pair.locator(':scope > .demo').boundingBox();
 				expect(code).not.toBeNull();
 				expect(live).not.toBeNull();
