@@ -254,18 +254,18 @@ test('19 study palettes retain tab text and boundaries in resting, hover, and se
 	}
 });
 
-test('19 study palettes retain paired demo controls, supporting text and themed tabs', async ({
-	page,
-}) => {
-	await page.setViewportSize({ width: 1400, height: 900 });
-	await page.goto('/demo/index.html');
-	await expect(page.locator('tabbed-interface.pills')).toHaveAttribute(
-		'data-layout',
-		'tabs',
-	);
-	const componentCSS = source.match(/<style>([\s\S]*?)<\/style>/)[1];
-	const inlineCSS = demoSource.match(/<style>([\s\S]*?)<\/style>/)[1];
-	for (const [index, palette] of palettes.entries()) {
+for (const [index, palette] of palettes.entries()) {
+	test(`study palette ${index} retains paired demo controls, supporting text and themed tabs`, async ({
+		page,
+	}) => {
+		await page.setViewportSize({ width: 1400, height: 900 });
+		await page.goto('/demo/index.html');
+		await expect(page.locator('tabbed-interface.pills')).toHaveAttribute(
+			'data-layout',
+			'tabs',
+		);
+		const componentCSS = source.match(/<style>([\s\S]*?)<\/style>/)[1];
+		const inlineCSS = demoSource.match(/<style>([\s\S]*?)<\/style>/)[1];
 		const style = await page.addStyleTag({
 			content: substitute(demoCSS + inlineCSS, palette),
 		});
@@ -308,8 +308,8 @@ test('19 study palettes retain paired demo controls, supporting text and themed 
 			).toBeGreaterThanOrEqual(4.5);
 		}
 		await style.evaluate((element) => element.remove());
-	}
-});
+	});
+}
 
 test('custom normal, hover and active color pairs retain precedence', async ({
 	page,
