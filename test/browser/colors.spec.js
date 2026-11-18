@@ -12,10 +12,13 @@ const source = await readFile(
 	new URL('../../tabbed-interface.js', import.meta.url),
 	'utf8',
 );
-const demoCSS = await readFile(
-	new URL('../../demo/styles.css', import.meta.url),
-	'utf8',
-);
+const demoCSS = (
+	await Promise.all(
+		['styles.css', 'demo-shell.css'].map((file) =>
+			readFile(new URL(`../../demo/${file}`, import.meta.url), 'utf8'),
+		),
+	)
+).join('\n');
 const definitionSource = await readFile(
 	new URL('../../define.js', import.meta.url),
 	'utf8',
