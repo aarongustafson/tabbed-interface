@@ -106,6 +106,60 @@ async function serveDemo(
 }
 
 const examples = [];
+for (const colorScheme of ['light', 'dark']) {
+	test(`${colorScheme}: demo controls preserve browser-native keyboard focus rings`, async ({
+		page,
+		browserName,
+	}) => {
+		await page.emulateMedia({ colorScheme });
+		await serveDemo(page);
+		await page.setViewportSize({ width: 1600, height: 1000 });
+		await page.goto('http://code-demo.test/demo/index.html');
+		await expect(page.locator('#microlighter-status')).toBeHidden();
+		await page.keyboard.press(
+			browserName === 'webkit' && process.platform === 'darwin'
+				? 'Alt+Tab'
+				: 'Tab',
+		);
+		await expect(page.locator('.skip-link')).toBeFocused();
+
+		for (const control of [
+			page.locator('.skip-link'),
+			page.locator('header a').first(),
+			page.locator('.controls button').first(),
+			page.locator('micro-lighter pre').first(),
+		]) {
+			await control.focus();
+			await expect(control).toBeFocused();
+			const outlines = await control.evaluate((element) => {
+				const outline = () => {
+					const style = getComputedStyle(element);
+					return {
+						color: style.outlineColor,
+						style: style.outlineStyle,
+						width: style.outlineWidth,
+						offset: style.outlineOffset,
+					};
+				};
+				const actual = outline();
+				const originalStyle = element.getAttribute('style');
+				element.style.outline = 'revert';
+				element.style.outlineOffset = 'revert';
+				const native = outline();
+				if (originalStyle === null) element.removeAttribute('style');
+				else element.setAttribute('style', originalStyle);
+				return { actual, native };
+			});
+			expect(outlines.actual).toEqual(outlines.native);
+			expect(outlines.actual.style).not.toBe('none');
+		}
+		await expect(page.locator('.code-panel').first()).toHaveCSS(
+			'outline-style',
+			'none',
+		);
+	});
+}
+
 for (const file of (await readdir(new URL('demo/', root)))
 	.filter((file) => file.endsWith('.html'))
 	.sort()) {
