@@ -28,7 +28,9 @@ describe('tab color contracts', () => {
 		expect(css).not.toContain(':focus-visible');
 		const fields = shell.match(/input:not\([^}]+\}/)?.[0];
 		expect(fields).toMatch(/border:\s*1px solid currentColor/);
-		expect(fields).toMatch(/background:\s*Field;\s*color:\s*FieldText/);
+		expect(fields).toMatch(
+			/background-color:\s*Canvas;\s*background-image:\s*linear-gradient\(Field,\s*Field\);\s*color:\s*FieldText/,
+		);
 		expect(css).toMatch(/border:\s*1px solid ButtonText/);
 	});
 
