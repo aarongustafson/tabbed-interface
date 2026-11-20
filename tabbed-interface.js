@@ -374,7 +374,6 @@ export class TabbedInterfaceElement extends HTMLElement {
 
 				[data-tab]:focus-visible {
 					outline: var(--tabbed-interface-tab-focus-outline, revert);
-					outline-offset: 1px;
 				}
 
 				[data-tab][aria-selected="true"] {

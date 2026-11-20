@@ -20,12 +20,21 @@ describe('tab color contracts', () => {
 
 	it('keeps shared demo pairs and focus free from unsafe substitutions', () => {
 		const css = read('../demo/styles.css');
+		const shell = read('../demo/demo-shell.css');
 		const demo = read('../demo/index.html');
-		expect(css + demo).not.toMatch(
+		expect(css + shell + demo).not.toMatch(
 			/GrayText|HighlightText|SelectedItem|AccentColorText|ActiveText|opacity:\s*0\.[68]/,
 		);
 		expect(css).not.toContain(':focus-visible');
-		expect(css).toMatch(/border:\s*1px solid FieldText/);
+		const fields = shell.match(/input:not\([^}]+\}/)?.[0];
+		expect(fields).toMatch(/border:\s*1px solid currentColor/);
+		expect(fields).toMatch(/background:\s*Field;\s*color:\s*FieldText/);
 		expect(css).toMatch(/border:\s*1px solid ButtonText/);
+	});
+
+	it('trims block-edge margins inside demo sections', () => {
+		expect(read('../demo/demo-shell.css')).toMatch(
+			/\.demo-section(?:,\s*\.api-reference)?\s*\{[^}]*\bmargin-trim:\s*block;/,
+		);
 	});
 });
