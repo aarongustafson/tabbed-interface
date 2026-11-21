@@ -1,386 +1,126 @@
-@font-face {
-	font-family: 'system-monospace';
-	src:
-		local('SFMono-Regular'), local('Menlo'), local('Monaco'),
-		local('Consolas'), local('Liberation Mono'), local('Courier New'),
-		local('monospace');
-}
-
-/* ==========================================================================
-   Reusable Demo Styles
-   ========================================================================== */
-
-/* Base Layout
-   ========================================================================== */
-
-:root {
-	color-scheme: light dark;
-}
-
 tabbed-interface {
 	overflow-wrap: normal;
 }
 
-* {
-	box-sizing: border-box;
+tabbed-interface.pills::part(tablist) {
+	gap: 8px;
+	margin: 0 0 1em 0;
 }
 
-body {
-	font-family:
-		-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
-		Cantarell, sans-serif;
-	line-height: 1.6;
-	color: CanvasText;
-	background: Canvas;
-	max-width: 1400px;
-	margin: 0 auto;
-	padding: 1rem;
-}
-
-h1,
-h2,
-h3,
-p,
-.output {
-	overflow-wrap: anywhere;
-}
-
-.visibly-hidden {
-	border: 0;
-	clip: rect(0 0 0 0);
-	height: 1px;
-	margin: -1px;
-	overflow: hidden;
-	padding: 0;
-	position: absolute;
-	width: 1px;
-}
-
-/* Typography
-   ========================================================================== */
-
-h1 {
-	font-size: 2rem;
-	margin-block: 0 0.5rem;
-}
-
-h2 {
-	font-size: 1.5rem;
-	margin-block: 2rem 1rem;
-	border-bottom: 2px solid;
-	padding-bottom: 0.5rem;
-}
-
-h3 {
-	font-size: 1.25rem;
-	margin-block: 1.5rem 0.5rem;
-}
-
-p {
-	margin-block: 0.5rem;
-}
-
-code {
+tabbed-interface.pills::part(tab) {
 	background-color: ButtonFace;
 	color: ButtonText;
-	padding: 0.125rem 0.25rem;
-	border-radius: 3px;
-	font-family: system-monospace, monospace;
-	font-size: 0.9em;
+	border: 1px solid ButtonText;
+	border-radius: 999px;
+	padding: 0.5em 1.5em;
 }
 
-/* Links
-   ========================================================================== */
-
-a {
-	color: LinkText;
-	text-decoration-skip-ink: auto;
+tabbed-interface.pills::part(tab):hover {
+	background-color: ButtonFace;
+	color: ButtonText;
 }
 
-a:visited {
-	color: VisitedText;
+tabbed-interface.pills::part(selected),
+tabbed-interface.pills::part(selected):hover {
+	background-color: CanvasText;
+	color: Canvas;
+	border-color: CanvasText;
 }
 
-a:active {
-	color: LinkText;
-}
-
-a:hover {
-	text-decoration: underline;
-}
-
-/* Header & Footer
-   ========================================================================== */
-
-header {
-	margin-block-end: 2rem;
-}
-
-header p {
-	font-size: 1.1rem;
-}
-
-footer {
-	margin-block-start: 3rem;
-	padding-block-start: 2rem;
-	border-top: 2px solid ButtonBorder;
-	background: Canvas;
-	font-size: 0.9rem;
-}
-
-/* Demo Sections
-   ========================================================================== */
-
-.demo-section {
-	margin-trim: block;
-	margin-block: 2rem;
-	padding: 1.5rem;
-	border-radius: 8px;
-	border: 1px solid ButtonBorder;
-}
-
-.demo-section > p {
-	margin-block-end: 1rem;
-}
-
-.demo-section > p code {
-	background: transparent;
-	color: inherit;
-}
-
-/* Code & Demo Pairing
-   ========================================================================== */
-
-.code-demo-pair {
-	display: flex;
-	flex-direction: column;
-	gap: 1rem;
-	margin-block: 1rem;
-}
-
-.code-demo-pair > * {
-	min-width: 0;
-}
-
-@media (min-width: 768px) {
-	.code-demo-pair {
-		flex-direction: row;
-		align-items: flex-start;
-	}
-
-	.code-demo-pair > pre {
-		flex: 1;
-		margin: 0;
-	}
-
-	.code-demo-pair > .demo {
-		flex: 1;
-	}
-}
-
-/* Code Blocks
-   ========================================================================== */
-
-pre {
-	/* Back translucent field colors without painting the code/live gap. */
+tabbed-interface.pills::part(tabpanel) {
 	background-color: Canvas;
-	background-image: linear-gradient(Field, Field);
-	color: FieldText;
-	padding: 1rem;
-	border-radius: 6px;
-	overflow-x: auto;
-	margin: 0;
-	font-size: 0.875rem;
-	line-height: 1.3;
+	color: CanvasText;
+	border: none;
 }
 
-pre code {
-	background: none;
-	padding: 0;
-	color: inherit;
-	font-size: inherit;
+tabbed-interface.minimal::part(tablist) {
+	gap: 0;
+	margin: 0 0 -1px 0;
 }
 
-pre code mark {
-	background: Mark;
-	color: MarkText;
-	border-radius: 2px;
-	padding: 0.125rem 0.25rem;
-	font-weight: 600;
-}
-
-/* Demo Container
-   ========================================================================== */
-
-.demo {
+tabbed-interface.minimal::part(tab) {
 	background: Canvas;
 	color: CanvasText;
-	padding: 1rem;
-	border-radius: 6px;
-	border: 1px solid ButtonBorder;
+	border: none;
+	border-radius: 0;
+	padding: 0.75em 1em;
 }
 
-/* Form Elements
-   ========================================================================== */
-
-legend,
-label {
-	font-weight: bold;
-	display: block;
-	margin-block: 1rem;
+tabbed-interface.minimal::part(tab):hover {
+	background: ButtonFace;
+	color: ButtonText;
 }
 
-label:has(+ input),
-label:has(+ select),
-label:has(+ textarea) {
-	margin-block-end: 0;
+tabbed-interface.minimal::part(selected) {
+	background: Canvas;
+	color: CanvasText;
+	border-bottom: 2px solid CanvasText;
 }
 
-fieldset {
-	margin-block: 1rem;
-	border: 0;
-	padding: 0;
+tabbed-interface.minimal::part(tabpanel) {
+	padding: 1.5em 0;
+	border: none;
+	border-top: 2px solid CanvasText;
 }
 
-legend {
-	margin-block: 0;
-	padding: 0;
+.controls {
+	display: flex;
+	gap: 0.5rem;
+	margin-block-start: 1rem;
+	flex-wrap: wrap;
 }
 
-fieldset > label {
-	font-weight: normal;
-	margin-block: 0.25rem;
-	min-height: 23px;
-}
-
-input:not([type='checkbox'], [type='radio'], [type='submit'], [type='reset']),
-select,
-textarea {
-	display: block;
-	padding: 0.25rem 0.5rem;
-	border: 1px solid FieldText;
-	border-radius: 4px;
-	font-size: 1rem;
-	font-family: inherit;
-	width: 100%;
-	max-width: 400px;
-	background: Field;
-	color: FieldText;
-}
-
-button {
+.controls button {
 	background: ButtonFace;
 	color: ButtonText;
 	border: 1px solid ButtonText;
-	padding: 0.75rem 1.5rem;
+	padding: 0.5rem 1rem;
 	border-radius: 4px;
-	font-size: 1rem;
+	font-size: 0.9rem;
 	font-weight: bold;
 	cursor: pointer;
 	margin-block-start: 1rem;
 	margin-inline-end: 0.5rem;
 }
 
-button:hover {
+.controls button:active {
 	text-decoration: underline;
 }
 
-@supports (background-color: color-mix(in srgb, ButtonFace 95%, ButtonText)) {
-	button:hover {
-		background-color: color-mix(in srgb, ButtonFace 95%, ButtonText);
-		text-decoration: none;
-	}
+.output {
+	padding: 1em;
+	background: ButtonFace;
+	color: ButtonText;
+	border-radius: 4px;
+	font-family: system-monospace, monospace;
+	font-size: 0.875rem;
+	margin-block-start: 1rem;
+	border: 1px solid ButtonBorder;
 }
 
-small {
-	display: block;
-	font-style: italic;
-	font-weight: normal;
-	margin-block: 0.5rem 1rem;
-	color: inherit;
-}
-
-footer,
-:where(body, .demo, .api-reference) > small {
-	color: CanvasText;
-	color: color-mix(in srgb, CanvasText 80%, Canvas);
-}
-
-/* Radio/Checkbox "Other" Pattern
-   ========================================================================== */
-
-.other-radio,
-.other-checkbox {
-	display: flex;
-	margin-block: 0.25rem;
-	min-height: 23px;
-	align-items: flex-start;
-}
-
-.other-radio label,
-.other-checkbox label {
-	font-weight: normal;
-	margin-block: 0;
-	margin-inline-end: 0.5rem;
-}
-
-.other-radio label + *,
-.other-checkbox label + * {
-	flex: 1;
-}
-
-/* Note Boxes
-   ========================================================================== */
-
-.note {
+.status {
+	display: inline-block;
+	padding: 0.25rem 0.5rem;
 	background: Canvas;
 	color: CanvasText;
-	border-left: 4px solid AccentColor;
-	padding: 1rem;
-	margin-block: 1rem;
-	border-radius: 4px;
+	border-radius: 3px;
+	font-size: 0.875rem;
+	font-weight: bold;
+	margin-inline-start: 0.5rem;
 }
 
-.note code {
-	background: transparent;
-	color: inherit;
+/* The long-title fit demonstration needs the section's full width. */
+.code-demo-pair.responsive-demo-pair {
+	grid-template-columns: minmax(0, 1fr);
 }
 
-.note a {
-	color: inherit;
-}
-
-.note strong {
+body[data-demo-variant='cdn'] tabbed-interface {
 	display: block;
-	margin-block-end: 0.5rem;
+	max-width: 720px;
 }
 
-/* API Reference Box
-   ========================================================================== */
-
-.api-reference {
-	border-left: 4px solid AccentColor;
-	padding: 1rem;
-	margin-block: 2rem;
-	border-radius: 4px;
-}
-
-.api-reference p {
-	margin: 0;
-}
-
-.api-reference a {
-	color: inherit;
-}
-
-@media (forced-colors: active), (prefers-contrast: more) {
-	button:hover {
-		background-color: ButtonFace;
-		text-decoration: underline;
-	}
-
-	footer,
-	:where(body, .demo, .api-reference) > small {
-		color: CanvasText;
-	}
+body[data-demo-variant='cdn'] tabbed-interface::part(tablist) {
+	display: flex;
+	gap: 0.5rem;
+	margin-bottom: 1rem;
 }

@@ -1,5 +1,6 @@
 import { readFile } from 'node:fs/promises';
 import { test, expect } from '@playwright/test';
+import { expectNativeFocus, readDemoStyles } from './demo-fixture.js';
 
 test.beforeEach(async ({ page }) => {
 	await page.route(
@@ -12,19 +13,9 @@ const source = await readFile(
 	new URL('../../tabbed-interface.js', import.meta.url),
 	'utf8',
 );
-const demoCSS = (
-	await Promise.all(
-		['styles.css', 'demo-shell.css'].map((file) =>
-			readFile(new URL(`../../demo/${file}`, import.meta.url), 'utf8'),
-		),
-	)
-).join('\n');
+const demoCSS = await readDemoStyles();
 const definitionSource = await readFile(
 	new URL('../../define.js', import.meta.url),
-	'utf8',
-);
-const demoSource = await readFile(
-	new URL('../../demo/index.html', import.meta.url),
 	'utf8',
 );
 const tokens = [
@@ -171,6 +162,28 @@ test('hover uses a complete control pair instead of inheriting the host foregrou
 });
 
 for (const scheme of ['light', 'dark']) {
+	test(`${scheme}: live tab variants and page controls retain unclipped native focus`, async ({
+		page,
+		browserName,
+	}) => {
+		await page.emulateMedia({ colorScheme: scheme });
+		await page.setViewportSize({ width: 1600, height: 1000 });
+		await page.goto('/demo/index.html');
+		await page.keyboard.press(
+			browserName === 'webkit' && process.platform === 'darwin'
+				? 'Alt+Tab'
+				: 'Tab',
+		);
+		for (const control of [
+			page.locator('.controls button').first(),
+			page.locator('tabbed-interface').first().getByRole('tab').first(),
+			page.locator('tabbed-interface.pills').getByRole('tab').first(),
+			page.locator('tabbed-interface.minimal').getByRole('tab').first(),
+		]) {
+			await expectNativeFocus(control);
+		}
+	});
+
 	test(`${scheme}: selected tabs omit the forced-color underline`, async ({
 		page,
 	}) => {
@@ -205,7 +218,7 @@ test('selection is metric-stable, native focus remains available, and focus hook
 	await tabs.nth(1).focus();
 	await page.keyboard.press('ArrowRight');
 	await expect(tabs.nth(2)).toBeFocused();
-	await expect(tabs.nth(2)).toHaveCSS('outline-style', 'auto');
+	await expectNativeFocus(tabs.nth(2));
 	await expect(tabs.nth(1)).toHaveAttribute('aria-selected', 'true');
 	await page.keyboard.press('Enter');
 	await expect(tabs.nth(2)).toHaveAttribute('aria-selected', 'true');
@@ -223,6 +236,9 @@ test('19 study palettes retain tab text and boundaries in resting, hover, and se
 	page,
 }) => {
 	const host = await fixture(page);
+	await page.locator('body').evaluate((body) => {
+		body.dataset.demoPage = 'full';
+	});
 	for (const [index, palette] of palettes.entries()) {
 		const style = await page.addStyleTag({
 			content: substitute(demoCSS, palette),
@@ -268,9 +284,8 @@ for (const [index, palette] of palettes.entries()) {
 			'tabs',
 		);
 		const componentCSS = source.match(/<style>([\s\S]*?)<\/style>/)[1];
-		const inlineCSS = demoSource.match(/<style>([\s\S]*?)<\/style>/)[1];
 		const style = await page.addStyleTag({
-			content: substitute(demoCSS + inlineCSS, palette),
+			content: substitute(demoCSS, palette),
 		});
 		await page.locator('tabbed-interface').evaluateAll(
 			(hosts, css) => {
@@ -418,9 +433,10 @@ for (const scheme of ['light', 'dark']) {
 						hasText: 'tabbed-interface.pills::part(tablist)',
 					})
 					.textContent();
-				await page.locator('head > style').evaluate((style, css) => {
-					style.textContent = css;
-				}, css);
+				await page
+					.locator('link[href="./styles.css"]')
+					.evaluate((link) => link.remove());
+				await page.addStyleTag({ content: css });
 			}
 			await page.mouse.move(0, 0);
 			const selected = host.getByRole('tab', { selected: true });

@@ -4,127 +4,10 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<title>Tabbed Interface Web Component Demo</title>
-		<link rel="stylesheet" href="./styles.css" />
 		<link rel="stylesheet" href="./demo-shell.css" />
-		<style>
-			/* Component-specific demo styles */
-
-			/* Pill-style variant */
-			tabbed-interface.pills::part(tablist) {
-				gap: 8px;
-				margin: 0 0 1em 0;
-			}
-
-			tabbed-interface.pills::part(tab) {
-				background-color: ButtonFace;
-				color: ButtonText;
-				border: 1px solid ButtonText;
-				border-radius: 999px;
-				padding: 0.5em 1.5em;
-			}
-
-			tabbed-interface.pills::part(tab):hover {
-				background-color: ButtonFace;
-				color: ButtonText;
-			}
-
-			tabbed-interface.pills::part(selected),
-			tabbed-interface.pills::part(selected):hover {
-				background-color: CanvasText;
-				color: Canvas;
-				border-color: CanvasText;
-			}
-
-			tabbed-interface.pills::part(tabpanel) {
-				background-color: Canvas;
-				color: CanvasText;
-				border: none;
-			}
-
-			/* Minimal variant */
-			tabbed-interface.minimal::part(tablist) {
-				gap: 0;
-				margin: 0 0 -1px 0;
-			}
-
-			tabbed-interface.minimal::part(tab) {
-				background: Canvas;
-				color: CanvasText;
-				border: none;
-				border-radius: 0;
-				padding: 0.75em 1em;
-			}
-
-			tabbed-interface.minimal::part(tab):hover {
-				background: ButtonFace;
-				color: ButtonText;
-			}
-
-			tabbed-interface.minimal::part(selected) {
-				background: Canvas;
-				color: CanvasText;
-				border-bottom: 2px solid CanvasText;
-			}
-
-			tabbed-interface.minimal::part(tabpanel) {
-				padding: 1.5em 0;
-				border: none;
-				border-top: 2px solid CanvasText;
-			}
-
-			/* Control buttons */
-			.controls {
-				display: flex;
-				gap: 0.5rem;
-				margin-block-start: 1rem;
-				flex-wrap: wrap;
-			}
-
-			.controls button {
-				background: ButtonFace;
-				color: ButtonText;
-				border: 1px solid ButtonText;
-				padding: 0.5rem 1rem;
-				border-radius: 4px;
-				font-size: 0.9rem;
-				cursor: pointer;
-			}
-
-			.controls button:active {
-				text-decoration: underline;
-			}
-
-			/* Event output */
-			.output {
-				padding: 1em;
-				background: ButtonFace;
-				color: ButtonText;
-				border-radius: 4px;
-				font-family: system-monospace, monospace;
-				font-size: 0.875rem;
-				margin-block-start: 1rem;
-				border: 1px solid ButtonBorder;
-			}
-
-			/* Status indicator */
-			.status {
-				display: inline-block;
-				padding: 0.25rem 0.5rem;
-				background: Canvas;
-				color: CanvasText;
-				border-radius: 3px;
-				font-size: 0.875rem;
-				font-weight: bold;
-				margin-inline-start: 0.5rem;
-			}
-
-			/* The long-title fit demonstration needs the section's full width. */
-			.code-demo-pair.responsive-demo-pair {
-				grid-template-columns: minmax(0, 1fr);
-			}
-		</style>
+		<link rel="stylesheet" href="./styles.css" />
 	</head>
-	<body data-syntax-theme="github">
+	<body data-demo-page="full" data-syntax-theme="github">
 		<a class="skip-link" href="#main">Skip to examples</a>
 		<header>
 			<p class="eyebrow">Web component / Examples</p>
@@ -155,6 +38,9 @@
 				class="enhancement-status"
 				role="status"
 				hidden
+				data-loading-message="Loading optional code highlighting and Copy controls."
+				data-failure-message="MicroLighter could not load. Code remains readable and selectable; the component loads independently."
+				data-theme-failure-message="Code highlighting and Copy controls are available, but the syntax theme could not load. The component loads independently."
 			></p>
 
 			<!-- Basic Example -->
@@ -192,7 +78,7 @@
   &lt;p&gt;Third tab content.&lt;/p&gt;
 <mark>&lt;/tabbed-interface&gt;</mark></code></pre>
 						</micro-lighter>
-						<div class="demo">
+						<div class="demo" data-demo-label="Live example">
 							<tabbed-interface>
 								<h3>Getting Started</h3>
 								<p>
@@ -276,7 +162,7 @@
   &lt;p&gt;More content.&lt;/p&gt;
 <mark>&lt;/tabbed-interface&gt;</mark></code></pre>
 						</micro-lighter>
-						<div class="demo">
+						<div class="demo" data-demo-label="Live example">
 							<div class="note">
 								<strong>Try it:</strong> Use arrow keys to focus
 								different tabs. They activate automatically on
@@ -329,7 +215,7 @@
   &lt;p&gt;More content.&lt;/p&gt;
 <mark>&lt;/tabbed-interface&gt;</mark></code></pre>
 						</micro-lighter>
-						<div class="demo">
+						<div class="demo" data-demo-label="Live example">
 							<tabbed-interface show-headers>
 								<h3>Overview</h3>
 								<p>
@@ -371,7 +257,7 @@
   &lt;p&gt;More content.&lt;/p&gt;
 <mark>&lt;/tabbed-interface&gt;</mark></code></pre>
 						</micro-lighter>
-						<div class="demo">
+						<div class="demo" data-demo-label="Live example">
 							<tabbed-interface tablist-after>
 								<h3>First Section</h3>
 								<p>
@@ -416,7 +302,7 @@
   &lt;p&gt;Third tab.&lt;/p&gt;
 <mark>&lt;/tabbed-interface&gt;</mark></code></pre>
 						</micro-lighter>
-						<div class="demo">
+						<div class="demo" data-demo-label="Live example">
 							<tabbed-interface default-tab="1">
 								<h3>Tab 0</h3>
 								<p>First tab content.</p>
@@ -470,7 +356,7 @@
   &lt;p&gt;More content.&lt;/p&gt;
 <mark>&lt;/tabbed-interface&gt;</mark></code></pre>
 						</micro-lighter>
-						<div class="demo">
+						<div class="demo" data-demo-label="Live example">
 							<tabbed-interface id="responsive-layout-demo">
 								<h3>Understanding Progressive Enhancement</h3>
 								<p>
@@ -566,7 +452,7 @@
   border: none;
 }</code></pre>
 						</micro-lighter>
-						<div class="demo">
+						<div class="demo" data-demo-label="Live example">
 							<tabbed-interface class="pills" show-headers>
 								<h3>Tab One</h3>
 								<p>
@@ -626,7 +512,7 @@
   border-top: 2px solid CanvasText;
 }</code></pre>
 						</micro-lighter>
-						<div class="demo">
+						<div class="demo" data-demo-label="Live example">
 							<tabbed-interface class="minimal">
 								<h3>Design</h3>
 								<p>
@@ -686,7 +572,7 @@
   &lt;p&gt;More content.&lt;/p&gt;
 <mark>&lt;/tabbed-interface&gt;</mark></code></pre>
 						</micro-lighter>
-						<div class="demo">
+						<div class="demo" data-demo-label="Live example">
 							<tabbed-interface>
 								<h3 data-tab-short-name="Short">
 									Very Long Section Title That Wouldn't Fit
@@ -739,7 +625,7 @@
     }
   );</code></pre>
 						</micro-lighter>
-						<div class="demo">
+						<div class="demo" data-demo-label="Live example">
 							<tabbed-interface id="event-demo">
 								<h3 id="intro">Introduction</h3>
 								<p>
@@ -795,7 +681,7 @@ tabs.<mark>last()</mark>;
 // Set active tab directly
 tabs.<mark>activeIndex = 2</mark>;</code></pre>
 						</micro-lighter>
-						<div class="demo">
+						<div class="demo" data-demo-label="Live example">
 							<tabbed-interface id="programmatic-demo">
 								<h3>Panel A</h3>
 								<p>First panel content with some text.</p>
@@ -889,7 +775,7 @@ tabs.<mark>activeIndex = 2</mark>;</code></pre>
   &lt;p&gt;Content...&lt;/p&gt;
 <mark>&lt;/tabbed-interface&gt;</mark></code></pre>
 						</micro-lighter>
-						<div class="demo">
+						<div class="demo" data-demo-label="Live example">
 							<p>
 								<a href="#hash-start">Jump to Start</a> |
 								<a href="#hash-middle">Jump to Middle</a> |
@@ -947,7 +833,7 @@ Home          First tab
 End           Last tab
 Enter/Space   Activate tab and focus panel content</code></pre>
 						</micro-lighter>
-						<div class="demo">
+						<div class="demo" data-demo-label="Live example">
 							<div class="note">
 								<strong>Try it:</strong> Click on any tab below,
 								then use your keyboard to navigate.
