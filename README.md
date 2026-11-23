@@ -20,22 +20,6 @@ This is a web component port of Aaron Gustafson’s original
 - [unpkg Demo](https://aarongustafson.github.io/tabbed-interface/demo/unpkg.html) ([Source](./demo/unpkg.html))
 - [esm.sh Demo](https://aarongustafson.github.io/tabbed-interface/demo/esm.html) ([Source](./demo/esm.html))
 
-## Features
-
-- **Progressive Enhancement**: Works with semantic HTML structure
-- **Accessibility**: Full ARIA support and keyboard navigation
-- **Customizable**: Extensive CSS custom properties for styling
-- **Lightweight**: No dependencies, pure vanilla JavaScript
-- **Modern**: Uses Shadow DOM and ES Modules
-- **TypeScript-ready**: Ships bundled type definitions for editors and build tooling
-
-## TypeScript & Framework Support
-
-- Bundled `.d.ts` files describe both `TabbedInterfaceElement` and `defineTabbedInterface`, so editors, bundlers, and framework toolchains get type information automatically.
-- The `showHeaders`, `tablistAfter`, `autoActivate`, and `defaultTab` properties reflect to attributes, keeping declarative markup and imperative code in sync.
-- A private `upgradeProperty` helper replays any property assignments that happen before the browser upgrades the element, which is especially helpful for SSR and hydration workflows.
-- The `defaultTab` property accepts either zero-based indices or heading IDs, making it easy to drive tab selection from reactive state or router parameters.
-
 ## Installation
 
 ```bash
@@ -48,20 +32,37 @@ npm install @aarongustafson/tabbed-interface
 
 ```html
 <tabbed-interface>
-  <h2>First Tab</h2>
-  <p>Content for the first tab panel.</p>
+  <h2>Opening hours</h2>
+  <p>Tuesday through Sunday, 10am to 5pm.</p>
 
-  <h2>Second Tab</h2>
-  <p>Content for the second tab panel.</p>
+  <h2>Getting here</h2>
+  <p>The museum is across from Central Station.</p>
 
-  <h2>Third Tab</h2>
-  <p>Content for the third tab panel.</p>
+  <h2>Contact</h2>
+  <p>Ask at the front desk for help planning your visit.</p>
 </tabbed-interface>
 
 <script type="module">
   import '@aarongustafson/tabbed-interface/define.js';
 </script>
 ```
+
+The browser needs a bundler or import map to resolve the bare package import
+above. Without either, use a served path to `define.js`:
+
+```html
+<script
+  type="module"
+  src="./node_modules/@aarongustafson/tabbed-interface/define.js"
+></script>
+```
+
+Start with a direct-child heading. The first heading’s level defines the
+sections: each subsequent direct-child heading at that level starts another
+panel. Lower-level headings belong to the current panel. Content before the
+first heading is not included in the enhanced panels; keep introductory content
+outside the element. With no direct-child headings, content stays in its
+original flow.
 
 ### Import Options
 
@@ -72,7 +73,9 @@ import '@aarongustafson/tabbed-interface/define.js';
 // Registers <tabbed-interface> when customElements is available
 ```
 
-Prefer to control when registration happens? Call the helper directly:
+Importing `define.js` also calls `defineTabbedInterface()`. The helper skips
+an already registered tag and returns `true` when a browser registry is
+available, or `false` otherwise. Calling it again is safe:
 
 ```javascript
 import { defineTabbedInterface } from '@aarongustafson/tabbed-interface/define.js';
@@ -82,10 +85,51 @@ defineTabbedInterface();
 
 **Manual registration:**
 
+The main import and the `tabbed-interface.js` subpath export the class without
+registering it. Use your preferred tag name and update your HTML to match:
+
 ```javascript
 import { TabbedInterfaceElement } from '@aarongustafson/tabbed-interface';
 customElements.define('my-tabs', TabbedInterfaceElement);
 ```
+
+Bundled declarations describe `TabbedInterfaceElement`, the registration helper,
+and change events. The component has no runtime package dependencies.
+
+## Selection, labels, and links
+
+The first section is selected by default. Set `default-tab` to a zero-based
+index or a heading ID to choose another section. An invalid value falls back
+to the first section. At initialization, a URL fragment matching a section
+heading ID takes precedence over `default-tab`. Later matching fragment changes
+select that section; unrelated fragments leave selection alone. Selecting a tab
+does not rewrite the URL.
+
+Use unique heading IDs for [links to sections](./demo/index.html#link-to-sections).
+The component matches the fragment text directly; it doesn’t decode
+percent-encoded IDs. Simple IDs such as `visit-hours` avoid that ambiguity.
+
+By default, ordinary panel headings are visually hidden in tab layout but
+remain available to assistive technology. Add `show-headers` to request visible
+headings. All headings are visible in linear and print layouts.
+
+### Custom Tab Titles
+
+`data-tab-short-name` supplies the visible tab label. The full heading becomes
+the tab’s accessible name through `aria-label`; that name is not the visible
+tab label. Keep the short label recognizable within the full name, including
+when rewriting labels for your application or translating them. The
+[short-label example](./demo/index.html#short-labels) explicitly uses
+`show-headers` to show the full headings too. The current runtime also leaves
+headings with nonempty short names visible when `show-headers` is absent.
+
+### Hash Navigation
+
+For example, a link to `#visit-hours` selects the section headed by
+`<h2 id="visit-hours">`. The heading remains a native fragment destination
+before upgrade or without JavaScript. See the
+[section-link example](./demo/index.html#link-to-sections) for matching HTML
+and links.
 
 ## Attributes
 
@@ -93,36 +137,13 @@ customElements.define('my-tabs', TabbedInterfaceElement);
 | --------------- | ------- | ------- | ------------------------------------------------------------------------------ |
 | `show-headers`  | boolean | `false` | When present, shows headings in tab panels                                     |
 | `tablist-after` | boolean | `false` | When present, positions tab list after content                                 |
-| `default-tab`   | string  | `"0"`   | Initial active tab (index or heading ID)                                       |
+| `default-tab`   | string  | absent  | Select a zero-based index or heading ID; absent selects the first section      |
 | `auto-activate` | boolean | `false` | When present, tabs activate on focus; when absent, use Enter/Space to activate |
 | `fixed-tabs`    | boolean | `false` | When present, keeps tabs active even when the complete tablist does not fit    |
 
-### Examples
-
-```html
-<!-- Show headings in panels -->
-<tabbed-interface show-headers> ... </tabbed-interface>
-
-<!-- Tabs after content -->
-<tabbed-interface tablist-after> ... </tabbed-interface>
-
-<!-- Start on specific tab -->
-<tabbed-interface default-tab="2"> ... </tabbed-interface>
-
-<!-- Start on tab by heading ID -->
-<tabbed-interface default-tab="features">
-  <h2 id="intro">Introduction</h2>
-  <p>...</p>
-  <h2 id="features">Features</h2>
-  <p>...</p>
-</tabbed-interface>
-
-<!-- Auto-activation (tabs activate on focus) -->
-<tabbed-interface auto-activate> ... </tabbed-interface>
-
-<!-- Always use tabs; the implementor handles any overflow -->
-<tabbed-interface fixed-tabs> ... </tabbed-interface>
-```
+Boolean attributes work by presence, so `auto-activate="false"` still enables
+automatic activation. See the [live examples](./demo/index.html) for configuration
+alternatives.
 
 ## Responsive Behavior
 
@@ -142,22 +163,36 @@ tabbed-interface[data-layout='linear'] {
 
 ## Properties
 
-| Property       | Type    | Description                                             |
-| -------------- | ------- | ------------------------------------------------------- |
-| `activeIndex`  | number  | Get/set the currently active tab index                  |
-| `showHeaders`  | boolean | Get/set header visibility                               |
-| `tablistAfter` | boolean | Get/set tablist position                                |
-| `autoActivate` | boolean | Get/set auto-activation behavior                        |
-| `fixedTabs`    | boolean | Get/set whether tabs remain active when they do not fit |
+| Property       | Type           | Description                                                                                  |
+| -------------- | -------------- | -------------------------------------------------------------------------------------------- |
+| `activeIndex`  | number         | Get/set the currently active tab index                                                       |
+| `showHeaders`  | boolean        | Get/set header visibility                                                                    |
+| `tablistAfter` | boolean        | Get/set tablist position                                                                     |
+| `autoActivate` | boolean        | Get/set auto-activation behavior                                                             |
+| `fixedTabs`    | boolean        | Get/set whether tabs remain active when they do not fit                                      |
+| `defaultTab`   | string \| null | Reflect `default-tab`; setting `null`, `undefined`, or an empty/whitespace string removes it |
+
+The boolean properties reflect their matching attributes and default to `false`.
+`activeIndex` starts at `0`; out-of-range assignments are ignored. Changing
+`defaultTab` after initialization also changes selection.
+
+The component replays assignments to all six public properties made before
+upgrade. Initial section setup still applies `default-tab` and then a matching
+hash, so use `activeIndex` after initialization for imperative selection.
 
 ## Methods
 
-| Method       | Description                  |
-| ------------ | ---------------------------- |
-| `next()`     | Navigate to the next tab     |
-| `previous()` | Navigate to the previous tab |
-| `first()`    | Navigate to the first tab    |
-| `last()`     | Navigate to the last tab     |
+| Method       | Description                                          |
+| ------------ | ---------------------------------------------------- |
+| `next()`     | Select the next tab, wrapping from last to first     |
+| `previous()` | Select the previous tab, wrapping from first to last |
+| `first()`    | Select the first tab                                 |
+| `last()`     | Select the last tab                                  |
+
+These methods also focus the selected tab in tab layout. In linear layout,
+they update the remembered selection without hiding sections or moving focus.
+They do nothing when there are no tabs. Setting `activeIndex` changes selection
+without moving focus.
 
 ### Programmatic Control
 
@@ -176,9 +211,9 @@ $tabs.activeIndex = 2;
 
 ## Events
 
-| Event                     | Detail                            | Description                   |
-| ------------------------- | --------------------------------- | ----------------------------- |
-| `tabbed-interface:change` | `{ tabId, tabpanelId, tabIndex }` | Fired when active tab changes |
+| Event                     | Detail                            | Description                                                                       |
+| ------------------------- | --------------------------------- | --------------------------------------------------------------------------------- |
+| `tabbed-interface:change` | `{ tabId, tabpanelId, tabIndex }` | Reports selection, including initial setup; bubbles and crosses shadow boundaries |
 
 ```javascript
 document
@@ -190,13 +225,25 @@ document
 
 ## Keyboard Navigation
 
-| Key                | Action                                                                                 |
-| ------------------ | -------------------------------------------------------------------------------------- |
-| `Arrow Left/Up`    | Previous tab                                                                           |
-| `Arrow Right/Down` | Next tab                                                                               |
-| `Home`             | First tab                                                                              |
-| `End`              | Last tab                                                                               |
-| `Enter/Space`      | Activate tab (when auto-activate is absent) and focus first focusable element in panel |
+Tab into the selected tab. Without `auto-activate`, arrow keys move focus
+without changing the visible panel; press Enter or Space to select the focused
+tab. With `auto-activate`, moving focus selects it immediately. Clicking a tab
+selects it in either mode.
+
+| Key                | Action                                                                                                                                                  |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Arrow Left/Up`    | Previous tab                                                                                                                                            |
+| `Arrow Right/Down` | Next tab                                                                                                                                                |
+| `Home`             | First tab                                                                                                                                               |
+| `End`              | Last tab                                                                                                                                                |
+| `Enter/Space`      | Select the focused tab in manual mode; in either mode, focus the first matching link, control, or focusable element in the active section if one exists |
+
+If the section has no matching focusable element, focus stays on the tab.
+The component creates tab/panel roles, names each panel from its tab, and uses
+one tab stop in the tablist. In linear layout it removes those roles and reveals
+all sections. If a focused tab disappears during that change, focus moves to
+the host; it returns to the selected tab when tabs fit again, unless the user
+has moved focus elsewhere.
 
 ## Styling
 
@@ -350,7 +397,11 @@ tabbed-interface::part(tab):focus-visible {
 }
 ```
 
-The responsive measurement probe receives the same parts and inherited styles as the visible tablist. Keep hover and focus styles metric-stable; normal and selected states are included in fit calculation.
+Keep hover and focus styles geometry-stable: changing padding, borders, or font
+size on focus can make controls move or overflow while someone navigates.
+The fit calculation includes normal and selected states, not hover/focus
+changes. See the [styling demos](./demo/index.html#styling-tabs) for pill and
+underline treatments.
 
 ### CSS custom properties
 
@@ -383,39 +434,30 @@ CSS custom properties offer convenient theme-level control without replacing par
 
 Print mode hides the tab controls and reveals every section and original heading in source order. The on-screen selected tab and responsive presentation are restored after printing.
 
-## Custom Tab Titles
+## Content changes and disconnection
 
-Use `data-tab-short-name` to show a different label in the tab than the heading. The full heading text is set as the `aria-label` for screen readers:
+Changes to direct-child content or section headings rebuild the tabs while
+preserving the selected index when it still exists. The original content nodes,
+listeners, and form state remain intact.
 
-```html
-<tabbed-interface>
-  <h2 data-tab-short-name="Intro">Introduction and Getting Started Guide</h2>
-  <p>Full content with the complete heading visible in the panel.</p>
-</tabbed-interface>
-```
-
-## Hash Navigation
-
-The component supports URL hash navigation. Link to specific tabs:
-
-```html
-<a href="#features">Go to Features</a>
-
-<tabbed-interface>
-  <h2 id="intro">Introduction</h2>
-  <p>...</p>
-  <h2 id="features">Features</h2>
-  <p>...</p>
-</tabbed-interface>
-```
+On disconnection, the component removes its hash, print, and font listeners,
+disconnects its observers, and cancels queued work. Reconnection rebuilds the
+presentation from the same authored nodes and applies the initial selection
+rules again.
 
 ## Browser Support
 
-Works in all modern browsers supporting:
+The component requires:
 
 - Custom Elements v1
 - Shadow DOM v1
 - ES Modules
+- Manual slot assignment (`HTMLSlotElement.assign()`)
+
+It also uses `ResizeObserver` to respond to container resizing. Test your
+target browsers, authored labels, form controls, and custom styles. Local
+automated browser tests do not establish screen-reader or high-contrast
+support across operating systems and user settings.
 
 ## Development
 
