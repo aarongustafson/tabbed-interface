@@ -104,12 +104,24 @@ test('manual and automatic examples separate focus from selection', async ({
 	const manual = page.locator('#basic-use tabbed-interface');
 	await expect(manual).toHaveAttribute('data-layout', 'tabs');
 	const tabs = manual.getByRole('tab');
+	const measureTab = () =>
+		tabs.nth(1).evaluate((tab) => {
+			const bounds = tab.getBoundingClientRect();
+			const host = tab.getRootNode().host.getBoundingClientRect();
+			// Native focus may scroll the viewport without changing tab layout.
+			return {
+				x: bounds.x - host.x,
+				y: bounds.y - host.y,
+				width: bounds.width,
+				height: bounds.height,
+			};
+		});
 	await tabs.nth(0).focus();
-	const before = await tabs.nth(1).boundingBox();
+	const before = await measureTab();
 	await page.keyboard.press('ArrowRight');
 	await expect(tabs.nth(1)).toBeFocused();
 	await expect(tabs.nth(0)).toHaveAttribute('aria-selected', 'true');
-	expect(await tabs.nth(1).boundingBox()).toEqual(before);
+	await expect.poll(measureTab).toEqual(before);
 	await page.keyboard.press('Space');
 	await expect(tabs.nth(1)).toHaveAttribute('aria-selected', 'true');
 	await page.keyboard.press('End');
