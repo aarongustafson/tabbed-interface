@@ -13,11 +13,9 @@
 			<p class="eyebrow">Web component / Examples</p>
 			<h1>&lt;tabbed-interface&gt;</h1>
 			<p class="lede">
-				A web component that transforms heading-structured content into
-				an accessible tabbed interface when the tabs fit, and readable
-				linear sections when they do not. See the
-				<a href="../">README</a>
-				for installation and API documentation.
+				This component turns headings and their content into tabs when
+				the tablist fits on one row. When it doesn’t fit, the component
+				shows every section in reading order.
 			</p>
 			<nav aria-label="Component resources">
 				<a
@@ -43,106 +41,71 @@
 				data-theme-failure-message="Code highlighting and Copy controls are available, but the syntax theme could not load. The component loads independently."
 			></p>
 
-			<!-- Basic Example -->
-			<section>
-				<h2>Basic Example</h2>
+			<section class="demo-section" id="basic-use">
+				<h2>Turn related sections into tabs</h2>
 				<p>
-					The component automatically converts headings into tabs with
-					accessible keyboard navigation and ARIA attributes.
+					Wrap headings and their content in
+					<code>&lt;tabbed-interface&gt;</code>. The first
+					direct-child heading’s level defines the sections. This page
+					loads <code>../define.js</code> to register the element.
+					Without JavaScript, or if the module fails to load, these
+					headings and paragraphs remain readable together.
 				</p>
+				<p>
+					Tab into the selected tab, then use arrow keys to move
+					focus. Press Enter or Space to select the focused tab. Home
+					and End move focus to the first and last tabs. If the
+					selected section contains a link or control, Enter or Space
+					also moves focus to its first matching focusable element;
+					otherwise focus stays on the tab.
+				</p>
+				<div class="code-demo-pair">
+					<micro-lighter
+						class="code-panel"
+						language="html"
+						controls="copy"
+						data-label="HTML"
+					>
+						<pre
+							aria-label="Related sections HTML"
+							tabindex="0"
+						><code><mark>&lt;tabbed-interface&gt;</mark>
+  &lt;h3&gt;Opening hours&lt;/h3&gt;
+  &lt;p&gt;Tuesday through Sunday, 10am to 5pm.&lt;/p&gt;
 
-				<div class="demo-section">
-					<h3>Basic Usage</h3>
-					<p>
-						Simply wrap your heading-structured content in the
-						<code>&lt;tabbed-interface&gt;</code> element.
-					</p>
-					<div class="code-demo-pair">
-						<micro-lighter
-							class="code-panel"
-							language="html"
-							controls="copy"
-							data-label="HTML"
-						>
-							<pre
-								aria-label="Basic Usage code 1"
-								tabindex="0"
-							><code><mark>&lt;tabbed-interface&gt;</mark>
-  &lt;h3&gt;Getting Started&lt;/h3&gt;
-  &lt;p&gt;First tab content.&lt;/p&gt;
+  &lt;h3&gt;Getting here&lt;/h3&gt;
+  &lt;p&gt;The museum is across from Central Station.&lt;/p&gt;
 
-  &lt;h3&gt;Features&lt;/h3&gt;
-  &lt;p&gt;Second tab content.&lt;/p&gt;
-
-  &lt;h3&gt;Installation&lt;/h3&gt;
-  &lt;p&gt;Third tab content.&lt;/p&gt;
+  &lt;h3&gt;Contact&lt;/h3&gt;
+  &lt;p&gt;Ask at the front desk for help planning your visit.&lt;/p&gt;
 <mark>&lt;/tabbed-interface&gt;</mark></code></pre>
-						</micro-lighter>
-						<div class="demo" data-demo-label="Live example">
-							<tabbed-interface>
-								<h3>Getting Started</h3>
-								<p>
-									This is the first tab panel. The component
-									automatically creates tabs from headings.
-								</p>
-								<p>Headers are hidden by default in panels.</p>
-
-								<h3>Features</h3>
-								<ul>
-									<li>
-										Automatic tab creation from headings
-									</li>
-									<li>Full keyboard navigation support</li>
-									<li>ARIA attributes for accessibility</li>
-									<li>CSS custom properties for styling</li>
-								</ul>
-
-								<h3>Installation</h3>
-								<micro-lighter
-									class="code-panel"
-									language="bash"
-									controls="copy"
-									data-label="BASH"
-								>
-									<pre
-										aria-label="Basic Usage code 2"
-										tabindex="0"
-									><code>npm install @aarongustafson/tabbed-interface</code></pre>
-								</micro-lighter>
-								<p>Then import in your JavaScript:</p>
-								<micro-lighter
-									class="code-panel"
-									language="javascript"
-									controls="copy"
-									data-label="JavaScript"
-								>
-									<pre
-										aria-label="Basic Usage code 3"
-										tabindex="0"
-									><code><mark>import '@aarongustafson/tabbed-interface/define.js';</mark></code></pre>
-								</micro-lighter>
-							</tabbed-interface>
-						</div>
+					</micro-lighter>
+					<div class="demo" data-demo-label="Live example">
+						<tabbed-interface>
+							<h3>Opening hours</h3>
+							<p>Tuesday through Sunday, 10am to 5pm.</p>
+							<h3>Getting here</h3>
+							<p>The museum is across from Central Station.</p>
+							<h3>Contact</h3>
+							<p>
+								Ask at the front desk for help planning your
+								visit.
+							</p>
+						</tabbed-interface>
 					</div>
 				</div>
 			</section>
 
-			<!-- Attributes -->
-			<section>
-				<h2>Attributes</h2>
-				<p>
-					The component supports several attributes to customize its
-					behavior.
-				</p>
-
-				<div class="demo-section">
-					<h3>Auto-Activation</h3>
+			<section id="selection-and-labels">
+				<h2>Choose the opening section and tab labels</h2>
+				<div class="demo-section" id="initial-selection">
+					<h3>Start on another section</h3>
 					<p>
-						Add the <code>auto-activate</code> attribute to make
-						tabs activate on focus. By default (without the
-						attribute), tabs require Enter or Space to activate,
-						following the manual activation pattern for better
-						accessibility.
+						Set <code>default-tab="1"</code> to select the second
+						section initially. The index starts at zero. You can
+						also use a heading ID; an invalid value selects the
+						first section. A matching URL fragment takes precedence
+						when the component initializes.
 					</p>
 					<div class="code-demo-pair">
 						<micro-lighter
@@ -152,187 +115,51 @@
 							data-label="HTML"
 						>
 							<pre
-								aria-label="Auto-Activation code 4"
-								tabindex="0"
-							><code><mark>&lt;tabbed-interface auto-activate&gt;</mark>
-  &lt;h3&gt;Tab One&lt;/h3&gt;
-  &lt;p&gt;Content here.&lt;/p&gt;
-
-  &lt;h3&gt;Tab Two&lt;/h3&gt;
-  &lt;p&gt;More content.&lt;/p&gt;
-<mark>&lt;/tabbed-interface&gt;</mark></code></pre>
-						</micro-lighter>
-						<div class="demo" data-demo-label="Live example">
-							<div class="note">
-								<strong>Try it:</strong> Use arrow keys to focus
-								different tabs. They activate automatically on
-								focus.
-							</div>
-							<tabbed-interface auto-activate>
-								<h3>Auto Tab 1</h3>
-								<p>
-									With auto-activation, tabs activate
-									immediately when you focus them with arrow
-									keys.
-								</p>
-
-								<h3>Auto Tab 2</h3>
-								<p>
-									This can be convenient for quick navigation
-									when you have few tabs.
-								</p>
-
-								<h3>Auto Tab 3</h3>
-								<p>
-									Just navigate with arrow keys and the panel
-									changes automatically.
-								</p>
-							</tabbed-interface>
-						</div>
-					</div>
-				</div>
-				<div class="demo-section">
-					<h3>Visible Headers</h3>
-					<p>
-						Use <code>show-headers</code> to keep headings visible
-						in tab panels.
-					</p>
-					<div class="code-demo-pair">
-						<micro-lighter
-							class="code-panel"
-							language="html"
-							controls="copy"
-							data-label="HTML"
-						>
-							<pre
-								aria-label="Visible Headers code 5"
-								tabindex="0"
-							><code><mark>&lt;tabbed-interface show-headers&gt;</mark>
-  &lt;h3&gt;Overview&lt;/h3&gt;
-  &lt;p&gt;Content here.&lt;/p&gt;
-
-  &lt;h3&gt;Details&lt;/h3&gt;
-  &lt;p&gt;More content.&lt;/p&gt;
-<mark>&lt;/tabbed-interface&gt;</mark></code></pre>
-						</micro-lighter>
-						<div class="demo" data-demo-label="Live example">
-							<tabbed-interface show-headers>
-								<h3>Overview</h3>
-								<p>
-									The heading is now visible inside the panel
-									along with the tab.
-								</p>
-
-								<h3>Details</h3>
-								<p>
-									This can be useful for certain design
-									patterns or when you want redundancy.
-								</p>
-							</tabbed-interface>
-						</div>
-					</div>
-				</div>
-
-				<div class="demo-section">
-					<h3>Tab List Position</h3>
-					<p>
-						Use <code>tablist-after</code> to place tabs below the
-						content.
-					</p>
-					<div class="code-demo-pair">
-						<micro-lighter
-							class="code-panel"
-							language="html"
-							controls="copy"
-							data-label="HTML"
-						>
-							<pre
-								aria-label="Tab List Position code 6"
-								tabindex="0"
-							><code><mark>&lt;tabbed-interface tablist-after&gt;</mark>
-  &lt;h3&gt;First&lt;/h3&gt;
-  &lt;p&gt;Content appears above tabs.&lt;/p&gt;
-
-  &lt;h3&gt;Second&lt;/h3&gt;
-  &lt;p&gt;More content.&lt;/p&gt;
-<mark>&lt;/tabbed-interface&gt;</mark></code></pre>
-						</micro-lighter>
-						<div class="demo" data-demo-label="Live example">
-							<tabbed-interface tablist-after>
-								<h3>First Section</h3>
-								<p>
-									The tabs appear below the content when using
-									<code>tablist-after</code>.
-								</p>
-
-								<h3>Second Section</h3>
-								<p>
-									This can be useful for certain layouts or
-									design patterns.
-								</p>
-							</tabbed-interface>
-						</div>
-					</div>
-				</div>
-
-				<div class="demo-section">
-					<h3>Default Tab</h3>
-					<p>
-						Use <code>default-tab</code> to set which tab is active
-						initially (by index or heading ID).
-					</p>
-					<div class="code-demo-pair">
-						<micro-lighter
-							class="code-panel"
-							language="html"
-							controls="copy"
-							data-label="HTML"
-						>
-							<pre
-								aria-label="Default Tab code 7"
+								aria-label="Initial selection HTML"
 								tabindex="0"
 							><code><mark>&lt;tabbed-interface default-tab="1"&gt;</mark>
-  &lt;h3&gt;Tab 0&lt;/h3&gt;
-  &lt;p&gt;First tab.&lt;/p&gt;
-
-  &lt;h3&gt;Tab 1&lt;/h3&gt;
-  &lt;p&gt;This tab is active by default.&lt;/p&gt;
-
-  &lt;h3&gt;Tab 2&lt;/h3&gt;
-  &lt;p&gt;Third tab.&lt;/p&gt;
+  &lt;h3&gt;By train&lt;/h3&gt;
+  &lt;p&gt;Leave the station through the north exit.&lt;/p&gt;
+  &lt;h3&gt;By bus&lt;/h3&gt;
+  &lt;p&gt;Routes 4 and 12 stop outside the museum.&lt;/p&gt;
+  &lt;h3&gt;By bicycle&lt;/h3&gt;
+  &lt;p&gt;Cycle racks are beside the entrance.&lt;/p&gt;
 <mark>&lt;/tabbed-interface&gt;</mark></code></pre>
 						</micro-lighter>
 						<div class="demo" data-demo-label="Live example">
 							<tabbed-interface default-tab="1">
-								<h3>Tab 0</h3>
-								<p>First tab content.</p>
-
-								<h3>Tab 1</h3>
-								<p>
-									This tab is active by default because of
-									<code>default-tab="1"</code>.
-								</p>
-
-								<h3>Tab 2</h3>
-								<p>Third tab content.</p>
+								<h3>By train</h3>
+								<p>Leave the station through the north exit.</p>
+								<h3>By bus</h3>
+								<p>Routes 4 and 12 stop outside the museum.</p>
+								<h3>By bicycle</h3>
+								<p>Cycle racks are beside the entrance.</p>
 							</tabbed-interface>
 						</div>
 					</div>
 				</div>
-			</section>
 
-			<!-- Responsive Layout -->
-			<section>
-				<h2>Responsive Layout</h2>
-				<p>
-					Tabs are used only while the complete tablist fits on one
-					row. Resize the browser to see long tab labels switch to
-					readable linear sections on smaller screens.
-				</p>
-
-				<div class="demo-section">
-					<h3>Long Tab Titles</h3>
-					<div class="code-demo-pair responsive-demo-pair">
+				<div class="demo-section" id="short-labels">
+					<h3>Use shorter tab labels</h3>
+					<p>
+						Set <code>data-tab-short-name</code> on a heading to
+						change the visible tab label. The full heading supplies
+						the tab’s accessible name through
+						<code>aria-label</code>; it isn’t the visible tab label.
+						This example explicitly adds
+						<code>show-headers</code> to request visible full
+						headings in the panels too.
+					</p>
+					<p>
+						Choose short labels that remain recognizable in the full
+						headings, whether you’re translating them or matching
+						your application’s vocabulary. See the
+						<a href="../README.md#selection-labels-and-links"
+							>label reference</a
+						>
+						for heading visibility behavior.
+					</p>
+					<div class="code-demo-pair">
 						<micro-lighter
 							class="code-panel"
 							language="html"
@@ -340,76 +167,414 @@
 							data-label="HTML"
 						>
 							<pre
-								aria-label="Long Tab Titles code 8"
+								aria-label="Short tab labels HTML"
 								tabindex="0"
-							><code><mark>&lt;tabbed-interface&gt;</mark>
-  &lt;h3&gt;Understanding Progressive Enhancement&lt;/h3&gt;
-  &lt;p&gt;Content here.&lt;/p&gt;
-
-  &lt;h3&gt;Designing Accessible Interaction Patterns&lt;/h3&gt;
-  &lt;p&gt;More content.&lt;/p&gt;
-
-  &lt;h3&gt;Supporting International&amp;shy;ized Tab Labels&lt;/h3&gt;
-  &lt;p&gt;More content.&lt;/p&gt;
-
-  &lt;h3&gt;Testing Responsive Behavior Across Browsers&lt;/h3&gt;
-  &lt;p&gt;More content.&lt;/p&gt;
+							><code><mark>&lt;tabbed-interface show-headers&gt;</mark>
+  &lt;h3 <mark>data-tab-short-name="Hours"</mark>&gt;Hours and admission prices&lt;/h3&gt;
+  &lt;p&gt;Admission is free on the first Sunday of each month.&lt;/p&gt;
+  &lt;h3 <mark>data-tab-short-name="Travel"</mark>&gt;Travel to the museum&lt;/h3&gt;
+  &lt;p&gt;The station and bus stops are a short walk away.&lt;/p&gt;
+  &lt;h3 <mark>data-tab-short-name="Access"</mark>&gt;Access during your visit&lt;/h3&gt;
+  &lt;p&gt;A step-free entrance is on the east side.&lt;/p&gt;
 <mark>&lt;/tabbed-interface&gt;</mark></code></pre>
 						</micro-lighter>
 						<div class="demo" data-demo-label="Live example">
-							<tabbed-interface id="responsive-layout-demo">
-								<h3>Understanding Progressive Enhancement</h3>
-								<p>
-									The original heading-structured content
-									remains useful before the component loads
-									and whenever the linear layout is active.
-								</p>
-
-								<h3>
-									Designing Accessible Interaction Patterns
+							<tabbed-interface show-headers>
+								<h3 data-tab-short-name="Hours">
+									Hours and admission prices
 								</h3>
 								<p>
-									The tabbed layout supplies familiar keyboard
-									navigation and accessible relationships
-									while there is enough room for it.
+									Admission is free on the first Sunday of
+									each month.
 								</p>
-
-								<h3>
-									Supporting International&shy;ized Tab Labels
+								<h3 data-tab-short-name="Travel">
+									Travel to the museum
 								</h3>
 								<p>
-									The fit decision uses rendered labels, so
-									long translations participate naturally.
+									The station and bus stops are a short walk
+									away.
 								</p>
-
-								<h3>
-									Testing Responsive Behavior Across Browsers
+								<h3 data-tab-short-name="Access">
+									Access during your visit
 								</h3>
+								<p>A step-free entrance is on the east side.</p>
+							</tabbed-interface>
+						</div>
+					</div>
+				</div>
+
+				<div class="demo-section" id="visible-headings">
+					<h3>Show headings inside panels</h3>
+					<p>
+						Add <code>show-headers</code> to keep ordinary headings
+						visible in tab layout. Without it, ordinary headings are
+						visually hidden, though assistive technology can still
+						read them. Linear layout and printing show every
+						heading.
+					</p>
+					<div class="code-demo-pair">
+						<micro-lighter
+							class="code-panel"
+							language="html"
+							controls="copy"
+							data-label="HTML"
+						>
+							<pre
+								aria-label="Visible headings HTML"
+								tabindex="0"
+							><code><mark>&lt;tabbed-interface show-headers&gt;</mark>
+  &lt;h3&gt;Current exhibition&lt;/h3&gt;
+  &lt;p&gt;Explore photographs from the city archives.&lt;/p&gt;
+  &lt;h3&gt;Permanent collection&lt;/h3&gt;
+  &lt;p&gt;Discover objects from everyday life in the city.&lt;/p&gt;
+<mark>&lt;/tabbed-interface&gt;</mark></code></pre>
+						</micro-lighter>
+						<div class="demo" data-demo-label="Live example">
+							<tabbed-interface show-headers>
+								<h3>Current exhibition</h3>
 								<p>
-									When the labels no longer fit in one row,
-									all sections and headings become visible
-									without introducing another interaction
-									pattern.
+									Explore photographs from the city archives.
 								</p>
+								<h3>Permanent collection</h3>
+								<p>
+									Discover objects from everyday life in the
+									city.
+								</p>
+							</tabbed-interface>
+						</div>
+					</div>
+				</div>
+
+				<div class="demo-section" id="link-to-sections">
+					<h3>Link to a section</h3>
+					<p>
+						Give each heading a unique ID and link to it with a URL
+						fragment. These links select the matching section after
+						upgrade and reach the native headings without
+						JavaScript. Clicking a tab does not change the URL.
+						Links to example blocks, such as
+						<code>#link-to-sections</code>, don’t change selection.
+					</p>
+					<div class="code-demo-pair">
+						<micro-lighter
+							class="code-panel"
+							language="html"
+							controls="copy"
+							data-label="HTML"
+						>
+							<pre
+								aria-label="Section links HTML"
+								tabindex="0"
+							><code>&lt;p&gt;
+  &lt;a <mark>href="#hash-start"</mark>&gt;Jump to Start&lt;/a&gt; |
+  &lt;a <mark>href="#hash-middle"</mark>&gt;Jump to Middle&lt;/a&gt; |
+  &lt;a <mark>href="#hash-end"</mark>&gt;Jump to End&lt;/a&gt;
+&lt;/p&gt;
+<mark>&lt;tabbed-interface&gt;</mark>
+  &lt;h3 <mark>id="hash-start"</mark>&gt;Start&lt;/h3&gt;
+  &lt;p&gt;Begin your visit in the entrance hall.&lt;/p&gt;
+  &lt;h3 <mark>id="hash-middle"</mark>&gt;Middle&lt;/h3&gt;
+  &lt;p&gt;Continue upstairs to the collection.&lt;/p&gt;
+  &lt;h3 <mark>id="hash-end"</mark>&gt;End&lt;/h3&gt;
+  &lt;p&gt;Finish in the courtyard.&lt;/p&gt;
+<mark>&lt;/tabbed-interface&gt;</mark></code></pre>
+						</micro-lighter>
+						<div class="demo" data-demo-label="Live example">
+							<p>
+								<a href="#hash-start">Jump to Start</a> |
+								<a href="#hash-middle">Jump to Middle</a> |
+								<a href="#hash-end">Jump to End</a>
+							</p>
+							<tabbed-interface>
+								<h3 id="hash-start">Start</h3>
+								<p>Begin your visit in the entrance hall.</p>
+								<h3 id="hash-middle">Middle</h3>
+								<p>Continue upstairs to the collection.</p>
+								<h3 id="hash-end">End</h3>
+								<p>Finish in the courtyard.</p>
 							</tabbed-interface>
 						</div>
 					</div>
 				</div>
 			</section>
 
-			<!-- Styling Variants -->
-			<section>
-				<h2>Styling Variants</h2>
-				<p>
-					Style authored panel content with ordinary CSS. Style the
-					component-owned controls and panel containers using
-					<code>::part()</code> selectors.
-				</p>
-				<div class="demo-section">
-					<h3>Pill-Style Tabs</h3>
+			<section id="navigation-options">
+				<h2>Change how people move between sections</h2>
+				<div class="demo-section" id="activate-on-focus">
+					<h3>Select tabs when they receive focus</h3>
 					<p>
-						Create rounded pill-style tabs using
-						<code>::part()</code> selectors.
+						Add <code>auto-activate</code> to select a tab as soon
+						as it receives focus. Use arrow keys here to see the
+						panel change without pressing Enter or Space. Without
+						the attribute, focus and selection stay separate.
+					</p>
+					<div class="code-demo-pair">
+						<micro-lighter
+							class="code-panel"
+							language="html"
+							controls="copy"
+							data-label="HTML"
+						>
+							<pre
+								aria-label="Automatic activation HTML"
+								tabindex="0"
+							><code><mark>&lt;tabbed-interface auto-activate&gt;</mark>
+  &lt;h3&gt;Morning&lt;/h3&gt;
+  &lt;p&gt;Join the guided tour at 11am.&lt;/p&gt;
+  &lt;h3&gt;Afternoon&lt;/h3&gt;
+  &lt;p&gt;Drop into the workshop from 2pm.&lt;/p&gt;
+<mark>&lt;/tabbed-interface&gt;</mark></code></pre>
+						</micro-lighter>
+						<div class="demo" data-demo-label="Live example">
+							<tabbed-interface auto-activate>
+								<h3>Morning</h3>
+								<p>Join the guided tour at 11am.</p>
+								<h3>Afternoon</h3>
+								<p>Drop into the workshop from 2pm.</p>
+							</tabbed-interface>
+						</div>
+					</div>
+				</div>
+
+				<div class="demo-section" id="tabs-after-content">
+					<h3>Place the tabs after the content</h3>
+					<p>
+						Add <code>tablist-after</code> to place tab controls
+						below the panels. This also changes their position in
+						reading and keyboard order; check that the arrangement
+						suits your content.
+					</p>
+					<div class="code-demo-pair">
+						<micro-lighter
+							class="code-panel"
+							language="html"
+							controls="copy"
+							data-label="HTML"
+						>
+							<pre
+								aria-label="Tabs after content HTML"
+								tabindex="0"
+							><code><mark>&lt;tabbed-interface tablist-after&gt;</mark>
+  &lt;h3&gt;Gallery one&lt;/h3&gt;
+  &lt;p&gt;Paintings from the local collection.&lt;/p&gt;
+  &lt;h3&gt;Gallery two&lt;/h3&gt;
+  &lt;p&gt;Sculptures from visiting artists.&lt;/p&gt;
+<mark>&lt;/tabbed-interface&gt;</mark></code></pre>
+						</micro-lighter>
+						<div class="demo" data-demo-label="Live example">
+							<tabbed-interface tablist-after>
+								<h3>Gallery one</h3>
+								<p>Paintings from the local collection.</p>
+								<h3>Gallery two</h3>
+								<p>Sculptures from visiting artists.</p>
+							</tabbed-interface>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="demo-section" id="rendered-fit">
+				<h2>Show every section when labels don’t fit</h2>
+				<p>
+					Resize the window to see these longer labels switch from
+					tabs to linear sections. Fit depends on rendered labels,
+					fonts, spacing, and selected-tab styles—not a fixed viewport
+					breakpoint. Labels can wrap inside their buttons as long as
+					the complete tablist fits on one row.
+				</p>
+				<p>
+					Use <code>fixed-tabs</code> only if you’ll handle tab
+					overflow at every width yourself. It disables this automatic
+					switch. Printing still shows all sections and original
+					headings; the selected tab and screen layout return
+					afterward.
+				</p>
+				<div class="code-demo-pair responsive-demo-pair">
+					<micro-lighter
+						class="code-panel"
+						language="html"
+						controls="copy"
+						data-label="HTML"
+					>
+						<pre
+							aria-label="Rendered fit HTML"
+							tabindex="0"
+						><code><mark>&lt;tabbed-interface id="responsive-layout-demo"&gt;</mark>
+  &lt;h3&gt;Understanding Progressive Enhancement&lt;/h3&gt;
+  &lt;p&gt;Keep the original headings and content useful without scripts.&lt;/p&gt;
+  &lt;h3&gt;Designing Accessible Interaction Patterns&lt;/h3&gt;
+  &lt;p&gt;Plan names, keyboard operation, and focus together.&lt;/p&gt;
+  &lt;h3&gt;Supporting International&amp;shy;ized Tab Labels&lt;/h3&gt;
+  &lt;p&gt;Allow room for translated labels.&lt;/p&gt;
+  &lt;h3&gt;Testing Responsive Behavior Across Browsers&lt;/h3&gt;
+  &lt;p&gt;Check the content at wide and narrow widths.&lt;/p&gt;
+<mark>&lt;/tabbed-interface&gt;</mark></code></pre>
+					</micro-lighter>
+					<div class="demo" data-demo-label="Live example">
+						<tabbed-interface id="responsive-layout-demo">
+							<h3>Understanding Progressive Enhancement</h3>
+							<p>
+								Keep the original headings and content useful
+								without scripts.
+							</p>
+							<h3>Designing Accessible Interaction Patterns</h3>
+							<p>
+								Plan names, keyboard operation, and focus
+								together.
+							</p>
+							<h3>
+								Supporting International&shy;ized Tab Labels
+							</h3>
+							<p>Allow room for translated labels.</p>
+							<h3>Testing Responsive Behavior Across Browsers</h3>
+							<p>Check the content at wide and narrow widths.</p>
+						</tabbed-interface>
+					</div>
+				</div>
+			</section>
+
+			<section id="respond-to-selection">
+				<h2>Respond to selection in your application</h2>
+				<div class="demo-section" id="selection-events">
+					<h3>Read the selected tab from an event</h3>
+					<p>
+						Listen for <code>tabbed-interface:change</code> on the
+						element. Select another tab to update the output below.
+						<code>tabIndex</code> starts at zero;
+						<code>tabId</code> and <code>tabpanelId</code> identify
+						the generated tab and panel. Use
+						<code>textContent</code> to display the detail as text.
+					</p>
+					<div class="code-demo-pair">
+						<micro-lighter
+							class="code-panel"
+							language="javascript"
+							controls="copy"
+							data-label="JavaScript"
+						>
+							<pre
+								aria-label="Selection event JavaScript"
+								tabindex="0"
+							><code>const eventTabs = document.querySelector('#event-demo');
+const eventOutput = document.querySelector('#event-output');
+eventTabs.addEventListener(<mark>'tabbed-interface:change'</mark>, (event) =&gt; {
+  const { tabIndex, tabId, tabpanelId } = <mark>event.detail</mark>;
+  eventOutput.textContent =
+    `Tab changed: index=${tabIndex}, tabId=${tabId}, tabpanelId=${tabpanelId}`;
+});</code></pre>
+						</micro-lighter>
+						<div class="demo" data-demo-label="Live example">
+							<tabbed-interface id="event-demo">
+								<h3 id="intro">Introduction</h3>
+								<p>Plan a route through the museum.</p>
+								<h3 id="details">Details</h3>
+								<p>Allow two hours for the full collection.</p>
+								<h3 id="api">Further information</h3>
+								<p>Ask the front desk about guided tours.</p>
+							</tabbed-interface>
+							<div id="event-output" class="output">
+								Waiting for tab change…
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="demo-section" id="select-with-methods">
+					<h3>Select a tab from another control</h3>
+					<p>
+						Use <code>first()</code>, <code>previous()</code>,
+						<code>next()</code>, and <code>last()</code> to select
+						and focus a tab. Previous and Next wrap at either end.
+						You can also assign <code>activeIndex</code> to select
+						without moving focus. In linear layout, the methods
+						remember selection without hiding sections or moving
+						focus. The extra controls appear only after the module
+						loads.
+					</p>
+					<div class="code-demo-pair">
+						<micro-lighter
+							class="code-panel"
+							language="javascript"
+							controls="copy"
+							data-label="JavaScript"
+						>
+							<pre
+								aria-label="Selection methods JavaScript"
+								tabindex="0"
+							><code>const programmaticTabs = document.querySelector('#programmatic-demo');
+const controls = document.querySelector('#selection-controls');
+const methods = {
+  first: () =&gt; programmaticTabs.<mark>first()</mark>,
+  previous: () =&gt; programmaticTabs.<mark>previous()</mark>,
+  next: () =&gt; programmaticTabs.<mark>next()</mark>,
+  last: () =&gt; programmaticTabs.<mark>last()</mark>,
+};
+controls.querySelectorAll('button').forEach((button) =&gt; {
+  button.addEventListener('click', methods[button.dataset.action]);
+});
+controls.hidden = false;</code></pre>
+						</micro-lighter>
+						<div class="demo" data-demo-label="Live example">
+							<tabbed-interface id="programmatic-demo">
+								<h3>Panel A</h3>
+								<p>Start in the entrance hall.</p>
+								<h3>Panel B</h3>
+								<p>Visit the temporary exhibition.</p>
+								<h3>Panel C</h3>
+								<p>Explore the permanent collection.</p>
+								<h3>Panel D</h3>
+								<p>Take a break in the courtyard.</p>
+							</tabbed-interface>
+							<div
+								class="controls"
+								id="selection-controls"
+								hidden
+							>
+								<button type="button" data-action="first">
+									First
+								</button>
+								<button type="button" data-action="previous">
+									Previous
+								</button>
+								<button type="button" data-action="next">
+									Next
+								</button>
+								<button type="button" data-action="last">
+									Last
+								</button>
+							</div>
+							<div id="programmatic-output" class="output">
+								Current tab: 0
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section id="styling-tabs">
+				<h2>Style the tab controls</h2>
+				<p>
+					Style authored content with ordinary CSS and generated
+					controls with <code>::part()</code>. The component keeps
+					your original nodes, event listeners, live form values, and
+					form ownership. See the
+					<a href="../README.md#styling">styling reference</a>
+					for parts and custom properties.
+				</p>
+				<p>
+					Keep focus styles geometry-stable: don’t change padding,
+					border widths, or font sizes when a tab receives focus. Keep
+					selection and focus distinguishable, and pair backgrounds
+					with readable foregrounds. Check your styles with keyboard
+					use and your users’ color settings.
+				</p>
+				<div class="demo-section" id="pill-tabs">
+					<h3>Give tabs rounded outlines</h3>
+					<p>
+						Apply <code>class="pills"</code> to the component and
+						use these part rules. The selected tab reverses the
+						foreground and background; the browser still supplies
+						the keyboard focus outline.
 					</p>
 					<div class="code-demo-pair">
 						<micro-lighter
@@ -419,7 +584,7 @@
 							data-label="CSS"
 						>
 							<pre
-								aria-label="Pill-Style Tabs code 9"
+								aria-label="Pill tabs CSS"
 								tabindex="0"
 							><code><mark>tabbed-interface.pills::part(tablist)</mark> {
   gap: 8px;
@@ -454,24 +619,27 @@
 						</micro-lighter>
 						<div class="demo" data-demo-label="Live example">
 							<tabbed-interface class="pills" show-headers>
-								<h3>Tab One</h3>
+								<h3>Paintings</h3>
 								<p>
-									The pill style is achieved entirely through
-									CSS <code>::part()</code> selectors.
+									Landscapes and portraits from local artists.
 								</p>
-								<h3>Tab Two</h3>
-								<p>No JavaScript changes needed!</p>
-
-								<h3>Tab Three</h3>
-								<p>Fully customizable appearance.</p>
+								<h3>Objects</h3>
+								<p>Everyday objects from the city’s past.</p>
+								<h3>Photographs</h3>
+								<p>Street scenes from the archives.</p>
 							</tabbed-interface>
 						</div>
 					</div>
 				</div>
 
-				<div class="demo-section">
-					<h3>Minimal Style</h3>
-					<p>A clean, minimal style with an underline indicator.</p>
+				<div class="demo-section" id="underlined-tabs">
+					<h3>Underline the selected tab</h3>
+					<p>
+						Apply <code>class="minimal"</code> and use a bottom
+						border to mark selection. Arrow to an unselected tab:
+						the selection border stays in place while the focus
+						outline moves. This example uses manual activation.
+					</p>
 					<div class="code-demo-pair">
 						<micro-lighter
 							class="code-panel"
@@ -480,7 +648,7 @@
 							data-label="CSS"
 						>
 							<pre
-								aria-label="Minimal Style code 10"
+								aria-label="Underlined tabs CSS"
 								tabindex="0"
 							><code><mark>tabbed-interface.minimal::part(tablist)</mark> {
   gap: 0;
@@ -515,364 +683,15 @@
 						<div class="demo" data-demo-label="Live example">
 							<tabbed-interface class="minimal">
 								<h3>Design</h3>
-								<p>
-									A minimal design with just an underline for
-									the active tab.
-								</p>
-
+								<p>Sketch the exhibition layout.</p>
 								<h3>Develop</h3>
-								<p>
-									Clean and simple, great for modern
-									interfaces.
-								</p>
-
+								<p>Prepare the displays and labels.</p>
 								<h3>Deploy</h3>
-								<p>Lightweight visual treatment.</p>
+								<p>Open the exhibition to visitors.</p>
 							</tabbed-interface>
 						</div>
 					</div>
 				</div>
-			</section>
-
-			<!-- Advanced Features -->
-			<section>
-				<h2>Advanced Features</h2>
-				<p>
-					The component includes several advanced features for
-					enhanced functionality.
-				</p>
-
-				<div class="demo-section">
-					<h3>Custom Tab Titles</h3>
-					<p>
-						Use <code>data-tab-short-name</code> to show shorter
-						labels in tabs while keeping full headings in panels.
-						The full text is available as
-						<code>aria-label</code> for screen readers.
-					</p>
-					<div class="code-demo-pair">
-						<micro-lighter
-							class="code-panel"
-							language="html"
-							controls="copy"
-							data-label="HTML"
-						>
-							<pre
-								aria-label="Custom Tab Titles code 11"
-								tabindex="0"
-							><code><mark>&lt;tabbed-interface&gt;</mark>
-  &lt;h3 <mark>data-tab-short-name="Short"</mark>&gt;
-    Very Long Section Title
-  &lt;/h3&gt;
-  &lt;p&gt;Content here.&lt;/p&gt;
-
-  &lt;h3 <mark>data-tab-short-name="Emoji 🎉"</mark>&gt;
-    Plain Heading
-  &lt;/h3&gt;
-  &lt;p&gt;More content.&lt;/p&gt;
-<mark>&lt;/tabbed-interface&gt;</mark></code></pre>
-						</micro-lighter>
-						<div class="demo" data-demo-label="Live example">
-							<tabbed-interface>
-								<h3 data-tab-short-name="Short">
-									Very Long Section Title That Wouldn't Fit
-									Well In a Tab
-								</h3>
-								<p>
-									The tab shows "Short" but the full heading
-									is visible in the panel and available to
-									screen readers.
-								</p>
-
-								<h3 data-tab-short-name="Emoji 🎉">
-									Plain Heading
-								</h3>
-								<p>
-									You can even add emoji or other content to
-									your tab titles!
-								</p>
-
-								<h3 data-tab-short-name="API">
-									API Reference Guide
-								</h3>
-								<p>Great for abbreviating long titles.</p>
-							</tabbed-interface>
-						</div>
-					</div>
-				</div>
-
-				<div class="demo-section">
-					<h3>Event Handling</h3>
-					<p>
-						Listen for <code>tabbed-interface:change</code> events
-						to respond to tab changes.
-					</p>
-					<div class="code-demo-pair">
-						<micro-lighter
-							class="code-panel"
-							language="javascript"
-							controls="copy"
-							data-label="JavaScript"
-						>
-							<pre
-								aria-label="Event Handling code 12"
-								tabindex="0"
-							><code>document.querySelector('tabbed-interface')
-  .addEventListener(
-    <mark>'tabbed-interface:change'</mark>,
-    (event) =&gt; {
-      console.log(<mark>event.detail</mark>);
-    }
-  );</code></pre>
-						</micro-lighter>
-						<div class="demo" data-demo-label="Live example">
-							<tabbed-interface id="event-demo">
-								<h3 id="intro">Introduction</h3>
-								<p>
-									Click between tabs and watch the output
-									below.
-								</p>
-
-								<h3 id="details">Details</h3>
-								<p>
-									The event fires whenever the active tab
-									changes and includes useful details.
-								</p>
-
-								<h3 id="api">API</h3>
-								<p>
-									Event detail includes
-									<code>tabIndex</code>, <code>tabId</code>,
-									and <code>tabpanelId</code>.
-								</p>
-							</tabbed-interface>
-							<div id="event-output" class="output">
-								<strong>Waiting for tab change...</strong>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<div class="demo-section">
-					<h3>Programmatic Control</h3>
-					<p>
-						Control tabs programmatically using the JavaScript API.
-					</p>
-					<div class="code-demo-pair">
-						<micro-lighter
-							class="code-panel"
-							language="javascript"
-							controls="copy"
-							data-label="JavaScript"
-						>
-							<pre
-								aria-label="Programmatic Control code 13"
-								tabindex="0"
-							><code>const tabs = document.querySelector(
-  'tabbed-interface'
-);
-
-// Navigate
-tabs.<mark>next()</mark>;
-tabs.<mark>previous()</mark>;
-tabs.<mark>first()</mark>;
-tabs.<mark>last()</mark>;
-
-// Set active tab directly
-tabs.<mark>activeIndex = 2</mark>;</code></pre>
-						</micro-lighter>
-						<div class="demo" data-demo-label="Live example">
-							<tabbed-interface id="programmatic-demo">
-								<h3>Panel A</h3>
-								<p>First panel content with some text.</p>
-
-								<h3>Panel B</h3>
-								<p>
-									Second panel content with more information.
-								</p>
-
-								<h3>Panel C</h3>
-								<p>
-									Third panel content with additional details.
-								</p>
-
-								<h3>Panel D</h3>
-								<p>
-									Fourth panel content to demonstrate
-									navigation.
-								</p>
-							</tabbed-interface>
-							<div class="controls">
-								<button
-									onclick="
-										document
-											.querySelector('#programmatic-demo')
-											.first()
-									"
-								>
-									First
-								</button>
-								<button
-									onclick="
-										document
-											.querySelector('#programmatic-demo')
-											.previous()
-									"
-								>
-									Previous
-								</button>
-								<button
-									onclick="
-										document
-											.querySelector('#programmatic-demo')
-											.next()
-									"
-								>
-									Next
-								</button>
-								<button
-									onclick="
-										document
-											.querySelector('#programmatic-demo')
-											.last()
-									"
-								>
-									Last
-								</button>
-							</div>
-							<div id="programmatic-output" class="output">
-								<strong>Current tab:</strong> 0
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<div class="demo-section">
-					<h3>Hash Navigation</h3>
-					<p>
-						The component supports URL hash navigation for deep
-						linking to specific tabs.
-					</p>
-					<div class="code-demo-pair">
-						<micro-lighter
-							class="code-panel"
-							language="html"
-							controls="copy"
-							data-label="HTML"
-						>
-							<pre
-								aria-label="Hash Navigation code 14"
-								tabindex="0"
-							><code>&lt;a <mark>href="#features"</mark>&gt;
-  Go to Features
-&lt;/a&gt;
-
-<mark>&lt;tabbed-interface&gt;</mark>
-  &lt;h3 <mark>id="intro"</mark>&gt;Introduction&lt;/h3&gt;
-  &lt;p&gt;Content...&lt;/p&gt;
-
-  &lt;h3 <mark>id="features"</mark>&gt;Features&lt;/h3&gt;
-  &lt;p&gt;Content...&lt;/p&gt;
-<mark>&lt;/tabbed-interface&gt;</mark></code></pre>
-						</micro-lighter>
-						<div class="demo" data-demo-label="Live example">
-							<p>
-								<a href="#hash-start">Jump to Start</a> |
-								<a href="#hash-middle">Jump to Middle</a> |
-								<a href="#hash-end">Jump to End</a>
-							</p>
-							<tabbed-interface>
-								<h3 id="hash-start">Start</h3>
-								<p>
-									This tab can be accessed via
-									<code>#hash-start</code>.
-								</p>
-
-								<h3 id="hash-middle">Middle</h3>
-								<p>
-									This tab can be accessed via
-									<code>#hash-middle</code>.
-								</p>
-
-								<h3 id="hash-end">End</h3>
-								<p>
-									This tab can be accessed via
-									<code>#hash-end</code>.
-								</p>
-							</tabbed-interface>
-						</div>
-					</div>
-				</div>
-			</section>
-
-			<!-- Accessibility -->
-			<section>
-				<h2>Accessibility</h2>
-				<p>
-					The component is built with accessibility as a core feature.
-				</p>
-
-				<div class="demo-section">
-					<h3>Keyboard Navigation</h3>
-					<p>
-						Full keyboard support following ARIA Authoring
-						Practices.
-					</p>
-					<div class="code-demo-pair">
-						<micro-lighter
-							class="code-panel"
-							language="html"
-							controls="copy"
-							data-label="HTML"
-						>
-							<pre
-								aria-label="Keyboard Navigation code 15"
-								tabindex="0"
-							><code>Arrow Keys    Navigate tabs
-Home          First tab
-End           Last tab
-Enter/Space   Activate tab and focus panel content</code></pre>
-						</micro-lighter>
-						<div class="demo" data-demo-label="Live example">
-							<div class="note">
-								<strong>Try it:</strong> Click on any tab below,
-								then use your keyboard to navigate.
-							</div>
-							<tabbed-interface>
-								<h3>Tab 1</h3>
-								<p>
-									Use Arrow keys to move between tabs. By
-									default, you must press Enter or Space to
-									activate a tab and view its content.
-								</p>
-
-								<h3>Tab 2</h3>
-								<p>
-									Press Home to jump to the first tab, or End
-									to jump to the last.
-								</p>
-
-								<h3>Tab 3</h3>
-								<p>
-									After activating, Enter or Space will move
-									focus to the first focusable element in the
-									panel.
-								</p>
-							</tabbed-interface>
-						</div>
-					</div>
-				</div>
-			</section>
-
-			<!-- API Reference -->
-			<section class="api-reference">
-				<h2>API Reference</h2>
-				<p>
-					For complete documentation of attributes, properties,
-					methods, events, CSS custom properties, keyboard navigation,
-					and browser support, see the
-					<a href="../">README</a>.
-				</p>
 			</section>
 		</main>
 
@@ -887,25 +706,41 @@ Enter/Space   Activate tab and focus panel content</code></pre>
 			</p>
 		</footer>
 
-		<script src="../define.js" type="module"></script>
 		<script type="module">
-			// Event listener demo
-			document
-				.querySelector('#event-demo')
-				.addEventListener('tabbed-interface:change', (event) => {
-					const output = document.querySelector('#event-output');
-					output.innerHTML = `<strong>Tab changed:</strong> index=${event.detail.tabIndex}, tabId=${event.detail.tabId}, tabpanelId=${event.detail.tabpanelId}`;
-				});
+			import '../define.js';
 
-			// Programmatic control demo
-			document
-				.querySelector('#programmatic-demo')
-				.addEventListener('tabbed-interface:change', (event) => {
-					const output = document.querySelector(
-						'#programmatic-output',
-					);
-					output.innerHTML = `<strong>Current tab:</strong> ${event.detail.tabIndex}`;
-				});
+			const eventTabs = document.querySelector('#event-demo');
+			const eventOutput = document.querySelector('#event-output');
+			eventTabs.addEventListener('tabbed-interface:change', (event) => {
+				const { tabIndex, tabId, tabpanelId } = event.detail;
+				eventOutput.textContent = `Tab changed: index=${tabIndex}, tabId=${tabId}, tabpanelId=${tabpanelId}`;
+			});
+
+			const programmaticTabs =
+				document.querySelector('#programmatic-demo');
+			const programmaticOutput = document.querySelector(
+				'#programmatic-output',
+			);
+			programmaticTabs.addEventListener(
+				'tabbed-interface:change',
+				(event) => {
+					programmaticOutput.textContent = `Current tab: ${event.detail.tabIndex}`;
+				},
+			);
+			const controls = document.querySelector('#selection-controls');
+			const methods = {
+				first: () => programmaticTabs.first(),
+				previous: () => programmaticTabs.previous(),
+				next: () => programmaticTabs.next(),
+				last: () => programmaticTabs.last(),
+			};
+			controls.querySelectorAll('button').forEach((button) => {
+				button.addEventListener(
+					'click',
+					methods[button.dataset.action],
+				);
+			});
+			controls.hidden = false;
 		</script>
 		<script type="module" src="./code-examples.js"></script>
 	</body>

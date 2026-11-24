@@ -47,65 +47,62 @@
 				data-theme-failure-message="Code highlighting and Copy controls are available, but the syntax theme could not load. The component loads independently."
 			></p>
 
-			<section class="demo-section">
-				<h2>Guarded registration</h2>
+			<section class="demo-section" id="unpkg-registration">
+				<h2>Load the definition helper</h2>
 				<p>
 					Importing the helper registers the default element when
-					supported. Calling it again is safe.
+					supported. Calling it again is safe. Without JavaScript, or
+					if the module fails to load, all headings and content remain
+					readable. If the tabs don’t fit on one row, the component
+					also shows every section.
+				</p>
+				<p>
+					Tab into the selected tab and use arrow keys to move focus.
+					Press Enter or Space to select it. Home and End move focus
+					to the first and last tabs. This example uses
+					<code>@latest</code>; pin a release in your application when
+					you need a repeatable import.
 				</p>
 				<div class="code-demo-pair">
 					<micro-lighter
 						class="code-panel"
-						language="javascript"
+						language="html"
 						controls="copy"
-						data-label="JavaScript"
+						data-label="HTML"
 					>
 						<pre
 							aria-label="Guarded registration code 1"
 							tabindex="0"
-						><code><mark>import { defineTabbedInterface } from
-  'https://unpkg.com/@aarongustafson/tabbed-interface@latest/define.js?module';</mark>
-<mark>defineTabbedInterface();</mark>
+						><code><mark>&lt;tabbed-interface&gt;</mark>
+  &lt;h2&gt;Opening hours&lt;/h2&gt;
+  &lt;p&gt;Tuesday through Sunday, 10am to 5pm.&lt;/p&gt;
+  &lt;h2&gt;Getting here&lt;/h2&gt;
+  &lt;p&gt;The museum is across from Central Station.&lt;/p&gt;
+  &lt;h2&gt;Contact&lt;/h2&gt;
+  &lt;p&gt;Ask at the front desk for help planning your visit.&lt;/p&gt;
+<mark>&lt;/tabbed-interface&gt;</mark>
 
-<mark>&lt;tabbed-interface&gt;</mark>
-  &lt;h2&gt;Overview&lt;/h2&gt;
-  &lt;p&gt;Related content.&lt;/p&gt;
-  &lt;h2&gt;Details&lt;/h2&gt;
-  &lt;p&gt;More content.&lt;/p&gt;
-  &lt;h2&gt;Usage&lt;/h2&gt;
-  &lt;p&gt;Wrap headings and their content.&lt;/p&gt;
-<mark>&lt;/tabbed-interface&gt;</mark></code></pre>
+&lt;script type="module"&gt;
+  <mark>import { defineTabbedInterface } from
+    'https://unpkg.com/@aarongustafson/tabbed-interface@latest/define.js?module';</mark>
+  <mark>defineTabbedInterface();</mark>
+&lt;/script&gt;</code></pre>
 					</micro-lighter>
 					<div class="demo" data-demo-label="Live example">
 						<tabbed-interface>
-							<h2>Overview</h2>
+							<h2>Opening hours</h2>
+							<p>Tuesday through Sunday, 10am to 5pm.</p>
+							<h2>Getting here</h2>
+							<p>The museum is across from Central Station.</p>
+							<h2>Contact</h2>
 							<p>
-								Tabbed interfaces help organize related content
-								into panels that users can switch between.
-							</p>
-
-							<h2>Details</h2>
-							<p>
-								Each tab controls visibility for its associated
-								panel and supports keyboard navigation and ARIA
-								attributes.
-							</p>
-
-							<h2>Usage</h2>
-							<p>
-								Wrap headings and their related content inside
-								<code>&lt;tabbed-interface&gt;</code> to enhance
-								the layout.
+								Ask at the front desk for help planning your
+								visit.
 							</p>
 						</tabbed-interface>
 					</div>
 				</div>
 			</section>
-			<p>
-				Without JavaScript or if the module cannot load, all authored
-				sections remain readable. Narrow layouts also show every section
-				without tab controls.
-			</p>
 		</main>
 		<footer>
 			<p>
