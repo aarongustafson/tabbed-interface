@@ -290,9 +290,10 @@ test('switching to tabs keeps the focused linear section visible', async ({
 test('auto presentation retains responsive and fixed-tabs behavior, and rejects invalid settings explicitly', async ({
 	page,
 }) => {
-	const errors = [];
+	const diagnostics = [];
 	page.on('console', (message) => {
-		if (message.type() === 'error') errors.push(message.text());
+		if (['error', 'warning'].includes(message.type()))
+			diagnostics.push(message.text());
 	});
 	await render(page, { width: 120, attributes: 'presentation="tabs"' });
 	const element = page.locator('#fixture > tabbed-interface');
@@ -305,6 +306,7 @@ test('auto presentation retains responsive and fixed-tabs behavior, and rejects 
 		host.fixedTabs = true;
 	});
 	await expect(element).toHaveAttribute('data-layout', 'tabs');
+	expect(diagnostics).toEqual([]);
 	await element.evaluate((host) => {
 		host.presentation = 'linear';
 		host.presentation = 'invalid';
@@ -317,7 +319,7 @@ test('auto presentation retains responsive and fixed-tabs behavior, and rejects 
 	await expect(element).toHaveAttribute('data-layout', 'tabs');
 	expect(await element.evaluate((host) => host.presentation)).toBe('auto');
 	expect(
-		errors.filter((message) => message.includes('presentation')),
+		diagnostics.filter((message) => message.includes('presentation')),
 	).toHaveLength(2);
 	await element.evaluate((host) => {
 		host.presentation = null;

@@ -52,7 +52,8 @@
 							"kind": "field",
 							"name": "fixedTabs",
 							"type": { "text": "boolean" },
-							"description": "Whether to keep tabs active when the tablist does not fit"
+							"description": "Whether to keep tabs active when presentation is auto and the tablist does not fit",
+							"deprecated": "Use presentation = 'tabs' instead. Retained for compatibility in auto mode."
 						},
 						{
 							"kind": "field",
@@ -123,7 +124,8 @@
 						{
 							"name": "fixed-tabs",
 							"type": { "text": "boolean" },
-							"description": "When present, keeps the tabbed presentation even when the tablist does not fit"
+							"description": "When present, keeps the tabbed presentation when presentation is auto, even if the tablist does not fit",
+							"deprecated": "Use presentation=\"tabs\" instead. Retained for compatibility in auto mode."
 						},
 						{
 							"name": "data-layout",

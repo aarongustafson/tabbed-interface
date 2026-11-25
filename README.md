@@ -148,6 +148,13 @@ Choose a presentation with `presentation`:
 With `fixed-tabs` or `presentation="tabs"`, you’re responsible for handling
 overflow at narrow widths. [Printing](#printing) always reveals every section.
 
+**Deprecated compatibility options:** prefer `presentation="tabs"` over
+`fixed-tabs`, and `.presentation = 'tabs'` over `.fixedTabs = true`. The old
+attribute and property still work in `"auto"` mode; explicit presentation
+values take precedence. This release neither removes them nor adds runtime
+deprecation warnings. Remove `fixed-tabs` when migrating so it won’t force
+tabs again if you return to `"auto"`.
+
 Change the `presentation` property to switch modes without moving authored
 nodes, reconnecting nested components, or losing their state. The selected tab
 is retained while all sections are visible. Invalid attribute values log an
@@ -175,14 +182,14 @@ tabbed-interface[data-layout='linear'] {
 
 ## Attributes
 
-| Attribute       | Values                         | Default  | Effect                                                      |
-| --------------- | ------------------------------ | -------- | ----------------------------------------------------------- |
-| `default-tab`   | Index or heading ID            | absent   | Choose the opening section; a matching initial hash wins    |
-| `show-headers`  | boolean                        | `false`  | Keep ordinary panel headings visible in tab layout          |
-| `tablist-after` | boolean                        | `false`  | Place the tablist after the content                         |
-| `auto-activate` | boolean                        | `false`  | Select tabs on focus instead of waiting for Enter or Space  |
-| `fixed-tabs`    | boolean                        | `false`  | Keep tabs regardless of fit when `presentation` is `"auto"` |
-| `presentation`  | `"auto"`, `"tabs"`, `"linear"` | `"auto"` | Choose automatic fitting, tabs, or all sections             |
+| Attribute       | Values                         | Default  | Effect                                                     |
+| --------------- | ------------------------------ | -------- | ---------------------------------------------------------- |
+| `default-tab`   | Index or heading ID            | absent   | Choose the opening section; a matching initial hash wins   |
+| `show-headers`  | boolean                        | `false`  | Keep ordinary panel headings visible in tab layout         |
+| `tablist-after` | boolean                        | `false`  | Place the tablist after the content                        |
+| `auto-activate` | boolean                        | `false`  | Select tabs on focus instead of waiting for Enter or Space |
+| `fixed-tabs`    | boolean                        | `false`  | Deprecated; use `presentation="tabs"` instead              |
+| `presentation`  | `"auto"`, `"tabs"`, `"linear"` | `"auto"` | Choose automatic fitting, tabs, or all sections            |
 
 Boolean attributes work by presence: `auto-activate="false"` still enables
 automatic activation. See the [live demos](./demo/index.html) for configuration
@@ -196,7 +203,7 @@ alternatives.
 | `showHeaders`  | boolean                        | Get/set header visibility                                                                    |
 | `tablistAfter` | boolean                        | Get/set tablist position                                                                     |
 | `autoActivate` | boolean                        | Get/set auto-activation behavior                                                             |
-| `fixedTabs`    | boolean                        | Get/set whether tabs remain active when they do not fit                                      |
+| `fixedTabs`    | boolean                        | Deprecated; use `presentation = 'tabs'` instead                                              |
 | `presentation` | `"auto" \| "tabs" \| "linear"` | Get/set the requested presentation; explicit modes override `fixedTabs`                      |
 | `layout`       | `"tabs" \| "linear" \| null`   | Read-only actual layout, including print; `null` when not initialized                        |
 | `defaultTab`   | string \| null                 | Reflect `default-tab`; setting `null`, `undefined`, or an empty/whitespace string removes it |

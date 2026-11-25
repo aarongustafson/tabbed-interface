@@ -9,7 +9,7 @@ const PRESENTATIONS = ['auto', 'tabs', 'linear'];
  * @attr {boolean} tablist-after - When present, positions the tab list after the content; when absent, before the content (default: absent/false)
  * @attr {string} default-tab - Index or heading ID of the tab to show by default (defaults to first tab)
  * @attr {boolean} auto-activate - When present, tabs activate on focus; when absent, use Enter/Space to activate (default: absent/false)
- * @attr {boolean} fixed-tabs - When present, keeps the tabbed presentation even when the tablist does not fit
+ * @attr {boolean} fixed-tabs - Deprecated: use presentation="tabs" instead. Retained for compatibility in auto mode.
  * @attr {string} presentation - auto follows rendered fit and fixed-tabs; tabs or linear explicitly chooses a presentation
  *
  * @slot - Default slot for content with heading elements (h1-h6) that define tab sections
@@ -259,6 +259,7 @@ export class TabbedInterfaceElement extends HTMLElement {
 
 	/**
 	 * Whether the component should remain tabbed when its tabs do not fit
+	 * @deprecated Use presentation = 'tabs' instead. Retained for compatibility in auto mode.
 	 * @returns {boolean}
 	 */
 	get fixedTabs() {

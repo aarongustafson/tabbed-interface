@@ -20,6 +20,7 @@ export declare class TabbedInterfaceElement extends HTMLElement {
 	tablistAfter: boolean;
 	defaultTab: string | null;
 	autoActivate: boolean;
+	/** @deprecated Use presentation = 'tabs' instead. Retained for compatibility in auto mode. */
 	fixedTabs: boolean;
 	get presentation(): TabbedInterfacePresentation;
 	set presentation(value: TabbedInterfacePresentation | null | undefined);
