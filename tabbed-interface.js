@@ -1,3 +1,5 @@
+const PRESENTATIONS = ['auto', 'tabs', 'linear'];
+
 /**
  * TabbedInterfaceElement - A web component that transforms heading-structured content into an accessible tabbed interface
  *
@@ -8,6 +10,7 @@
  * @attr {string} default-tab - Index or heading ID of the tab to show by default (defaults to first tab)
  * @attr {boolean} auto-activate - When present, tabs activate on focus; when absent, use Enter/Space to activate (default: absent/false)
  * @attr {boolean} fixed-tabs - When present, keeps the tabbed presentation even when the tablist does not fit
+ * @attr {string} presentation - auto follows rendered fit and fixed-tabs; tabs or linear explicitly chooses a presentation
  *
  * @slot - Default slot for content with heading elements (h1-h6) that define tab sections
  *
@@ -42,6 +45,7 @@ export class TabbedInterfaceElement extends HTMLElement {
 			'default-tab',
 			'auto-activate',
 			'fixed-tabs',
+			'presentation',
 		];
 	}
 
@@ -86,6 +90,7 @@ export class TabbedInterfaceElement extends HTMLElement {
 		this.#upgradeProperty('autoActivate');
 		this.#upgradeProperty('activeIndex');
 		this.#upgradeProperty('fixedTabs');
+		this.#upgradeProperty('presentation');
 
 		this.#render();
 		this.#observeContent();
@@ -139,9 +144,17 @@ export class TabbedInterfaceElement extends HTMLElement {
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
-		if (oldValue === newValue || !this.#initialized) {
-			return;
+		if (oldValue === newValue) return;
+		if (
+			name === 'presentation' &&
+			newValue !== null &&
+			!PRESENTATIONS.includes(newValue)
+		) {
+			console.error(
+				'tabbed-interface: presentation must be auto, tabs, or linear; using auto.',
+			);
 		}
+		if (!this.#initialized) return;
 
 		switch (name) {
 			case 'show-headers':
@@ -157,6 +170,7 @@ export class TabbedInterfaceElement extends HTMLElement {
 				this.#focusedIndex = this.#activeIndex;
 				break;
 			case 'fixed-tabs':
+			case 'presentation':
 				this.#scheduleLayoutEvaluation();
 				break;
 			default:
@@ -246,6 +260,23 @@ export class TabbedInterfaceElement extends HTMLElement {
 			this.setAttribute('fixed-tabs', '');
 		} else {
 			this.removeAttribute('fixed-tabs');
+		}
+	}
+
+	get presentation() {
+		const value = this.getAttribute('presentation');
+		return PRESENTATIONS.includes(value) ? value : 'auto';
+	}
+
+	set presentation(value) {
+		if (value === null || value === undefined) {
+			this.removeAttribute('presentation');
+		} else if (PRESENTATIONS.includes(value)) {
+			this.setAttribute('presentation', value);
+		} else {
+			console.error(
+				'tabbed-interface: presentation must be auto, tabs, or linear; keeping the previous setting.',
+			);
 		}
 	}
 
@@ -475,7 +506,7 @@ export class TabbedInterfaceElement extends HTMLElement {
 					}
 				}
 			</style>
-			<div id="presentation" data-layout="linear">
+			<div id="presentation" part="presentation" data-layout="linear">
 				<slot id="fallback"></slot>
 			</div>
 			<div id="measurement" aria-hidden="true" inert></div>
@@ -662,7 +693,10 @@ export class TabbedInterfaceElement extends HTMLElement {
 		this.#focusedIndex = this.#activeIndex;
 		this.#updateHeaderVisibility();
 		this.#buildMeasurementTablist();
-		if (this.fixedTabs) {
+		if (
+			this.presentation === 'tabs' ||
+			(this.presentation === 'auto' && this.fixedTabs)
+		) {
 			this.#applyLayout('tabs');
 		} else {
 			this.#applyLayout('linear');
@@ -827,8 +861,11 @@ export class TabbedInterfaceElement extends HTMLElement {
 			if (this.#printing) {
 				return;
 			}
-			const nextLayout =
-				this.fixedTabs || this.#tabsFit() ? 'tabs' : 'linear';
+			let nextLayout = this.presentation;
+			if (nextLayout === 'auto') {
+				nextLayout =
+					this.fixedTabs || this.#tabsFit() ? 'tabs' : 'linear';
+			}
 			this.#applyLayout(nextLayout);
 		});
 	}
@@ -898,6 +935,17 @@ export class TabbedInterfaceElement extends HTMLElement {
 		}
 		if (layout === this.#layout) {
 			return;
+		}
+
+		if (layout === 'tabs') {
+			const focused = this.getRootNode().activeElement;
+			const index = this.#sections.findIndex((section) =>
+				[section.heading, ...section.content].some((node) =>
+					node.contains(focused),
+				),
+			);
+			if (index !== -1) this.#activateTab(index);
+			if (!this.isConnected || !this.#tablist) return;
 		}
 
 		const presentation = this.shadowRoot.querySelector('#presentation');

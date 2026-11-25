@@ -7,6 +7,8 @@ export interface TabbedInterfaceChangeDetail {
 export type TabbedInterfaceChangeEvent =
 	CustomEvent<TabbedInterfaceChangeDetail>;
 
+export type TabbedInterfacePresentation = 'auto' | 'tabs' | 'linear';
+
 export declare class TabbedInterfaceElement extends HTMLElement {
 	activeIndex: number;
 	showHeaders: boolean;
@@ -14,6 +16,8 @@ export declare class TabbedInterfaceElement extends HTMLElement {
 	defaultTab: string | null;
 	autoActivate: boolean;
 	fixedTabs: boolean;
+	get presentation(): TabbedInterfacePresentation;
+	set presentation(value: TabbedInterfacePresentation | null | undefined);
 
 	next(): void;
 	previous(): void;

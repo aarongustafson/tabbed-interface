@@ -133,13 +133,14 @@ and links.
 
 ## Attributes
 
-| Attribute       | Type    | Default | Description                                                                    |
-| --------------- | ------- | ------- | ------------------------------------------------------------------------------ |
-| `show-headers`  | boolean | `false` | When present, shows headings in tab panels                                     |
-| `tablist-after` | boolean | `false` | When present, positions tab list after content                                 |
-| `default-tab`   | string  | absent  | Select a zero-based index or heading ID; absent selects the first section      |
-| `auto-activate` | boolean | `false` | When present, tabs activate on focus; when absent, use Enter/Space to activate |
-| `fixed-tabs`    | boolean | `false` | When present, keeps tabs active even when the complete tablist does not fit    |
+| Attribute       | Type                           | Default  | Description                                                                    |
+| --------------- | ------------------------------ | -------- | ------------------------------------------------------------------------------ |
+| `show-headers`  | boolean                        | `false`  | When present, shows headings in tab panels                                     |
+| `tablist-after` | boolean                        | `false`  | When present, positions tab list after content                                 |
+| `default-tab`   | string                         | absent   | Select a zero-based index or heading ID; absent selects the first section      |
+| `auto-activate` | boolean                        | `false`  | When present, tabs activate on focus; when absent, use Enter/Space to activate |
+| `fixed-tabs`    | boolean                        | `false`  | When present, keeps tabs active even when the complete tablist does not fit    |
+| `presentation`  | `"auto" \| "tabs" \| "linear"` | `"auto"` | Request automatic fitting, tabs, or all sections                               |
 
 Boolean attributes work by presence, so `auto-activate="false"` still enables
 automatic activation. See the [live examples](./demo/index.html) for configuration
@@ -153,6 +154,21 @@ Fit is based on rendered styles rather than a viewport breakpoint. Fonts, paddin
 
 Use `fixed-tabs` only when you want tabs at every available width and will handle overflow yourself.
 
+Set `presentation="linear"` to show all sections or `presentation="tabs"` to
+keep tabs regardless of fit. These explicit modes take precedence over
+`fixed-tabs`; `"auto"` preserves its existing behavior. Print always shows all
+sections, then restores the requested presentation afterward.
+
+Change the `presentation` property to switch modes without moving authored
+nodes, reconnecting nested components, or losing their state. The selected tab
+is retained while all sections are visible. Invalid attribute values log an
+error and use `"auto"`; invalid property assignments log and keep the previous
+setting. Set the property to `null` or `undefined` to remove the attribute.
+See the [presentation control example](./demo/index.html#presentation-control).
+
+When returning to tabs, a section containing keyboard focus takes precedence
+over the saved selection so the focused control stays visible.
+
 The current presentation is reflected as `data-layout="tabs"` or `data-layout="linear"` on the component for state-specific styling:
 
 ```css
@@ -163,20 +179,21 @@ tabbed-interface[data-layout='linear'] {
 
 ## Properties
 
-| Property       | Type           | Description                                                                                  |
-| -------------- | -------------- | -------------------------------------------------------------------------------------------- |
-| `activeIndex`  | number         | Get/set the currently active tab index                                                       |
-| `showHeaders`  | boolean        | Get/set header visibility                                                                    |
-| `tablistAfter` | boolean        | Get/set tablist position                                                                     |
-| `autoActivate` | boolean        | Get/set auto-activation behavior                                                             |
-| `fixedTabs`    | boolean        | Get/set whether tabs remain active when they do not fit                                      |
-| `defaultTab`   | string \| null | Reflect `default-tab`; setting `null`, `undefined`, or an empty/whitespace string removes it |
+| Property       | Type                           | Description                                                                                  |
+| -------------- | ------------------------------ | -------------------------------------------------------------------------------------------- |
+| `activeIndex`  | number                         | Get/set the currently active tab index                                                       |
+| `showHeaders`  | boolean                        | Get/set header visibility                                                                    |
+| `tablistAfter` | boolean                        | Get/set tablist position                                                                     |
+| `autoActivate` | boolean                        | Get/set auto-activation behavior                                                             |
+| `fixedTabs`    | boolean                        | Get/set whether tabs remain active when they do not fit                                      |
+| `presentation` | `"auto" \| "tabs" \| "linear"` | Get/set the requested presentation; explicit modes override `fixedTabs`                      |
+| `defaultTab`   | string \| null                 | Reflect `default-tab`; setting `null`, `undefined`, or an empty/whitespace string removes it |
 
 The boolean properties reflect their matching attributes and default to `false`.
 `activeIndex` starts at `0`; out-of-range assignments are ignored. Changing
 `defaultTab` after initialization also changes selection.
 
-The component replays assignments to all six public properties made before
+The component replays assignments to all seven public properties made before
 upgrade. Initial section setup still applies `default-tab` and then a matching
 hash, so use `activeIndex` after initialization for imperative selection.
 
@@ -270,12 +287,13 @@ Style the component's shadow DOM elements using CSS `::part()` selectors:
 
 ### Available Parts
 
-| Part       | Description                     |
-| ---------- | ------------------------------- |
-| `tablist`  | The container for all tabs      |
-| `tab`      | Individual tab buttons          |
-| `selected` | The currently selected tab      |
-| `tabpanel` | Individual tab panel containers |
+| Part           | Description                                                                                 |
+| -------------- | ------------------------------------------------------------------------------------------- |
+| `tablist`      | The container for all tabs                                                                  |
+| `tab`          | Individual tab buttons                                                                      |
+| `selected`     | The currently selected tab                                                                  |
+| `tabpanel`     | Individual tab panel containers                                                             |
+| `presentation` | Container for the tablist and panels; use a grid in linear mode without reparenting content |
 
 ### Styling Examples
 

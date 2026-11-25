@@ -48,6 +48,15 @@
 							"description": "Whether to keep tabs active when the tablist does not fit"
 						},
 						{
+							"kind": "field",
+							"name": "presentation",
+							"type": { "text": "'auto' | 'tabs' | 'linear'" },
+							"attribute": "presentation",
+							"reflects": true,
+							"default": "'auto'",
+							"description": "Requested presentation. Auto follows rendered fit and fixedTabs; tabs or linear overrides fixedTabs. Switching preserves connected content. Selection is retained unless a focused linear section needs to remain visible. Invalid markup logs an error and uses auto; invalid property assignments log and retain the prior setting. Null or undefined removes the attribute."
+						},
+						{
 							"kind": "method",
 							"name": "next",
 							"description": "Navigate to the next tab"
@@ -99,12 +108,22 @@
 							"description": "When present, tabs activate when they receive focus"
 						},
 						{
+							"name": "presentation",
+							"type": { "text": "'auto' | 'tabs' | 'linear'" },
+							"default": "'auto'",
+							"description": "Choose automatic fitting, tabs, or linear sections. Explicit modes take precedence over fixed-tabs; print always uses linear content."
+						},
+						{
 							"name": "fixed-tabs",
 							"type": { "text": "boolean" },
 							"description": "When present, keeps the tabbed presentation even when the tablist does not fit"
 						}
 					],
 					"cssParts": [
+						{
+							"name": "presentation",
+							"description": "Container for the tablist and panel wrappers; supports custom linear layouts without moving authored content."
+						},
 						{
 							"name": "tablist",
 							"description": "The container for all tabs"

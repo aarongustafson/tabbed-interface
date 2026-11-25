@@ -96,6 +96,102 @@
 				</div>
 			</section>
 
+			<section class="demo-section" id="presentation-control">
+				<h2>Switch presentation without replacing content</h2>
+				<p>
+					Use <code>presentation</code> to choose automatic fitting,
+					tabs, or all sections. The <code>presentation</code> CSS
+					part makes the expanded view a responsive grid. Enter a
+					delivery note and change the view: selection, entered text,
+					and nested component state stay attached to the original
+					nodes. The controls remain hidden if the component cannot
+					load; the content remains available.
+				</p>
+				<div class="code-demo-pair">
+					<micro-lighter
+						class="code-panel"
+						language="html"
+						controls="copy"
+						data-label="HTML"
+					>
+						<pre
+							aria-label="State-preserving presentation control HTML"
+							tabindex="0"
+						><code>&lt;style&gt;
+  <mark>.presentation-example[data-layout='linear']::part(presentation)</mark> {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(14rem, 100%), 1fr));
+    gap: 1rem;
+  }
+&lt;/style&gt;
+&lt;div id="presentation-controls" hidden&gt;
+  &lt;label for="presentation-mode"&gt;View sections&lt;/label&gt;
+  &lt;select id="presentation-mode"&gt;
+    &lt;option value="auto"&gt;Automatic&lt;/option&gt;
+    &lt;option value="tabs"&gt;Tabs&lt;/option&gt;
+    &lt;option value="linear"&gt;All sections&lt;/option&gt;
+  &lt;/select&gt;
+&lt;/div&gt;
+<mark>&lt;tabbed-interface id="presentation-example" class="presentation-example"&gt;</mark>
+  &lt;h3&gt;Order details&lt;/h3&gt;
+  &lt;p&gt;Two notebooks and a pencil.&lt;/p&gt;
+  &lt;h3&gt;Delivery&lt;/h3&gt;
+  &lt;label&gt;Delivery note &lt;input name="delivery-note"&gt;&lt;/label&gt;
+<mark>&lt;/tabbed-interface&gt;</mark>
+&lt;script&gt;
+  <mark>customElements.whenDefined('tabbed-interface')</mark>.then(() =&gt; {
+    const mode = document.getElementById('presentation-mode');
+    const example = document.getElementById('presentation-example');
+    document.getElementById('presentation-controls').hidden = false;
+    mode.addEventListener('change', () =&gt; {
+      <mark>example.presentation = mode.value;</mark>
+    });
+  });
+&lt;/script&gt;</code></pre>
+					</micro-lighter>
+					<div class="demo" data-demo-label="Live example">
+						<div id="presentation-controls" hidden>
+							<label for="presentation-mode">View sections</label>
+							<select id="presentation-mode">
+								<option value="auto">Automatic</option>
+								<option value="tabs">Tabs</option>
+								<option value="linear">All sections</option>
+							</select>
+						</div>
+						<tabbed-interface
+							id="presentation-example"
+							class="presentation-example"
+						>
+							<h3>Order details</h3>
+							<p>Two notebooks and a pencil.</p>
+							<h3>Delivery</h3>
+							<label
+								>Delivery note <input name="delivery-note"
+							/></label>
+						</tabbed-interface>
+						<script>
+							customElements
+								.whenDefined('tabbed-interface')
+								.then(() => {
+									const mode =
+										document.getElementById(
+											'presentation-mode',
+										);
+									const example = document.getElementById(
+										'presentation-example',
+									);
+									document.getElementById(
+										'presentation-controls',
+									).hidden = false;
+									mode.addEventListener('change', () => {
+										example.presentation = mode.value;
+									});
+								});
+						</script>
+					</div>
+				</div>
+			</section>
+
 			<section id="selection-and-labels">
 				<h2>Choose the opening section and tab labels</h2>
 				<div class="demo-section" id="initial-selection">

@@ -2,6 +2,12 @@ tabbed-interface {
 	overflow-wrap: normal;
 }
 
+.presentation-example[data-layout='linear']::part(presentation) {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(min(14rem, 100%), 1fr));
+	gap: 1rem;
+}
+
 tabbed-interface.pills::part(tablist) {
 	gap: 8px;
 	margin: 0 0 1em 0;
