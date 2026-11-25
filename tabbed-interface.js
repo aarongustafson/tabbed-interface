@@ -22,14 +22,14 @@ const PRESENTATIONS = ['auto', 'tabs', 'linear'];
  * @cssprop --tabbed-interface-tablist-background - Background color for tablist
  * @cssprop --tabbed-interface-tablist-border - Border for tablist
  * @cssprop --tabbed-interface-tab-padding - Padding for tabs (default: 0.5em 1em)
- * @cssprop --tabbed-interface-tab-background - Background color for tabs (default: ButtonFace)
- * @cssprop --tabbed-interface-tab-color - Text color for tabs (default: ButtonText)
+ * @cssprop --tabbed-interface-tab-background - Background color for tabs (default: color-mix(in srgb, CanvasText 8%, Canvas), with a Canvas fallback)
+ * @cssprop --tabbed-interface-tab-color - Text color for tabs (default: CanvasText)
  * @cssprop --tabbed-interface-tab-border - Border for tabs (default: 1px solid currentColor)
  * @cssprop --tabbed-interface-tab-border-radius - Border radius for tabs
  * @cssprop --tabbed-interface-tab-active-background - Background color for active tab (default: Canvas)
  * @cssprop --tabbed-interface-tab-active-color - Text color for active tab (default: CanvasText)
- * @cssprop --tabbed-interface-tab-hover-background - Hover/focus background (default: ButtonFace)
- * @cssprop --tabbed-interface-tab-hover-color - Hover/focus foreground (default: ButtonText)
+ * @cssprop --tabbed-interface-tab-hover-background - Hover/focus background (default: color-mix(in srgb, CanvasText 16%, Canvas), with a Canvas fallback)
+ * @cssprop --tabbed-interface-tab-hover-color - Hover/focus foreground (default: CanvasText)
  * @cssprop --tabbed-interface-tab-focus-outline - Keyboard focus outline (default: revert, browser-native)
  * @cssprop --tabbed-interface-tabpanel-padding - Padding for tab panels
  * @cssprop --tabbed-interface-tabpanel-background - Background color for tab panels
@@ -191,9 +191,19 @@ export class TabbedInterfaceElement extends HTMLElement {
 	 * @param {number} index - The tab index to activate
 	 */
 	set activeIndex(index) {
+		if (!Number.isInteger(index)) {
+			console.error(
+				'tabbed-interface: activeIndex must be a finite integer number; keeping the previous selection.',
+			);
+			return;
+		}
 		if (index >= 0 && index < this.#tabs.length) {
 			this.#activateTab(index);
 		}
+	}
+
+	get layout() {
+		return this.#layout;
 	}
 
 	/**
@@ -385,8 +395,8 @@ export class TabbedInterfaceElement extends HTMLElement {
 				[data-tab] {
 					min-inline-size: 0;
 					padding: var(--tabbed-interface-tab-padding, 0.5em 1em);
-					background-color: var(--tabbed-interface-tab-background, ButtonFace);
-					color: var(--tabbed-interface-tab-color, ButtonText);
+					background-color: var(--tabbed-interface-tab-background, Canvas);
+					color: var(--tabbed-interface-tab-color, CanvasText);
 					border: var(--tabbed-interface-tab-border, 1px solid currentColor);
 					border-radius: var(--tabbed-interface-tab-border-radius, 0);
 					border-start-start-radius: 3px;
@@ -399,8 +409,19 @@ export class TabbedInterfaceElement extends HTMLElement {
 
 				[data-tab]:hover,
 				[data-tab]:focus {
-					background: var(--tabbed-interface-tab-hover-background, ButtonFace);
-					color: var(--tabbed-interface-tab-hover-color, ButtonText);
+					background: var(--tabbed-interface-tab-hover-background, Canvas);
+					color: var(--tabbed-interface-tab-hover-color, CanvasText);
+				}
+
+				@supports (background-color: color-mix(in srgb, CanvasText 8%, Canvas)) {
+					[data-tab] {
+						background-color: var(--tabbed-interface-tab-background, color-mix(in srgb, CanvasText 8%, Canvas));
+					}
+
+					[data-tab]:hover,
+					[data-tab]:focus {
+						background: var(--tabbed-interface-tab-hover-background, color-mix(in srgb, CanvasText 16%, Canvas));
+					}
 				}
 
 				[data-tab]:focus-visible {
@@ -1309,6 +1330,7 @@ export class TabbedInterfaceElement extends HTMLElement {
 		this.#focusedIndex = 0;
 		this.#initialized = false;
 		this.#layout = null;
+		this.removeAttribute('data-layout');
 	}
 
 	#upgradeProperty(prop) {

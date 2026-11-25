@@ -101,7 +101,9 @@
 				<p>
 					Use <code>presentation</code> to choose automatic fitting,
 					tabs, or all sections. The <code>presentation</code> CSS
-					part makes the expanded view a responsive grid. Enter a
+					part makes the expanded view a responsive grid. The
+					read-only <code>layout</code> property reports the actual
+					view, including automatic fitting and print. Enter a
 					delivery note and change the view: selection, entered text,
 					and nested component state stay attached to the original
 					nodes. The controls remain hidden if the component cannot
@@ -118,6 +120,9 @@
 							aria-label="State-preserving presentation control HTML"
 							tabindex="0"
 						><code>&lt;style&gt;
+  #presentation-controls {
+    margin-block-end: 1rem;
+  }
   <mark>.presentation-example[data-layout='linear']::part(presentation)</mark> {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(14rem, 100%), 1fr));
@@ -688,16 +693,18 @@ controls.hidden = false;</code></pre>
 }
 
 <mark>tabbed-interface.pills::part(tab)</mark> {
-  background-color: ButtonFace;
-  color: ButtonText;
-  border: 1px solid ButtonText;
+  background-color: Canvas;
+  background-color: color-mix(in srgb, CanvasText 8%, Canvas);
+  color: CanvasText;
+  border: 1px solid CanvasText;
   border-radius: 999px;
   padding: 0.5em 1.5em;
 }
 
 <mark>tabbed-interface.pills::part(tab):hover</mark> {
-  background-color: ButtonFace;
-  color: ButtonText;
+  background-color: Canvas;
+  background-color: color-mix(in srgb, CanvasText 16%, Canvas);
+  color: CanvasText;
 }
 
 <mark>tabbed-interface.pills::part(selected)</mark>,
@@ -760,8 +767,9 @@ controls.hidden = false;</code></pre>
 }
 
 <mark>tabbed-interface.minimal::part(tab):hover</mark> {
-  background: ButtonFace;
-  color: ButtonText;
+  background: Canvas;
+  background: color-mix(in srgb, CanvasText 16%, Canvas);
+  color: CanvasText;
 }
 
 <mark>tabbed-interface.minimal::part(selected)</mark> {

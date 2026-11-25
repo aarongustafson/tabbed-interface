@@ -26,7 +26,8 @@ const tokens = [
 	'Field',
 	'FieldText',
 ];
-// The study's 62 observations reduce to these 19 token palettes.
+// The first 19 palettes cover the study's 62 observations. The last entry
+// substitutes the captured low-contrast dark Button pair into a dark palette.
 // Substitution checks authored CSS, not actual forced-color repainting.
 const palettes = [
 	['#ffffff', '#000000', '#efefef', '#000000', '#ffffff', '#000000'],
@@ -48,6 +49,7 @@ const palettes = [
 	['#ffffff', '#000000', '#ffffff', '#000000d8', '#ffffff', '#000000d8'],
 	['#282828', '#ffffff', '#202020', '#ffffff', '#202020', '#ffffff'],
 	['#202020', '#ffffff', '#00000000', '#ffffff', '#00000000', '#ffffff'],
+	['#121212', '#ffffff', '#393939', '#000000', '#3b3b3b', '#ffffff'],
 ];
 
 function substitute(css, palette) {
@@ -151,7 +153,7 @@ test('hover uses a complete control pair instead of inheriting the host foregrou
 	await tab.hover();
 	const colors = await tab.evaluate((element) => {
 		const probe = document.createElement('button');
-		probe.style.color = 'ButtonText';
+		probe.style.color = 'CanvasText';
 		document.body.append(probe);
 		const expected = getComputedStyle(probe).color;
 		probe.remove();
@@ -232,7 +234,7 @@ test('selection is metric-stable, native focus remains available, and focus hook
 	await expect(tabs.nth(2)).toHaveCSS('outline-color', 'rgb(80, 20, 120)');
 });
 
-test('19 study palettes retain tab text and boundaries in resting, hover, and selected states', async ({
+test('study and captured palettes retain tab text and boundaries in resting, hover, and selected states', async ({
 	page,
 }) => {
 	const host = await fixture(page);
@@ -267,6 +269,11 @@ test('19 study palettes retain tab text and boundaries in resting, hover, and se
 					(await measurements(tab)).text,
 					`palette ${index}: hover`,
 				).toBeGreaterThanOrEqual(4.5);
+				await tab.focus();
+				expect(
+					(await measurements(tab)).text,
+					`palette ${index}: focus`,
+				).toBeGreaterThanOrEqual(4.5);
 			}
 		}
 		await style.evaluate((element) => element.remove());
@@ -274,7 +281,7 @@ test('19 study palettes retain tab text and boundaries in resting, hover, and se
 });
 
 for (const [index, palette] of palettes.entries()) {
-	test(`study palette ${index} retains paired demo controls, supporting text and themed tabs`, async ({
+	test(`palette ${index} retains paired demo controls, supporting text and themed tabs`, async ({
 		page,
 	}) => {
 		await page.setViewportSize({ width: 1400, height: 900 });
@@ -396,16 +403,7 @@ test('measurements cross shadow/slot boundaries and ignore unpainted borders', a
 });
 
 for (const scheme of ['light', 'dark']) {
-	test(`${scheme}: native control pair contrast`, async ({
-		page,
-		browserName,
-	}) => {
-		test.fail(
-			browserName === 'webkit' &&
-				process.platform === 'linux' &&
-				scheme === 'dark',
-			'Known Ubuntu WebKit dark native ButtonText/ButtonFace limitation.',
-		);
+	test(`${scheme}: default tab contrast`, async ({ page }) => {
 		await page.emulateMedia({ colorScheme: scheme });
 		await fixture(page);
 		const probe = await page.addStyleTag({
@@ -477,7 +475,6 @@ for (const scheme of ['light', 'dark']) {
 
 	test(`${scheme}: demo variants, controls and status surfaces keep readable pairs`, async ({
 		page,
-		browserName,
 	}) => {
 		await page.emulateMedia({ colorScheme: scheme });
 		await page.setViewportSize({ width: 1400, height: 900 });
@@ -486,42 +483,6 @@ for (const scheme of ['light', 'dark']) {
 			'data-layout',
 			'tabs',
 		);
-		const nativePair = await page.evaluate(() => {
-			const probe = document.createElement('span');
-			probe.style.cssText = 'background:ButtonFace;color:ButtonText';
-			document.body.append(probe);
-			const style = getComputedStyle(probe);
-			const pair = {
-				color: style.color,
-				background: style.backgroundColor,
-			};
-			probe.remove();
-			return pair;
-		});
-		const checkText = async (element, label) => {
-			const style = await element.evaluate((node) => {
-				const color = getComputedStyle(node).color;
-				let background = getComputedStyle(node).backgroundColor;
-				while (background === 'rgba(0, 0, 0, 0)') {
-					node = node.parentElement || node.getRootNode().host;
-					if (!node) throw new Error('Missing opaque demo surface.');
-					background = getComputedStyle(node).backgroundColor;
-				}
-				return { color, background };
-			});
-			// Only the exact native pair is covered by the separate expected-failure test.
-			const knownNativeFailure =
-				browserName === 'webkit' &&
-				process.platform === 'linux' &&
-				scheme === 'dark' &&
-				style.color === nativePair.color &&
-				style.background === nativePair.background;
-			if (!knownNativeFailure)
-				expect(
-					(await measurements(element)).text,
-					label,
-				).toBeGreaterThanOrEqual(4.5);
-		};
 		for (const selector of [
 			'.controls button',
 			'.status',
@@ -531,15 +492,24 @@ for (const scheme of ['light', 'dark']) {
 			'.api-reference',
 		]) {
 			for (const element of await page.locator(selector).all()) {
-				await checkText(element, selector);
+				expect(
+					(await measurements(element)).text,
+					selector,
+				).toBeGreaterThanOrEqual(4.5);
 			}
 		}
 		for (const variant of ['.pills', '.minimal']) {
 			const host = page.locator(`tabbed-interface${variant}`);
 			for (const tab of await host.getByRole('tab').all()) {
-				await checkText(tab, variant);
+				expect(
+					(await measurements(tab)).text,
+					variant,
+				).toBeGreaterThanOrEqual(4.5);
 				await tab.hover();
-				await checkText(tab, `${variant}: hover`);
+				expect(
+					(await measurements(tab)).text,
+					`${variant}: hover`,
+				).toBeGreaterThanOrEqual(4.5);
 			}
 			await expect(host.getByRole('tab', { selected: true })).toHaveCSS(
 				'text-decoration-line',

@@ -129,6 +129,38 @@ describe('TabbedInterfaceElement', () => {
 			expect(tabs[1].getAttribute('aria-selected')).toBe('true');
 		});
 
+		it('rejects invalid index types without changing selection or emitting changes', () => {
+			element.activeIndex = 1;
+			const changed = vi.fn();
+			element.addEventListener('tabbed-interface:change', changed);
+			const diagnostic = vi
+				.spyOn(console, 'error')
+				.mockImplementation(() => {});
+			const invalid = [0.5, NaN, Infinity, '1', null];
+			try {
+				for (const value of invalid) {
+					expect(() => {
+						element.activeIndex = value;
+					}).not.toThrow();
+					expect(element.activeIndex).toBe(1);
+					const tabs =
+						element.shadowRoot.querySelectorAll('[role="tab"]');
+					expect(tabs[1].getAttribute('aria-selected')).toBe('true');
+					expect(
+						[
+							...element.shadowRoot.querySelectorAll(
+								'[role="tabpanel"]',
+							),
+						].map((panel) => panel.hidden),
+					).toEqual([true, false, true]);
+				}
+				expect(changed).not.toHaveBeenCalled();
+				expect(diagnostic).toHaveBeenCalledTimes(invalid.length);
+			} finally {
+				diagnostic.mockRestore();
+			}
+		});
+
 		it('should reinitialize when slotted content changes', async () => {
 			const newHeading = document.createElement('h2');
 			newHeading.textContent = 'Fourth Tab';

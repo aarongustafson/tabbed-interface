@@ -325,6 +325,45 @@ test('auto presentation retains responsive and fixed-tabs behavior, and rejects 
 	await expect(element).not.toHaveAttribute('presentation');
 });
 
+test('actual layout follows fitting, print, empty content, and reconnection', async ({
+	page,
+}) => {
+	await render(page, { width: 120 });
+	const element = page.locator('#fixture > tabbed-interface');
+	await expect(element).toHaveJSProperty('presentation', 'auto');
+	await expect(element).toHaveJSProperty('layout', 'linear');
+	await element.evaluate((host) => {
+		host.presentation = 'tabs';
+	});
+	await expect(element).toHaveJSProperty('layout', 'tabs');
+	await page.evaluate(() => window.dispatchEvent(new Event('beforeprint')));
+	await expect(element).toHaveJSProperty('layout', 'linear');
+	await page.evaluate(() => window.dispatchEvent(new Event('afterprint')));
+	await expect(element).toHaveJSProperty('layout', 'tabs');
+	await element.evaluate((host) => {
+		host.innerHTML = '<p>Ordinary fallback content</p>';
+	});
+	await expect(element).toHaveJSProperty('layout', null);
+	await expect(element).not.toHaveAttribute('data-layout');
+	await expect(element.getByText('Ordinary fallback content')).toBeVisible();
+	await element.evaluate((host) => {
+		host.innerHTML =
+			'<h2>First</h2><p>First content</p><h2>Second</h2><p>Second content</p>';
+	});
+	await expect(element).toHaveJSProperty('layout', 'tabs');
+	const disconnected = await element.evaluate((host) => {
+		host.remove();
+		const state = {
+			layout: host.layout,
+			output: host.getAttribute('data-layout'),
+		};
+		document.getElementById('fixture').append(host);
+		return state;
+	});
+	expect(disconnected).toEqual({ layout: null, output: null });
+	await expect(element).toHaveJSProperty('layout', 'tabs');
+});
+
 test('allows wrapped labels while keeping the tablist on one row', async ({
 	page,
 }) => {

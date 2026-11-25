@@ -15,7 +15,14 @@
 							"kind": "field",
 							"name": "activeIndex",
 							"type": { "text": "number" },
-							"description": "Gets or sets the current active tab index"
+							"description": "Gets or sets the current active tab index. Non-integer or non-number assignments log an error and retain selection; out-of-range integers are ignored."
+						},
+						{
+							"kind": "field",
+							"name": "layout",
+							"readonly": true,
+							"type": { "text": "'tabs' | 'linear' | null" },
+							"description": "Actual applied layout, including responsive fitting and print. Null before initialization, without headings, or after disconnection. Read-only; use presentation to request a mode."
 						},
 						{
 							"kind": "field",
@@ -117,6 +124,11 @@
 							"name": "fixed-tabs",
 							"type": { "text": "boolean" },
 							"description": "When present, keeps the tabbed presentation even when the tablist does not fit"
+						},
+						{
+							"name": "data-layout",
+							"type": { "text": "'tabs' | 'linear'" },
+							"description": "Read-only output reflecting the actual applied layout for CSS. Not configuration; absent when layout is null."
 						}
 					],
 					"cssParts": [
@@ -152,12 +164,12 @@
 						{ "name": "--tabbed-interface-tab-padding" },
 						{
 							"name": "--tabbed-interface-tab-background",
-							"default": "ButtonFace",
+							"default": "color-mix(in srgb, CanvasText 8%, Canvas)",
 							"description": "Ordinary tab background; pair with --tabbed-interface-tab-color."
 						},
 						{
 							"name": "--tabbed-interface-tab-color",
-							"default": "ButtonText",
+							"default": "CanvasText",
 							"description": "Ordinary tab foreground."
 						},
 						{
@@ -178,12 +190,12 @@
 						},
 						{
 							"name": "--tabbed-interface-tab-hover-background",
-							"default": "ButtonFace",
+							"default": "color-mix(in srgb, CanvasText 16%, Canvas)",
 							"description": "Hover/focus background; pair with --tabbed-interface-tab-hover-color."
 						},
 						{
 							"name": "--tabbed-interface-tab-hover-color",
-							"default": "ButtonText",
+							"default": "CanvasText",
 							"description": "Hover/focus foreground, independent of the host foreground."
 						},
 						{

@@ -169,7 +169,15 @@ See the [presentation control example](./demo/index.html#presentation-control).
 When returning to tabs, a section containing keyboard focus takes precedence
 over the saved selection so the focused control stays visible.
 
-The current presentation is reflected as `data-layout="tabs"` or `data-layout="linear"` on the component for state-specific styling:
+Read `layout` for the actual applied mode, which can differ from a requested
+`presentation="auto"`. It returns `"tabs"` or `"linear"`, including during print,
+or `null` before initialization, without headings, and after disconnection.
+Layout evaluation is queued, so assigning `presentation` need not change
+`layout` synchronously.
+
+The same state is reflected as `data-layout="tabs"` or `data-layout="linear"`
+for styling. This is output, not configuration; it is absent when `layout` is
+`null`. Don’t author or set it to choose a presentation.
 
 ```css
 tabbed-interface[data-layout='linear'] {
@@ -187,13 +195,16 @@ tabbed-interface[data-layout='linear'] {
 | `autoActivate` | boolean                        | Get/set auto-activation behavior                                                             |
 | `fixedTabs`    | boolean                        | Get/set whether tabs remain active when they do not fit                                      |
 | `presentation` | `"auto" \| "tabs" \| "linear"` | Get/set the requested presentation; explicit modes override `fixedTabs`                      |
+| `layout`       | `"tabs" \| "linear" \| null`   | Read-only actual layout, including print; `null` when not initialized                        |
 | `defaultTab`   | string \| null                 | Reflect `default-tab`; setting `null`, `undefined`, or an empty/whitespace string removes it |
 
 The boolean properties reflect their matching attributes and default to `false`.
-`activeIndex` starts at `0`; out-of-range assignments are ignored. Changing
+`activeIndex` starts at `0`. It accepts finite integer numbers; fractional,
+non-finite, and non-number assignments log an error and retain the selection
+without emitting a change event. Out-of-range integers are ignored. Changing
 `defaultTab` after initialization also changes selection.
 
-The component replays assignments to all seven public properties made before
+The component replays assignments to all seven writable properties made before
 upgrade. Initial section setup still applies `default-tab` and then a matching
 hash, so use `activeIndex` after initialization for imperative selection.
 
@@ -239,6 +250,12 @@ document
     console.log(`Switched to tab ${e.detail.tabIndex}`);
   });
 ```
+
+TypeScript infers `TabbedInterfaceChangeEvent` in ordinary `addEventListener`
+callbacks on a `TabbedInterfaceElement`. The exported `TabbedInterfaceEventMap`
+extends `HTMLElementEventMap`, so native events, listener objects, and
+`removeEventListener` remain supported. The declarations also export
+`TabbedInterfacePresentation` and `TabbedInterfaceLayout`.
 
 ## Keyboard Navigation
 
@@ -297,8 +314,11 @@ Style the component's shadow DOM elements using CSS `::part()` selectors:
 
 ### Styling Examples
 
-Defaults use `ButtonText` on `ButtonFace` for ordinary and hovered/focused tabs,
-and `CanvasText` on `Canvas` for the selected tab. In forced colors, selection
+Defaults use `CanvasText` over a shaded `Canvas` background: an 8% foreground
+mix for ordinary tabs and 16% for hover/focus. The selected tab uses `CanvasText`
+on unshaded `Canvas`. Browsers without `color-mix()` fall back to `Canvas`.
+This avoids relying on low-contrast native Button pairs in some dark palettes
+while keeping the existing color hooks. In forced colors, selection
 also has a two-pixel underline so it remains distinguishable when user colors
 flatten the surfaces. The underline is off in ordinary light/dark mode and
 does not change the tab’s measured size. Browsers without `forced-colors`
@@ -317,8 +337,8 @@ Keep automatic forced-color adjustment enabled, and check your actual
 surfaces, keyboard focus, and reading order. System-color pairs and automated
 checks do not guarantee contrast for every browser or user palette.
 
-**Migration:** hover/focus text previously inherited the host foreground.
-It now defaults to `ButtonText`. If your theme overrides a hover/focus fill,
+**Migration:** ordinary and hover/focus defaults now use the Canvas pair rather
+than `ButtonFace`/`ButtonText`. If your theme overrides a hover/focus fill,
 set `--tabbed-interface-tab-hover-color` too. Existing color hooks and parts
 remain supported. To replace the forced-color selected underline, provide an
 equally clear non-color selected cue through `::part(selected)`.
@@ -383,9 +403,10 @@ tabbed-interface::part(tab):focus-visible {
 
 .pills::part(tab) {
   border-radius: 20px;
-  background: ButtonFace;
-  color: ButtonText;
-  border: 1px solid ButtonText;
+  background: Canvas;
+  background: color-mix(in srgb, CanvasText 8%, Canvas);
+  color: CanvasText;
+  border: 1px solid CanvasText;
 }
 
 .pills::part(selected) {
@@ -425,28 +446,28 @@ underline treatments.
 
 CSS custom properties offer convenient theme-level control without replacing parts:
 
-| Property                                   | Purpose                                              |
-| ------------------------------------------ | ---------------------------------------------------- |
-| `--tabbed-interface-font-family`           | Component font family                                |
-| `--tabbed-interface-tablist-display`       | Tablist display mode                                 |
-| `--tabbed-interface-tablist-gap`           | Gap between tabs                                     |
-| `--tabbed-interface-tablist-padding`       | Tablist padding                                      |
-| `--tabbed-interface-tablist-margin`        | Tablist margin                                       |
-| `--tabbed-interface-tablist-background`    | Tablist background                                   |
-| `--tabbed-interface-tablist-border`        | Tablist border                                       |
-| `--tabbed-interface-tab-padding`           | Tab padding                                          |
-| `--tabbed-interface-tab-background`        | Default tab background (`ButtonFace`)                |
-| `--tabbed-interface-tab-color`             | Default tab text color (`ButtonText`)                |
-| `--tabbed-interface-tab-border`            | Tab border (`1px solid currentColor`)                |
-| `--tabbed-interface-tab-border-radius`     | Tab border radius                                    |
-| `--tabbed-interface-tab-active-background` | Selected tab background (`Canvas`)                   |
-| `--tabbed-interface-tab-active-color`      | Selected tab text color (`CanvasText`)               |
-| `--tabbed-interface-tab-hover-background`  | Hover/focus background (`ButtonFace`)                |
-| `--tabbed-interface-tab-hover-color`       | Hover/focus text color (`ButtonText`)                |
-| `--tabbed-interface-tab-focus-outline`     | Keyboard focus outline (browser-native via `revert`) |
-| `--tabbed-interface-tabpanel-padding`      | Panel padding                                        |
-| `--tabbed-interface-tabpanel-background`   | Panel background                                     |
-| `--tabbed-interface-tabpanel-border`       | Panel border                                         |
+| Property                                   | Purpose                                                               |
+| ------------------------------------------ | --------------------------------------------------------------------- |
+| `--tabbed-interface-font-family`           | Component font family                                                 |
+| `--tabbed-interface-tablist-display`       | Tablist display mode                                                  |
+| `--tabbed-interface-tablist-gap`           | Gap between tabs                                                      |
+| `--tabbed-interface-tablist-padding`       | Tablist padding                                                       |
+| `--tabbed-interface-tablist-margin`        | Tablist margin                                                        |
+| `--tabbed-interface-tablist-background`    | Tablist background                                                    |
+| `--tabbed-interface-tablist-border`        | Tablist border                                                        |
+| `--tabbed-interface-tab-padding`           | Tab padding                                                           |
+| `--tabbed-interface-tab-background`        | Default tab background (`color-mix(in srgb, CanvasText 8%, Canvas)`)  |
+| `--tabbed-interface-tab-color`             | Default tab text color (`CanvasText`)                                 |
+| `--tabbed-interface-tab-border`            | Tab border (`1px solid currentColor`)                                 |
+| `--tabbed-interface-tab-border-radius`     | Tab border radius                                                     |
+| `--tabbed-interface-tab-active-background` | Selected tab background (`Canvas`)                                    |
+| `--tabbed-interface-tab-active-color`      | Selected tab text color (`CanvasText`)                                |
+| `--tabbed-interface-tab-hover-background`  | Hover/focus background (`color-mix(in srgb, CanvasText 16%, Canvas)`) |
+| `--tabbed-interface-tab-hover-color`       | Hover/focus text color (`CanvasText`)                                 |
+| `--tabbed-interface-tab-focus-outline`     | Keyboard focus outline (browser-native via `revert`)                  |
+| `--tabbed-interface-tabpanel-padding`      | Panel padding                                                         |
+| `--tabbed-interface-tabpanel-background`   | Panel background                                                      |
+| `--tabbed-interface-tabpanel-border`       | Panel border                                                          |
 
 ## Printing
 
@@ -488,6 +509,9 @@ npm test
 
 # Run tests once
 npm run test:run
+
+# Check public types
+npm run test:types
 
 # Lint
 npm run lint

@@ -2,6 +2,10 @@ tabbed-interface {
 	overflow-wrap: normal;
 }
 
+#presentation-controls {
+	margin-block-end: 1rem;
+}
+
 .presentation-example[data-layout='linear']::part(presentation) {
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(min(14rem, 100%), 1fr));
@@ -14,16 +18,18 @@ tabbed-interface.pills::part(tablist) {
 }
 
 tabbed-interface.pills::part(tab) {
-	background-color: ButtonFace;
-	color: ButtonText;
-	border: 1px solid ButtonText;
+	background-color: Canvas;
+	background-color: color-mix(in srgb, CanvasText 8%, Canvas);
+	color: CanvasText;
+	border: 1px solid CanvasText;
 	border-radius: 999px;
 	padding: 0.5em 1.5em;
 }
 
 tabbed-interface.pills::part(tab):hover {
-	background-color: ButtonFace;
-	color: ButtonText;
+	background-color: Canvas;
+	background-color: color-mix(in srgb, CanvasText 16%, Canvas);
+	color: CanvasText;
 }
 
 tabbed-interface.pills::part(selected),
@@ -53,8 +59,9 @@ tabbed-interface.minimal::part(tab) {
 }
 
 tabbed-interface.minimal::part(tab):hover {
-	background: ButtonFace;
-	color: ButtonText;
+	background: Canvas;
+	background: color-mix(in srgb, CanvasText 16%, Canvas);
+	color: CanvasText;
 }
 
 tabbed-interface.minimal::part(selected) {
@@ -77,9 +84,10 @@ tabbed-interface.minimal::part(tabpanel) {
 }
 
 .controls button {
-	background: ButtonFace;
-	color: ButtonText;
-	border: 1px solid ButtonText;
+	background: Canvas;
+	background: color-mix(in srgb, CanvasText 8%, Canvas);
+	color: CanvasText;
+	border: 1px solid CanvasText;
 	padding: 0.5rem 1rem;
 	border-radius: 4px;
 	font-size: 0.9rem;
@@ -95,8 +103,8 @@ tabbed-interface.minimal::part(tabpanel) {
 
 .output {
 	padding: 1em;
-	background: ButtonFace;
-	color: ButtonText;
+	background: Canvas;
+	color: CanvasText;
 	border-radius: 4px;
 	font-family: system-monospace, monospace;
 	font-size: 0.875rem;

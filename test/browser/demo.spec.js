@@ -62,6 +62,20 @@ test('presentation controls retain the delivery draft and selection across views
 	for (const presentation of ['linear', 'tabs']) {
 		await mode.selectOption(presentation);
 		await expect(host).toHaveAttribute('data-layout', presentation);
+		await expect
+			.poll(() =>
+				host.evaluate((element) => {
+					const controls = document.getElementById(
+						'presentation-controls',
+					);
+					const gap =
+						element.getBoundingClientRect().top -
+						controls.getBoundingClientRect().bottom;
+					// Firefox can round the two DOMRect edges independently.
+					return Number(gap.toFixed(3));
+				}),
+			)
+			.toBeGreaterThanOrEqual(16);
 		await expect(note).toBeVisible();
 		await expect(note).toHaveValue('Leave beside the blue door.');
 	}
