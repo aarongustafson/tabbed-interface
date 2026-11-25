@@ -406,7 +406,8 @@ has moved focus elsewhere.
 ## Printing
 
 Print hides the tab controls and reveals every section and original heading
-in source order, regardless of `presentation` or `fixed-tabs`. After printing,
+in source order, regardless of `presentation` or `fixed-tabs`. Content and
+heading updates during printing stay expanded too. After printing,
 the component restores the requested presentation and remembered selection,
 subject to the [focused-section rule](#responsive-behavior).
 

@@ -716,8 +716,9 @@ export class TabbedInterfaceElement extends HTMLElement {
 		this.#updateHeaderVisibility();
 		this.#buildMeasurementTablist();
 		if (
-			this.presentation === 'tabs' ||
-			(this.presentation === 'auto' && this.fixedTabs)
+			!this.#printing &&
+			(this.presentation === 'tabs' ||
+				(this.presentation === 'auto' && this.fixedTabs))
 		) {
 			this.#applyLayout('tabs');
 		} else {

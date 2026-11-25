@@ -479,6 +479,41 @@ test('keeps queued layouts from hiding printed sections and restores the screen 
 	await expect(element).toHaveAttribute('data-layout', 'tabs');
 });
 
+for (const attributes of ['presentation="tabs"', 'fixed-tabs']) {
+	test(`keeps reconciled headings linear during print with ${attributes}`, async ({
+		page,
+	}) => {
+		await render(page, { attributes });
+		const element = page.locator('#fixture > tabbed-interface');
+		await element.evaluate((host) => {
+			host.activeIndex = 1;
+		});
+		await page.emulateMedia({ media: 'print' });
+		await page.evaluate(() =>
+			window.dispatchEvent(new Event('beforeprint')),
+		);
+		await element
+			.locator('h2')
+			.first()
+			.evaluate((heading) => {
+				heading.textContent = 'Updated while printing';
+			});
+		await expect(
+			element.locator('#presentation [data-tab]').first(),
+		).toHaveText('Updated while printing');
+		await expect(element).toHaveJSProperty('layout', 'linear');
+		await expect(element.locator('[data-panel][hidden]')).toHaveCount(0);
+		for (const panel of await element.locator('[data-panel]').all())
+			await expect(panel).toBeVisible();
+		await page.emulateMedia({ media: 'screen' });
+		await page.evaluate(() =>
+			window.dispatchEvent(new Event('afterprint')),
+		);
+		await expect(element).toHaveJSProperty('layout', 'tabs');
+		await expect(element).toHaveJSProperty('activeIndex', 1);
+	});
+}
+
 test('reconciles heading changes while preserving authored content state', async ({
 	page,
 }) => {
