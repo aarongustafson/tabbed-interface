@@ -38,12 +38,59 @@ test('all primary demo components upgrade successfully', async ({ page }) => {
 			}),
 		);
 
-	expect(demos).toHaveLength(12);
+	expect(demos).toHaveLength(13);
 	for (const demo of demos) {
 		expect(['tabs', 'linear']).toContain(demo.layout);
 		expect(demo.panelCount).toBe(demo.headingCount);
 		expect(demo.tabCount).toBe(demo.headingCount);
 	}
+});
+
+test('presentation control follows the core examples, before optional styling', async ({
+	page,
+}) => {
+	await page.goto('/demo/index.html');
+	const following = page.locator('#presentation-control ~ section');
+	await expect(following).toHaveCount(1);
+	await expect(following).toHaveAttribute('id', 'styling-tabs');
+});
+
+test('presentation controls retain the delivery draft and selection across views', async ({
+	page,
+}) => {
+	await page.setViewportSize({ width: 1400, height: 900 });
+	await page.goto('/demo/index.html');
+	const host = page.locator('#presentation-example');
+	const mode = page.getByLabel('View sections');
+	await expect(mode).toBeVisible();
+	await mode.selectOption('tabs');
+	await expect(host).toHaveAttribute('data-layout', 'tabs');
+	await host.getByRole('tab', { name: 'Delivery', exact: true }).click();
+	const note = host.getByLabel('Delivery note');
+	await note.fill('Leave beside the blue door.');
+	for (const presentation of ['linear', 'tabs']) {
+		await mode.selectOption(presentation);
+		await expect(host).toHaveAttribute('data-layout', presentation);
+		await expect
+			.poll(() =>
+				host.evaluate((element) => {
+					const controls = document.getElementById(
+						'presentation-controls',
+					);
+					const gap =
+						element.getBoundingClientRect().top -
+						controls.getBoundingClientRect().bottom;
+					// Firefox can round the two DOMRect edges independently.
+					return Number(gap.toFixed(3));
+				}),
+			)
+			.toBeGreaterThanOrEqual(16);
+		await expect(note).toBeVisible();
+		await expect(note).toHaveValue('Leave beside the blue door.');
+	}
+	await expect(
+		host.getByRole('tab', { name: 'Delivery', exact: true }),
+	).toHaveAttribute('aria-selected', 'true');
 });
 
 for (const path of ['index.html', 'esm.html', 'unpkg.html']) {
@@ -201,6 +248,10 @@ for (const path of ['index.html', 'esm.html', 'unpkg.html']) {
 			}
 			if (path === 'index.html') {
 				await expect(page.locator('#selection-controls')).toBeHidden();
+				await expect(
+					page.locator('#presentation-controls'),
+				).toBeHidden();
+				await expect(page.getByLabel('Delivery note')).toBeVisible();
 			}
 		} finally {
 			await context.close();

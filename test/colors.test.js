@@ -31,7 +31,7 @@ describe('tab color contracts', () => {
 		expect(fields).toMatch(
 			/background-color:\s*Canvas;\s*background-image:\s*linear-gradient\(Field,\s*Field\);\s*color:\s*FieldText/,
 		);
-		expect(css).toMatch(/border:\s*1px solid ButtonText/);
+		expect(css).toMatch(/border:\s*1px solid CanvasText/);
 	});
 
 	it('trims block-edge margins inside demo sections', () => {

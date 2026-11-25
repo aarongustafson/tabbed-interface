@@ -195,6 +195,177 @@ test('switches between tabs and linear sections based on rendered fit', async ({
 	expect(restoredFocus).toBe(true);
 });
 
+test('explicit presentation preserves nested tab selection, live values, and focus without reconnecting content', async ({
+	page,
+}) => {
+	await render(page, {
+		attributes: 'presentation="linear" fixed-tabs',
+		style: `#fixture > tabbed-interface[data-layout="linear"]::part(presentation) {
+			display: grid;
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+			gap: 1rem;
+		}`,
+	});
+	const element = page.locator('#fixture > tabbed-interface');
+	await expect(element).toHaveAttribute('data-layout', 'linear');
+	await element.evaluate((host) => {
+		host.presentation = 'tabs';
+		host.activeIndex = 1;
+		const nested = document.createElement('tabbed-interface');
+		nested.fixedTabs = true;
+		nested.innerHTML = `<h3>Nested first</h3><p>First</p>
+			<h3>Nested second</h3><label>Draft <input id="draft"></label>`;
+		host.querySelector('#action').parentElement.append(nested);
+	});
+	const nested = element.locator('tabbed-interface');
+	await expect(nested).toHaveAttribute('data-layout', 'tabs');
+	await nested
+		.getByRole('tab', { name: 'Nested second', exact: true })
+		.click();
+	const input = nested.getByRole('textbox', { name: 'Draft' });
+	await input.fill('Keep this draft');
+	for (const mode of ['linear', 'tabs']) {
+		await element.evaluate((host, value) => {
+			host.presentation = value;
+		}, mode);
+		await expect(element).toHaveAttribute('data-layout', mode);
+		await expect(
+			nested.getByRole('tab', { name: 'Nested second', exact: true }),
+		).toHaveAttribute('aria-selected', 'true');
+		await expect(input).toHaveValue('Keep this draft');
+		await expect(input).toBeFocused();
+		if (mode === 'linear') {
+			const state = await element.evaluate((host) => {
+				const panels = [
+					...host.shadowRoot.querySelectorAll('[data-panel]'),
+				];
+				const boxes = panels.map((panel) =>
+					panel.getBoundingClientRect(),
+				);
+				return {
+					roles: panels.filter((panel) => panel.hasAttribute('role'))
+						.length,
+					hidden: panels.filter((panel) => panel.hidden).length,
+					columns:
+						boxes[0].right <= boxes[1].left &&
+						boxes[1].right <= boxes[2].left,
+					boxes: boxes.map(({ x, width, right }) => ({
+						x,
+						width,
+						right,
+					})),
+				};
+			});
+			expect(state, JSON.stringify(state)).toMatchObject({
+				roles: 0,
+				hidden: 0,
+				columns: true,
+			});
+		}
+	}
+	await page.evaluate(() => window.dispatchEvent(new Event('beforeprint')));
+	await expect(element).toHaveAttribute('data-layout', 'linear');
+	await page.evaluate(() => window.dispatchEvent(new Event('afterprint')));
+	await expect(element).toHaveAttribute('data-layout', 'tabs');
+	await expect(input).toHaveValue('Keep this draft');
+});
+
+test('switching to tabs keeps the focused linear section visible', async ({
+	page,
+}) => {
+	await render(page, { attributes: 'presentation="linear"' });
+	const element = page.locator('#fixture > tabbed-interface');
+	await expect(element).toHaveAttribute('data-layout', 'linear');
+	const action = page.locator('#action');
+	await action.focus();
+	await element.evaluate((host) => {
+		host.presentation = 'tabs';
+	});
+	await expect(element).toHaveAttribute('data-layout', 'tabs');
+	await expect(action).toBeFocused();
+	await expect(action).toBeVisible();
+	expect(await element.evaluate((host) => host.activeIndex)).toBe(1);
+});
+
+test('auto presentation retains responsive and fixed-tabs behavior, and rejects invalid settings explicitly', async ({
+	page,
+}) => {
+	const diagnostics = [];
+	page.on('console', (message) => {
+		if (['error', 'warning'].includes(message.type()))
+			diagnostics.push(message.text());
+	});
+	await render(page, { width: 120, attributes: 'presentation="tabs"' });
+	const element = page.locator('#fixture > tabbed-interface');
+	await expect(element).toHaveAttribute('data-layout', 'tabs');
+	await element.evaluate((host) => {
+		host.presentation = 'auto';
+	});
+	await expect(element).toHaveAttribute('data-layout', 'linear');
+	await element.evaluate((host) => {
+		host.fixedTabs = true;
+	});
+	await expect(element).toHaveAttribute('data-layout', 'tabs');
+	expect(diagnostics).toEqual([]);
+	await element.evaluate((host) => {
+		host.presentation = 'linear';
+		host.presentation = 'invalid';
+	});
+	await expect(element).toHaveAttribute('presentation', 'linear');
+	await expect(element).toHaveAttribute('data-layout', 'linear');
+	await element.evaluate((host) =>
+		host.setAttribute('presentation', 'invalid'),
+	);
+	await expect(element).toHaveAttribute('data-layout', 'tabs');
+	expect(await element.evaluate((host) => host.presentation)).toBe('auto');
+	expect(
+		diagnostics.filter((message) => message.includes('presentation')),
+	).toHaveLength(2);
+	await element.evaluate((host) => {
+		host.presentation = null;
+	});
+	await expect(element).not.toHaveAttribute('presentation');
+});
+
+test('actual layout follows fitting, print, empty content, and reconnection', async ({
+	page,
+}) => {
+	await render(page, { width: 120 });
+	const element = page.locator('#fixture > tabbed-interface');
+	await expect(element).toHaveJSProperty('presentation', 'auto');
+	await expect(element).toHaveJSProperty('layout', 'linear');
+	await element.evaluate((host) => {
+		host.presentation = 'tabs';
+	});
+	await expect(element).toHaveJSProperty('layout', 'tabs');
+	await page.evaluate(() => window.dispatchEvent(new Event('beforeprint')));
+	await expect(element).toHaveJSProperty('layout', 'linear');
+	await page.evaluate(() => window.dispatchEvent(new Event('afterprint')));
+	await expect(element).toHaveJSProperty('layout', 'tabs');
+	await element.evaluate((host) => {
+		host.innerHTML = '<p>Ordinary fallback content</p>';
+	});
+	await expect(element).toHaveJSProperty('layout', null);
+	await expect(element).not.toHaveAttribute('data-layout');
+	await expect(element.getByText('Ordinary fallback content')).toBeVisible();
+	await element.evaluate((host) => {
+		host.innerHTML =
+			'<h2>First</h2><p>First content</p><h2>Second</h2><p>Second content</p>';
+	});
+	await expect(element).toHaveJSProperty('layout', 'tabs');
+	const disconnected = await element.evaluate((host) => {
+		host.remove();
+		const state = {
+			layout: host.layout,
+			output: host.getAttribute('data-layout'),
+		};
+		document.getElementById('fixture').append(host);
+		return state;
+	});
+	expect(disconnected).toEqual({ layout: null, output: null });
+	await expect(element).toHaveJSProperty('layout', 'tabs');
+});
+
 test('allows wrapped labels while keeping the tablist on one row', async ({
 	page,
 }) => {
@@ -307,6 +478,41 @@ test('keeps queued layouts from hiding printed sections and restores the screen 
 	await page.evaluate(() => window.dispatchEvent(new Event('afterprint')));
 	await expect(element).toHaveAttribute('data-layout', 'tabs');
 });
+
+for (const attributes of ['presentation="tabs"', 'fixed-tabs']) {
+	test(`keeps reconciled headings linear during print with ${attributes}`, async ({
+		page,
+	}) => {
+		await render(page, { attributes });
+		const element = page.locator('#fixture > tabbed-interface');
+		await element.evaluate((host) => {
+			host.activeIndex = 1;
+		});
+		await page.emulateMedia({ media: 'print' });
+		await page.evaluate(() =>
+			window.dispatchEvent(new Event('beforeprint')),
+		);
+		await element
+			.locator('h2')
+			.first()
+			.evaluate((heading) => {
+				heading.textContent = 'Updated while printing';
+			});
+		await expect(
+			element.locator('#presentation [data-tab]').first(),
+		).toHaveText('Updated while printing');
+		await expect(element).toHaveJSProperty('layout', 'linear');
+		await expect(element.locator('[data-panel][hidden]')).toHaveCount(0);
+		for (const panel of await element.locator('[data-panel]').all())
+			await expect(panel).toBeVisible();
+		await page.emulateMedia({ media: 'screen' });
+		await page.evaluate(() =>
+			window.dispatchEvent(new Event('afterprint')),
+		);
+		await expect(element).toHaveJSProperty('layout', 'tabs');
+		await expect(element).toHaveJSProperty('activeIndex', 1);
+	});
+}
 
 test('reconciles heading changes while preserving authored content state', async ({
 	page,

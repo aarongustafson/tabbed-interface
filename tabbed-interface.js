@@ -1,3 +1,5 @@
+const PRESENTATIONS = ['auto', 'tabs', 'linear'];
+
 /**
  * TabbedInterfaceElement - A web component that transforms heading-structured content into an accessible tabbed interface
  *
@@ -7,7 +9,8 @@
  * @attr {boolean} tablist-after - When present, positions the tab list after the content; when absent, before the content (default: absent/false)
  * @attr {string} default-tab - Index or heading ID of the tab to show by default (defaults to first tab)
  * @attr {boolean} auto-activate - When present, tabs activate on focus; when absent, use Enter/Space to activate (default: absent/false)
- * @attr {boolean} fixed-tabs - When present, keeps the tabbed presentation even when the tablist does not fit
+ * @attr {boolean} fixed-tabs - Deprecated: use presentation="tabs" instead. Retained for compatibility in auto mode.
+ * @attr {string} presentation - auto follows rendered fit and fixed-tabs; tabs or linear explicitly chooses a presentation
  *
  * @slot - Default slot for content with heading elements (h1-h6) that define tab sections
  *
@@ -19,14 +22,14 @@
  * @cssprop --tabbed-interface-tablist-background - Background color for tablist
  * @cssprop --tabbed-interface-tablist-border - Border for tablist
  * @cssprop --tabbed-interface-tab-padding - Padding for tabs (default: 0.5em 1em)
- * @cssprop --tabbed-interface-tab-background - Background color for tabs (default: ButtonFace)
- * @cssprop --tabbed-interface-tab-color - Text color for tabs (default: ButtonText)
+ * @cssprop --tabbed-interface-tab-background - Background color for tabs (default: color-mix(in srgb, CanvasText 8%, Canvas), with a Canvas fallback)
+ * @cssprop --tabbed-interface-tab-color - Text color for tabs (default: CanvasText)
  * @cssprop --tabbed-interface-tab-border - Border for tabs (default: 1px solid currentColor)
  * @cssprop --tabbed-interface-tab-border-radius - Border radius for tabs
  * @cssprop --tabbed-interface-tab-active-background - Background color for active tab (default: Canvas)
  * @cssprop --tabbed-interface-tab-active-color - Text color for active tab (default: CanvasText)
- * @cssprop --tabbed-interface-tab-hover-background - Hover/focus background (default: ButtonFace)
- * @cssprop --tabbed-interface-tab-hover-color - Hover/focus foreground (default: ButtonText)
+ * @cssprop --tabbed-interface-tab-hover-background - Hover/focus background (default: color-mix(in srgb, CanvasText 16%, Canvas), with a Canvas fallback)
+ * @cssprop --tabbed-interface-tab-hover-color - Hover/focus foreground (default: CanvasText)
  * @cssprop --tabbed-interface-tab-focus-outline - Keyboard focus outline (default: revert, browser-native)
  * @cssprop --tabbed-interface-tabpanel-padding - Padding for tab panels
  * @cssprop --tabbed-interface-tabpanel-background - Background color for tab panels
@@ -42,6 +45,7 @@ export class TabbedInterfaceElement extends HTMLElement {
 			'default-tab',
 			'auto-activate',
 			'fixed-tabs',
+			'presentation',
 		];
 	}
 
@@ -86,6 +90,7 @@ export class TabbedInterfaceElement extends HTMLElement {
 		this.#upgradeProperty('autoActivate');
 		this.#upgradeProperty('activeIndex');
 		this.#upgradeProperty('fixedTabs');
+		this.#upgradeProperty('presentation');
 
 		this.#render();
 		this.#observeContent();
@@ -139,9 +144,17 @@ export class TabbedInterfaceElement extends HTMLElement {
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
-		if (oldValue === newValue || !this.#initialized) {
-			return;
+		if (oldValue === newValue) return;
+		if (
+			name === 'presentation' &&
+			newValue !== null &&
+			!PRESENTATIONS.includes(newValue)
+		) {
+			console.error(
+				'tabbed-interface: presentation must be auto, tabs, or linear; using auto.',
+			);
 		}
+		if (!this.#initialized) return;
 
 		switch (name) {
 			case 'show-headers':
@@ -157,6 +170,7 @@ export class TabbedInterfaceElement extends HTMLElement {
 				this.#focusedIndex = this.#activeIndex;
 				break;
 			case 'fixed-tabs':
+			case 'presentation':
 				this.#scheduleLayoutEvaluation();
 				break;
 			default:
@@ -177,9 +191,19 @@ export class TabbedInterfaceElement extends HTMLElement {
 	 * @param {number} index - The tab index to activate
 	 */
 	set activeIndex(index) {
+		if (!Number.isInteger(index)) {
+			console.error(
+				'tabbed-interface: activeIndex must be a finite integer number; keeping the previous selection.',
+			);
+			return;
+		}
 		if (index >= 0 && index < this.#tabs.length) {
 			this.#activateTab(index);
 		}
+	}
+
+	get layout() {
+		return this.#layout;
 	}
 
 	/**
@@ -235,6 +259,7 @@ export class TabbedInterfaceElement extends HTMLElement {
 
 	/**
 	 * Whether the component should remain tabbed when its tabs do not fit
+	 * @deprecated Use presentation = 'tabs' instead. Retained for compatibility in auto mode.
 	 * @returns {boolean}
 	 */
 	get fixedTabs() {
@@ -246,6 +271,23 @@ export class TabbedInterfaceElement extends HTMLElement {
 			this.setAttribute('fixed-tabs', '');
 		} else {
 			this.removeAttribute('fixed-tabs');
+		}
+	}
+
+	get presentation() {
+		const value = this.getAttribute('presentation');
+		return PRESENTATIONS.includes(value) ? value : 'auto';
+	}
+
+	set presentation(value) {
+		if (value === null || value === undefined) {
+			this.removeAttribute('presentation');
+		} else if (PRESENTATIONS.includes(value)) {
+			this.setAttribute('presentation', value);
+		} else {
+			console.error(
+				'tabbed-interface: presentation must be auto, tabs, or linear; keeping the previous setting.',
+			);
 		}
 	}
 
@@ -354,8 +396,8 @@ export class TabbedInterfaceElement extends HTMLElement {
 				[data-tab] {
 					min-inline-size: 0;
 					padding: var(--tabbed-interface-tab-padding, 0.5em 1em);
-					background-color: var(--tabbed-interface-tab-background, ButtonFace);
-					color: var(--tabbed-interface-tab-color, ButtonText);
+					background-color: var(--tabbed-interface-tab-background, Canvas);
+					color: var(--tabbed-interface-tab-color, CanvasText);
 					border: var(--tabbed-interface-tab-border, 1px solid currentColor);
 					border-radius: var(--tabbed-interface-tab-border-radius, 0);
 					border-start-start-radius: 3px;
@@ -368,8 +410,19 @@ export class TabbedInterfaceElement extends HTMLElement {
 
 				[data-tab]:hover,
 				[data-tab]:focus {
-					background: var(--tabbed-interface-tab-hover-background, ButtonFace);
-					color: var(--tabbed-interface-tab-hover-color, ButtonText);
+					background: var(--tabbed-interface-tab-hover-background, Canvas);
+					color: var(--tabbed-interface-tab-hover-color, CanvasText);
+				}
+
+				@supports (background-color: color-mix(in srgb, CanvasText 8%, Canvas)) {
+					[data-tab] {
+						background-color: var(--tabbed-interface-tab-background, color-mix(in srgb, CanvasText 8%, Canvas));
+					}
+
+					[data-tab]:hover,
+					[data-tab]:focus {
+						background: var(--tabbed-interface-tab-hover-background, color-mix(in srgb, CanvasText 16%, Canvas));
+					}
 				}
 
 				[data-tab]:focus-visible {
@@ -475,7 +528,7 @@ export class TabbedInterfaceElement extends HTMLElement {
 					}
 				}
 			</style>
-			<div id="presentation" data-layout="linear">
+			<div id="presentation" part="presentation" data-layout="linear">
 				<slot id="fallback"></slot>
 			</div>
 			<div id="measurement" aria-hidden="true" inert></div>
@@ -662,7 +715,11 @@ export class TabbedInterfaceElement extends HTMLElement {
 		this.#focusedIndex = this.#activeIndex;
 		this.#updateHeaderVisibility();
 		this.#buildMeasurementTablist();
-		if (this.fixedTabs) {
+		if (
+			!this.#printing &&
+			(this.presentation === 'tabs' ||
+				(this.presentation === 'auto' && this.fixedTabs))
+		) {
 			this.#applyLayout('tabs');
 		} else {
 			this.#applyLayout('linear');
@@ -827,8 +884,11 @@ export class TabbedInterfaceElement extends HTMLElement {
 			if (this.#printing) {
 				return;
 			}
-			const nextLayout =
-				this.fixedTabs || this.#tabsFit() ? 'tabs' : 'linear';
+			let nextLayout = this.presentation;
+			if (nextLayout === 'auto') {
+				nextLayout =
+					this.fixedTabs || this.#tabsFit() ? 'tabs' : 'linear';
+			}
 			this.#applyLayout(nextLayout);
 		});
 	}
@@ -898,6 +958,17 @@ export class TabbedInterfaceElement extends HTMLElement {
 		}
 		if (layout === this.#layout) {
 			return;
+		}
+
+		if (layout === 'tabs') {
+			const focused = this.getRootNode().activeElement;
+			const index = this.#sections.findIndex((section) =>
+				[section.heading, ...section.content].some((node) =>
+					node.contains(focused),
+				),
+			);
+			if (index !== -1) this.#activateTab(index);
+			if (!this.isConnected || !this.#tablist) return;
 		}
 
 		const presentation = this.shadowRoot.querySelector('#presentation');
@@ -1261,6 +1332,7 @@ export class TabbedInterfaceElement extends HTMLElement {
 		this.#focusedIndex = 0;
 		this.#initialized = false;
 		this.#layout = null;
+		this.removeAttribute('data-layout');
 	}
 
 	#upgradeProperty(prop) {

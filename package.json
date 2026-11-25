@@ -59,6 +59,7 @@
 		"test:browser": "playwright test",
 		"test:ui": "vitest --ui",
 		"test:run": "vitest run",
+		"test:types": "tsc --noEmit --strict --target es2022 --module nodenext --moduleResolution nodenext test/types.ts",
 		"test:coverage": "vitest run --coverage",
 		"demo:check": "node scripts/check-demo-shared.js",
 		"lint": "npm run demo:check && npm run lint:eslint && npm run lint:prettier",
@@ -82,6 +83,7 @@
 		"happy-dom": "^21.0.4",
 		"microlighter": "2.2.0",
 		"prettier": "^3.9.9",
+		"typescript": "^7.0.2",
 		"vitest": "^5.0.5"
 	},
 	"publishConfig": {
