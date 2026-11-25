@@ -46,6 +46,15 @@ test('all primary demo components upgrade successfully', async ({ page }) => {
 	}
 });
 
+test('presentation control follows the core examples, before optional styling', async ({
+	page,
+}) => {
+	await page.goto('/demo/index.html');
+	const following = page.locator('#presentation-control ~ section');
+	await expect(following).toHaveCount(1);
+	await expect(following).toHaveAttribute('id', 'styling-tabs');
+});
+
 test('presentation controls retain the delivery draft and selection across views', async ({
 	page,
 }) => {
